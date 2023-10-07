@@ -45,8 +45,6 @@
 #define USE_NNUE_AVX2                           // Required NNUE_EVALUATION_FUNCTION_2
 #define USE_NNUE_UPDATE                         // Required NNUE_EVALUATION_FUNCTION_2
 
-//#define LAST_LAYER_AS_FLOAT                   // Required NNUE_EVALUATION_FUNCTION_2
-
 //#define PRINT_MIN_MAX_VALUES                  // Required NNUE_EVALUATION_FUNCTION_2
 //#define PRINT_WEIGHT_INDEX                    // Required NNUE_EVALUATION_FUNCTION_2
 //#define PRINT_ACCUMULATOR                     // Required NNUE_EVALUATION_FUNCTION_2
@@ -185,7 +183,7 @@
 #elif defined(NNUE_EVALUATION_FUNCTION)
 #define EVALUATION_NAME                         "NNUE"
 #elif defined(NNUE_EVALUATION_FUNCTION_2)
-#define EVALUATION_NAME                         "NNUE2"
+#define EVALUATION_NAME                         "NNUE3"
 #endif // SIMPLIFIED_EVALUATION_FUNCTION || TOGA_EVALUATION_FUNCTION || NNUE_EVALUATION_FUNCTION || NNUE_EVALUATION_FUNCTION_2
 
 #define YEARS                                   "1999-2023"
