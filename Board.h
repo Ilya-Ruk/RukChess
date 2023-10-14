@@ -121,7 +121,7 @@ typedef struct {
 
 #ifdef NNUE_EVALUATION_FUNCTION_2
 typedef struct {
-    _declspec(align(64)) I16 Accumulation[2][512]; // [Perspective][Hidden dimension]
+    _declspec(align(64)) I16 Accumulation[2][256]; // [Perspective][Hidden dimension]
 
     BOOL AccumulationComputed;
 } AccumulatorItem; // 2052 bytes (aligned 2080 bytes)

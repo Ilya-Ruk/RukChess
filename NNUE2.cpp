@@ -18,51 +18,40 @@
 #define NNUE_FILE_NAME                  "rukchess.nnue"
 #define NNUE_FILE_MAGIC                 ('B' | 'R' << 8 | 'K' << 16 | 'R' << 24)
 //#define NNUE_FILE_HASH                0x0000755B16A94877
-#define NNUE_FILE_SIZE                  1706256
+#define NNUE_FILE_SIZE                  820368
 
 #define FEATURE_DIMENSION               768
-#define HIDDEN_DIMENSION_1              512
-#define HIDDEN_DIMENSION_2              32
+#define HIDDEN_DIMENSION_1              256
+#define HIDDEN_DIMENSION_2              16
 #define OUTPUT_DIMENSION                1
 
-#define QUANTIZATION_PRECISION_IN       64
-#define QUANTIZATION_PRECISION_HIDDEN   256
-#define QUANTIZATION_PRECISION_OUT      512
+#define QUANTIZATION_PRECISION_INPUT    128
+#define QUANTIZATION_PRECISION_HIDDEN   64
+#define QUANTIZATION_PRECISION_OUTPUT   64
+
+#define HIDDEN_SHIFT                    6 // 2 ^ 6 = 64
 
 #ifdef USE_NNUE_AVX2
 #define NUM_REGS                        (HIDDEN_DIMENSION_1 * sizeof(I16) / sizeof(__m256i)) // 32
 #endif // USE_NNUE_AVX2
 
-_declspec(align(64)) I16 FeatureWeights[FEATURE_DIMENSION * HIDDEN_DIMENSION_1];        // 768 x 512 = 393216
-_declspec(align(64)) I16 HiddenBiases1[HIDDEN_DIMENSION_1];                             // 512
+_declspec(align(64)) I16 InputWeights[FEATURE_DIMENSION * HIDDEN_DIMENSION_1];          // 768 x 256 = 196608
+_declspec(align(64)) I16 InputBiases[HIDDEN_DIMENSION_1];                               // 256
 
-_declspec(align(64)) I16 HiddenWeights1[HIDDEN_DIMENSION_1 * HIDDEN_DIMENSION_2 * 2];   // 512 x 32 x 2 = 32768
-_declspec(align(64)) I16 HiddenBiases2[HIDDEN_DIMENSION_2];                             // 32
+_declspec(align(64)) I16 HiddenWeights[HIDDEN_DIMENSION_1 * HIDDEN_DIMENSION_2 * 2];    // 256 x 16 x 2 = 8192
+_declspec(align(64)) I32 HiddenBiases[HIDDEN_DIMENSION_2];                              // 16
 
-_declspec(align(64)) I16 HiddenWeights2[HIDDEN_DIMENSION_2];                            // 32
-I16 OutputBias;                                                                         // 1
+_declspec(align(64)) I16 OutputWeights[HIDDEN_DIMENSION_2];                             // 16
+I32 OutputBias;                                                                         // 1
 
-I16 LoadWeight(const float Value, const int Precision)
+I16 LoadWeight16(const float Value, const int Precision)
 {
-    I16 Result;
+    return (I16)roundf(Value * (float)Precision);
+}
 
-//    if (Value < (float)SHRT_MIN / (float)Precision) {
-//        Result = 0;
-//        Result = SHRT_MIN;
-
-//        printf("Value = %f\n", Value);
-//    }
-//    else if (Value > (float)SHRT_MAX / (float)Precision) {
-//        Result = 0;
-//        Result = SHRT_MAX;
-
-//        printf("Value = %f\n", Value);
-//    }
-//    else {
-        Result = (I16)roundf(Value * (float)Precision);
-//    }
-
-    return Result;
+I32 LoadWeight32(const float Value, const int Precision)
+{
+    return (I32)roundf(Value * (float)Precision);
 }
 
 void ReadNetwork(void)
@@ -130,7 +119,7 @@ void ReadNetwork(void)
     MaxValue = FLT_MIN;
 #endif // PRINT_MIN_MAX_VALUES
 
-    for (int Index = 0; Index < FEATURE_DIMENSION * HIDDEN_DIMENSION_1; ++Index) { // 768 x 512 = 393216
+    for (int Index = 0; Index < FEATURE_DIMENSION * HIDDEN_DIMENSION_1; ++Index) { // 768 x 256 = 196608
         fread(&Value, sizeof(float), 1, File);
 
 #ifdef PRINT_MIN_MAX_VALUES
@@ -143,11 +132,11 @@ void ReadNetwork(void)
         }
 #endif // PRINT_MIN_MAX_VALUES
 
-        FeatureWeights[Index] = LoadWeight(Value, QUANTIZATION_PRECISION_IN);
+        InputWeights[Index] = LoadWeight16(Value, QUANTIZATION_PRECISION_INPUT);
     }
 
 #ifdef PRINT_MIN_MAX_VALUES
-    printf("Feature weights: MinValue = %f MaxValue = %f\n", MinValue, MaxValue);
+    printf("Input weights: MinValue = %f MaxValue = %f\n", MinValue, MaxValue);
 #endif // PRINT_MIN_MAX_VALUES
 
     // Hidden biases 1
@@ -157,7 +146,7 @@ void ReadNetwork(void)
     MaxValue = FLT_MIN;
 #endif // PRINT_MIN_MAX_VALUES
 
-    for (int Index = 0; Index < HIDDEN_DIMENSION_1; ++Index) { // 512
+    for (int Index = 0; Index < HIDDEN_DIMENSION_1; ++Index) { // 256
         fread(&Value, sizeof(float), 1, File);
 
 #ifdef PRINT_MIN_MAX_VALUES
@@ -170,11 +159,11 @@ void ReadNetwork(void)
         }
 #endif // PRINT_MIN_MAX_VALUES
 
-        HiddenBiases1[Index] = LoadWeight(Value, QUANTIZATION_PRECISION_IN);
+        InputBiases[Index] = LoadWeight16(Value, QUANTIZATION_PRECISION_INPUT);
     }
 
 #ifdef PRINT_MIN_MAX_VALUES
-    printf("Hidden biases 1: MinValue = %f MaxValue = %f\n", MinValue, MaxValue);
+    printf("Input biases: MinValue = %f MaxValue = %f\n", MinValue, MaxValue);
 #endif // PRINT_MIN_MAX_VALUES
 
     // Hidden weights 1
@@ -184,7 +173,7 @@ void ReadNetwork(void)
     MaxValue = FLT_MIN;
 #endif // PRINT_MIN_MAX_VALUES
 
-    for (int Index = 0; Index < HIDDEN_DIMENSION_1 * HIDDEN_DIMENSION_2 * 2; ++Index) { // 512 x 32 x 2 = 32768
+    for (int Index = 0; Index < HIDDEN_DIMENSION_1 * HIDDEN_DIMENSION_2 * 2; ++Index) { // 256 x 16 x 2 = 8192
         fread(&Value, sizeof(float), 1, File);
 
 #ifdef PRINT_MIN_MAX_VALUES
@@ -197,11 +186,11 @@ void ReadNetwork(void)
         }
 #endif // PRINT_MIN_MAX_VALUES
 
-        HiddenWeights1[Index] = LoadWeight(Value, QUANTIZATION_PRECISION_HIDDEN);
+        HiddenWeights[Index] = LoadWeight16(Value, QUANTIZATION_PRECISION_HIDDEN);
     }
 
 #ifdef PRINT_MIN_MAX_VALUES
-    printf("Hidden weights 1: MinValue = %f MaxValue = %f\n", MinValue, MaxValue);
+    printf("Hidden weights: MinValue = %f MaxValue = %f\n", MinValue, MaxValue);
 #endif // PRINT_MIN_MAX_VALUES
 
     // Hidden biases 2
@@ -211,7 +200,7 @@ void ReadNetwork(void)
     MaxValue = FLT_MIN;
 #endif // PRINT_MIN_MAX_VALUES
 
-    for (int Index = 0; Index < HIDDEN_DIMENSION_2; ++Index) { // 32
+    for (int Index = 0; Index < HIDDEN_DIMENSION_2; ++Index) { // 16
         fread(&Value, sizeof(float), 1, File);
 
 #ifdef PRINT_MIN_MAX_VALUES
@@ -224,11 +213,11 @@ void ReadNetwork(void)
         }
 #endif // PRINT_MIN_MAX_VALUES
 
-        HiddenBiases2[Index] = LoadWeight(Value, QUANTIZATION_PRECISION_HIDDEN);
+        HiddenBiases[Index] = LoadWeight32(Value, QUANTIZATION_PRECISION_HIDDEN * QUANTIZATION_PRECISION_INPUT);
     }
 
 #ifdef PRINT_MIN_MAX_VALUES
-    printf("Hidden biases 2: MinValue = %f MaxValue = %f\n", MinValue, MaxValue);
+    printf("Hidden biases: MinValue = %f MaxValue = %f\n", MinValue, MaxValue);
 #endif // PRINT_MIN_MAX_VALUES
 
     // Hidden weights 2
@@ -238,7 +227,7 @@ void ReadNetwork(void)
     MaxValue = FLT_MIN;
 #endif // PRINT_MIN_MAX_VALUES
 
-    for (int Index = 0; Index < HIDDEN_DIMENSION_2; ++Index) { // 32
+    for (int Index = 0; Index < HIDDEN_DIMENSION_2; ++Index) { // 16
         fread(&Value, sizeof(float), 1, File);
 
 #ifdef PRINT_MIN_MAX_VALUES
@@ -251,21 +240,21 @@ void ReadNetwork(void)
         }
 #endif // PRINT_MIN_MAX_VALUES
 
-        HiddenWeights2[Index] = LoadWeight(Value, QUANTIZATION_PRECISION_OUT);
+        OutputWeights[Index] = LoadWeight16(Value, QUANTIZATION_PRECISION_OUTPUT);
     }
 
 #ifdef PRINT_MIN_MAX_VALUES
-    printf("Hidden weights 2: MinValue = %f MaxValue = %f\n", MinValue, MaxValue);
+    printf("Output weights: MinValue = %f MaxValue = %f\n", MinValue, MaxValue);
 #endif // PRINT_MIN_MAX_VALUES
 
     // Output bias
 
     fread(&Value, sizeof(float), 1, File);
 
-    OutputBias = LoadWeight(Value, QUANTIZATION_PRECISION_OUT);
+    OutputBias = LoadWeight32(Value, QUANTIZATION_PRECISION_OUTPUT * QUANTIZATION_PRECISION_INPUT);
 
 #ifdef PRINT_MIN_MAX_VALUES
-    printf("OutputBias: Value = %f\n", Value);
+    printf("Output bias: Value = %f\n", Value);
 #endif // PRINT_MIN_MAX_VALUES
 
     fgetpos(File, &FilePos);
@@ -313,7 +302,7 @@ void RefreshAccumulator(BoardItem* Board)
     I16 (*Accumulation)[2][HIDDEN_DIMENSION_1] = &Board->Accumulator.Accumulation;
 
     for (int Perspective = 0; Perspective < 2; ++Perspective) { // White/Black
-        memcpy((*Accumulation)[Perspective], HiddenBiases1, sizeof(HiddenBiases1));
+        memcpy((*Accumulation)[Perspective], InputBiases, sizeof(InputBiases));
 
         U64 Pieces = (Board->BB_WhitePieces | Board->BB_BlackPieces);
 
@@ -327,14 +316,14 @@ void RefreshAccumulator(BoardItem* Board)
 #ifdef USE_NNUE_AVX2
             __m256i* AccumulatorTile = (__m256i*)(*Accumulation)[Perspective];
 
-            __m256i* Column = (__m256i*)&FeatureWeights[WeightIndex * HIDDEN_DIMENSION_1];
+            __m256i* Column = (__m256i*)&InputWeights[WeightIndex * HIDDEN_DIMENSION_1];
 
             for (int Reg = 0; Reg < NUM_REGS; ++Reg) { // 32
                 AccumulatorTile[Reg] = _mm256_add_epi16(AccumulatorTile[Reg], Column[Reg]);
             }
 #else
             for (int Index = 0; Index < HIDDEN_DIMENSION_1; ++Index) { // 512
-                (*Accumulation)[Perspective][Index] += FeatureWeights[WeightIndex * HIDDEN_DIMENSION_1 + Index];
+                (*Accumulation)[Perspective][Index] += InputWeights[WeightIndex * HIDDEN_DIMENSION_1 + Index];
             }
 #endif // USE_NNUE_AVX2
 
@@ -356,14 +345,14 @@ void AccumulatorAdd(BoardItem* Board, const int Perspective, const int WeightInd
 #ifdef USE_NNUE_AVX2
     __m256i* AccumulatorTile = (__m256i*)(*Accumulation)[Perspective];
 
-    __m256i* Column = (__m256i*)&FeatureWeights[WeightIndex * HIDDEN_DIMENSION_1];
+    __m256i* Column = (__m256i*)&InputWeights[WeightIndex * HIDDEN_DIMENSION_1];
 
     for (int Reg = 0; Reg < NUM_REGS; ++Reg) { // 32
         AccumulatorTile[Reg] = _mm256_add_epi16(AccumulatorTile[Reg], Column[Reg]);
     }
 #else
     for (int Index = 0; Index < HIDDEN_DIMENSION_1; ++Index) { // 512
-        (*Accumulation)[Perspective][Index] += FeatureWeights[WeightIndex * HIDDEN_DIMENSION_1 + Index];
+        (*Accumulation)[Perspective][Index] += InputWeights[WeightIndex * HIDDEN_DIMENSION_1 + Index];
     }
 #endif // USE_NNUE_AVX2
 }
@@ -375,14 +364,14 @@ void AccumulatorSub(BoardItem* Board, const int Perspective, const int WeightInd
 #ifdef USE_NNUE_AVX2
     __m256i* AccumulatorTile = (__m256i*)(*Accumulation)[Perspective];
 
-    __m256i* Column = (__m256i*)&FeatureWeights[WeightIndex * HIDDEN_DIMENSION_1];
+    __m256i* Column = (__m256i*)&InputWeights[WeightIndex * HIDDEN_DIMENSION_1];
 
     for (int Reg = 0; Reg < NUM_REGS; ++Reg) { // 32
         AccumulatorTile[Reg] = _mm256_sub_epi16(AccumulatorTile[Reg], Column[Reg]);
     }
 #else
     for (int Index = 0; Index < HIDDEN_DIMENSION_1; ++Index) { // 512
-        (*Accumulation)[Perspective][Index] -= FeatureWeights[WeightIndex * HIDDEN_DIMENSION_1 + Index];
+        (*Accumulation)[Perspective][Index] -= InputWeights[WeightIndex * HIDDEN_DIMENSION_1 + Index];
     }
 #endif // USE_NNUE_AVX2
 }
@@ -482,7 +471,7 @@ BOOL UpdateAccumulator(BoardItem* Board)
 
 #endif // USE_NNUE_UPDATE
 
-void HiddenLayer(BoardItem* Board, I32 HiddenValues32[], I16 HiddenValues16[])
+void HiddenLayer(BoardItem* Board, I16 HiddenValues16[])
 {
 #ifdef PRINT_ACCUMULATOR
     for (int Index = 0; Index < HIDDEN_DIMENSION_1; ++Index) { // 512
@@ -495,6 +484,7 @@ void HiddenLayer(BoardItem* Board, I32 HiddenValues32[], I16 HiddenValues16[])
 
 #ifdef USE_NNUE_AVX2
     const __m256i ConstZero = _mm256_setzero_si256();
+    const __m256i ConstMax = _mm256_set1_epi16(QUANTIZATION_PRECISION_INPUT);
 
     __m256i* AccumulatorTile0 = (__m256i*)&Board->Accumulator.Accumulation[Board->CurrentColor];
     __m256i* AccumulatorTile1 = (__m256i*)&Board->Accumulator.Accumulation[CHANGE_COLOR(Board->CurrentColor)];
@@ -503,12 +493,12 @@ void HiddenLayer(BoardItem* Board, I32 HiddenValues32[], I16 HiddenValues16[])
         __m256i Sum0 = ConstZero;
         __m256i Sum1 = ConstZero;
 
-        __m256i* Weights0 = (__m256i*)&HiddenWeights1[Index * 2 * HIDDEN_DIMENSION_1];
-        __m256i* Weights1 = (__m256i*)&HiddenWeights1[Index * 2 * HIDDEN_DIMENSION_1 + HIDDEN_DIMENSION_1];
+        __m256i* Weights0 = (__m256i*)&HiddenWeights[Index * 2 * HIDDEN_DIMENSION_1];
+        __m256i* Weights1 = (__m256i*)&HiddenWeights[Index * 2 * HIDDEN_DIMENSION_1 + HIDDEN_DIMENSION_1];
 
         for (int Reg = 0; Reg < NUM_REGS; ++Reg) { // 32
-            const __m256i Acc0 = _mm256_max_epi16(ConstZero, AccumulatorTile0[Reg]); // ReLU
-            const __m256i Acc1 = _mm256_max_epi16(ConstZero, AccumulatorTile1[Reg]); // ReLU
+            const __m256i Acc0 = _mm256_max_epi16(ConstZero, _mm256_min_epi16(ConstMax, AccumulatorTile0[Reg])); // CReLU
+            const __m256i Acc1 = _mm256_max_epi16(ConstZero, _mm256_min_epi16(ConstMax, AccumulatorTile1[Reg])); // CReLU
 
             Sum0 = _mm256_add_epi32(Sum0, _mm256_madd_epi16(Acc0, Weights0[Reg]));
             Sum1 = _mm256_add_epi32(Sum1, _mm256_madd_epi16(Acc1, Weights1[Reg]));
@@ -519,47 +509,48 @@ void HiddenLayer(BoardItem* Board, I32 HiddenValues32[], I16 HiddenValues16[])
         const __m128i R2 = _mm_add_epi32(R4, _mm_srli_si128(R4, 8));
         const __m128i R1 = _mm_add_epi32(R2, _mm_srli_si128(R2, 4));
 
-        HiddenValues16[Index] = (I16)(_mm_cvtsi128_si32(R1) / QUANTIZATION_PRECISION_HIDDEN);
+        HiddenValues16[Index] = (I16)((_mm_cvtsi128_si32(R1) + HiddenBiases[Index]) >> HIDDEN_SHIFT);
     }
 #else
     I16 (*Accumulation)[2][HIDDEN_DIMENSION_1] = &Board->Accumulator.Accumulation;
 
     for (int Index1 = 0; Index1 < HIDDEN_DIMENSION_2; ++Index1) { // 32
-        HiddenValues32[Index1] = HiddenBiases2[Index1];
+        I32 Result = HiddenBiases[Index1];
 
         for (int Index2 = 0; Index2 < HIDDEN_DIMENSION_1; ++Index2) { // 512
-            const I16 Acc0 = MAX(0, (*Accumulation)[Board->CurrentColor][Index2]); // ReLU
-            const I16 Acc1 = MAX(0, (*Accumulation)[CHANGE_COLOR(Board->CurrentColor)][Index2]); // ReLU
+            const I16 Acc0 = MAX(0, MIN(QUANTIZATION_PRECISION_INPUT, (*Accumulation)[Board->CurrentColor][Index2])); // CReLU
+            const I16 Acc1 = MAX(0, MIN(QUANTIZATION_PRECISION_INPUT, (*Accumulation)[CHANGE_COLOR(Board->CurrentColor)][Index2])); // CReLU
 
-            HiddenValues32[Index1] += Acc0 * HiddenWeights1[Index1 * 2 * HIDDEN_DIMENSION_1 + Index2]; // Offset 0
-            HiddenValues32[Index1] += Acc1 * HiddenWeights1[Index1 * 2 * HIDDEN_DIMENSION_1 + Index2 + HIDDEN_DIMENSION_1]; // Offset 512
+            Result += Acc0 * HiddenWeights[Index1 * 2 * HIDDEN_DIMENSION_1 + Index2]; // Offset 0
+            Result += Acc1 * HiddenWeights[Index1 * 2 * HIDDEN_DIMENSION_1 + Index2 + HIDDEN_DIMENSION_1]; // Offset 512
         }
 
-        HiddenValues16[Index1] = (I16)(HiddenValues32[Index1] / QUANTIZATION_PRECISION_HIDDEN);
+        HiddenValues16[Index1] = (I16)(Result >> HIDDEN_SHIFT);
     }
 #endif // USE_NNUE_AVX2
 }
 
 I32 OutputLayer(BoardItem* Board, I16 HiddenValues16[])
 {
-    I32 Result = OutputBias * QUANTIZATION_PRECISION_IN;
+    I32 Result = OutputBias;
 
 #ifdef USE_NNUE_AVX2
     const __m256i ConstZero = _mm256_setzero_si256();
+    const __m256i ConstMax = _mm256_set1_epi16(QUANTIZATION_PRECISION_INPUT);
 
     __m256i* AccumulatorTile0 = (__m256i*)&HiddenValues16[0];
-    __m256i* AccumulatorTile1 = (__m256i*)&HiddenValues16[HIDDEN_DIMENSION_2 / 2];
+//    __m256i* AccumulatorTile1 = (__m256i*)&HiddenValues16[HIDDEN_DIMENSION_2 / 2];
 
-    __m256i* Weights0 = (__m256i*)&HiddenWeights2[0];
-    __m256i* Weights1 = (__m256i*)&HiddenWeights2[HIDDEN_DIMENSION_2 / 2];
+    __m256i* Weights0 = (__m256i*)&OutputWeights[0];
+//    __m256i* Weights1 = (__m256i*)&OutputWeights[HIDDEN_DIMENSION_2 / 2];
 
-    const __m256i Acc0 = _mm256_max_epi16(ConstZero, AccumulatorTile0[0]); // ReLU
-    const __m256i Acc1 = _mm256_max_epi16(ConstZero, AccumulatorTile1[0]); // ReLU
+    const __m256i Acc0 = _mm256_max_epi16(ConstZero, _mm256_min_epi16(ConstMax, AccumulatorTile0[0])); // CReLU
+//    const __m256i Acc1 = _mm256_max_epi16(ConstZero, _mm256_min_epi16(ConstMax, AccumulatorTile1[0])); // ReLU
 
     __m256i Sum0 = _mm256_madd_epi16(Acc0, Weights0[0]);
-    __m256i Sum1 = _mm256_madd_epi16(Acc1, Weights1[0]);
+//    __m256i Sum1 = _mm256_madd_epi16(Acc1, Weights1[0]);
 
-    const __m256i R8 = _mm256_add_epi32(Sum0, Sum1);
+    const __m256i R8 = _mm256_add_epi32(Sum0, ConstZero);
     const __m128i R4 = _mm_add_epi32(_mm256_castsi256_si128(R8), _mm256_extractf128_si256(R8, 1));
     const __m128i R2 = _mm_add_epi32(R4, _mm_srli_si128(R4, 8));
     const __m128i R1 = _mm_add_epi32(R2, _mm_srli_si128(R2, 4));
@@ -567,18 +558,17 @@ I32 OutputLayer(BoardItem* Board, I16 HiddenValues16[])
     Result += _mm_cvtsi128_si32(R1);
 #else
     for (int Index = 0; Index < HIDDEN_DIMENSION_2; ++Index) { // 32
-        const I32 Value = MAX(0, HiddenValues16[Index]); // ReLU
+        const I16 Value = MAX(0, MIN(QUANTIZATION_PRECISION_INPUT, HiddenValues16[Index])); // CReLU
 
-        Result += Value * HiddenWeights2[Index];
+        Result += (I32)Value * OutputWeights[Index];
     }
 #endif // USE_NNUE_AVX2
 
-    return Result / QUANTIZATION_PRECISION_IN / QUANTIZATION_PRECISION_OUT;
+    return Result / QUANTIZATION_PRECISION_INPUT / QUANTIZATION_PRECISION_OUTPUT;
 }
 
 int NetworkEvaluate(BoardItem* Board)
 {
-    I32 HiddenValues32[HIDDEN_DIMENSION_2];
     I16 HiddenValues16[HIDDEN_DIMENSION_2];
 
     I32 OutputValue;
@@ -597,7 +587,7 @@ int NetworkEvaluate(BoardItem* Board)
 
     // Hidden layer: (512 x 2) -> 32
 
-    HiddenLayer(Board, HiddenValues32, HiddenValues16);
+    HiddenLayer(Board, HiddenValues16);
 
     // Output: 32 -> 1
 
