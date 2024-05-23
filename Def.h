@@ -150,7 +150,7 @@
 /*
     https://github.com/Ilya-Ruk/RukChessNets
 */
-#define DEFAULT_NNUE_FILE_NAME                  "net-7cf57d4dc994.nnue" // 09.12.2023
+#define DEFAULT_NNUE_FILE_NAME                  "rukchess_022.nnue" // 22.05.2024
 
 #endif // NNUE_EVALUATION_FUNCTION_2
 

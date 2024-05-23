@@ -21,11 +21,13 @@
 #define HIDDEN_DIMENSION            512
 #define OUTPUT_DIMENSION            1
 
-#define QUANTIZATION_PRECISION_IN   64
+#define QUANTIZATION_PRECISION_IN   255
 
 #ifndef LAST_LAYER_AS_FLOAT
-#define QUANTIZATION_PRECISION_OUT  512
+#define QUANTIZATION_PRECISION_OUT  64
 #endif // !LAST_LAYER_AS_FLOAT
+
+#define SCALE                       200
 
 #ifdef USE_NNUE_AVX2
 #define NUM_REGS                    (HIDDEN_DIMENSION * sizeof(I16) / sizeof(__m256i)) // 32
@@ -510,6 +512,7 @@ I32 OutputLayer(BoardItem* Board)
 
 #ifdef USE_NNUE_AVX2
     const __m256i ConstZero = _mm256_setzero_si256();
+    const __m256i ConstMax = _mm256_set1_epi16(QUANTIZATION_PRECISION_IN);
 
     __m256i Sum0 = ConstZero;
     __m256i Sum1 = ConstZero;
@@ -521,8 +524,8 @@ I32 OutputLayer(BoardItem* Board)
     __m256i* Weights1 = (__m256i*)&OutputWeights[HIDDEN_DIMENSION];
 
     for (int Reg = 0; Reg < NUM_REGS; ++Reg) { // 32
-        const __m256i Acc0 = _mm256_max_epi16(ConstZero, AccumulatorTile0[Reg]); // ReLU
-        const __m256i Acc1 = _mm256_max_epi16(ConstZero, AccumulatorTile1[Reg]); // ReLU
+        const __m256i Acc0 = _mm256_max_epi16(ConstZero, _mm256_min_epi16(ConstMax, AccumulatorTile0[Reg])); // CReLU
+        const __m256i Acc1 = _mm256_max_epi16(ConstZero, _mm256_min_epi16(ConstMax, AccumulatorTile1[Reg])); // CReLU
 
         Sum0 = _mm256_add_epi32(Sum0, _mm256_madd_epi16(Acc0, Weights0[Reg]));
         Sum1 = _mm256_add_epi32(Sum1, _mm256_madd_epi16(Acc1, Weights1[Reg]));
@@ -546,7 +549,7 @@ I32 OutputLayer(BoardItem* Board)
     }
 #endif // USE_NNUE_AVX2
 
-    return Result / (QUANTIZATION_PRECISION_IN * QUANTIZATION_PRECISION_OUT);
+    return Result * SCALE / (QUANTIZATION_PRECISION_IN * QUANTIZATION_PRECISION_OUT);
 }
 #endif // LAST_LAYER_AS_FLOAT
 
