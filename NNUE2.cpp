@@ -27,7 +27,7 @@
 #define QUANTIZATION_PRECISION_OUT  64
 #endif // !LAST_LAYER_AS_FLOAT
 
-#define SCALE                       200
+#define SCALE                       400
 
 #ifdef USE_NNUE_AVX2
 #define NUM_REGS                    (HIDDEN_DIMENSION * sizeof(I16) / sizeof(__m256i)) // 32
