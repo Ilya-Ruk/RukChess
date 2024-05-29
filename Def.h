@@ -26,6 +26,9 @@
 
 #define HASH_PREFETCH
 
+//#define BIND_THREAD
+//#define BIND_THREAD_V2                        // Max. 64 CPUs
+
 // Search
 
 #define MATE_DISTANCE_PRUNING
@@ -51,14 +54,11 @@
 #define QUIESCENCE_CHECK_EXTENSION
 #define QUIESCENCE_SEE_MOVE_PRUNING
 
-//#define BIND_THREAD
-//#define BIND_THREAD_V2                        // Max. 64 CPUs
-
 // ------------------------------------------------------------------
 
 // Parameter values
 
-// Program name, program version, algorithm name, evaluation function name and copyright information
+// Program name, program version, evaluation function name and copyright information
 
 #define PROGRAM_NAME                            "RukChess"
 #define PROGRAM_VERSION                         "4.0.0dev"
@@ -67,7 +67,7 @@
     https://www.chessprogramming.org/Toga_Log
     https://manualzz.com/doc/6937632/toga-log-user-manual
 */
-#define EVALUATION_FUNCTION                     "Toga"
+#define EVALUATION_FUNCTION_NAME                "Toga"
 
 #define YEARS                                   "1999-2024"
 #define AUTHOR                                  "Ilya Rukavishnikov"

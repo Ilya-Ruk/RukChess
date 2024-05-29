@@ -22,13 +22,12 @@ int main(int argc, char** argv)
 
     // Print program name, program version, evaluation function name and copyright information
 
-    printf("%s %s %s\n", PROGRAM_NAME, PROGRAM_VERSION, EVALUATION_FUNCTION);
+    printf("%s %s %s\n", PROGRAM_NAME, PROGRAM_VERSION, EVALUATION_FUNCTION_NAME);
     printf("Copyright (C) %s %s\n", YEARS, AUTHOR);
 
     // Print debug information
 
 //    printf("MoveItem = %zd\n", sizeof(MoveItem));
-//    printf("AccumulatorItem = %zd\n", sizeof(AccumulatorItem));
 //    printf("HistoryItem = %zd\n", sizeof(HistoryItem));
 //    printf("BoardItem = %zd\n", sizeof(BoardItem));
 
