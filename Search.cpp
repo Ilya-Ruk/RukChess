@@ -373,10 +373,6 @@ int Search(BoardItem* Board, int Alpha, int Beta, int Depth, const int Ply, Move
     GenMoveCount = 0;
     GenerateAllMoves(Board, CMH_Pointer, MoveList, &GenMoveCount);
 
-#ifdef PVS
-    SetPvsMoveSortValue(Board, Ply, MoveList, GenMoveCount);
-#endif // PVS
-
     SetHashMoveSortValue(MoveList, GenMoveCount, HashMove);
 
 #ifdef KILLER_MOVE
@@ -409,9 +405,6 @@ NextMove:
             (MoveList[MoveNumber].Type & MOVE_CAPTURE)
             && !(MoveList[MoveNumber].Type & MOVE_PAWN_PROMOTE)
             && MoveList[MoveNumber].SortValue >= 0
-#ifdef PVS
-            && MoveList[MoveNumber].SortValue != SORT_PVS_MOVE_VALUE
-#endif // PVS
             && MoveList[MoveNumber].Move != HashMove
         ) {
             SEE_Value = CaptureSEE(Board, MOVE_FROM(MoveList[MoveNumber].Move), MOVE_TO(MoveList[MoveNumber].Move), MOVE_PROMOTE_PIECE(MoveList[MoveNumber].Move), MoveList[MoveNumber].Type);
@@ -512,9 +505,6 @@ NextMove:
             && !IsPrincipal
             && !InCheck
             && !GiveCheck
-#ifdef PVS
-            && MoveList[MoveNumber].SortValue != SORT_PVS_MOVE_VALUE
-#endif // PVS
             && MoveList[MoveNumber].Move != HashMove
         ) {
 #if defined(SEE_CAPTURE_MOVE_PRUNING) && defined(BAD_CAPTURE_LAST)
@@ -579,9 +569,6 @@ NextMove:
                 && !InCheck
                 && !GiveCheck
                 && !(MoveList[MoveNumber].Type & (MOVE_CAPTURE | MOVE_PAWN_PROMOTE)) // Not capture/promote move
-#ifdef PVS
-                && MoveList[MoveNumber].SortValue != SORT_PVS_MOVE_VALUE
-#endif // PVS
                 && MoveList[MoveNumber].Move != HashMove
                 && Depth >= 5
             ) {

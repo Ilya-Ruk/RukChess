@@ -8,31 +8,6 @@
 #include "Def.h"
 #include "Heuristic.h"
 
-#if defined(PVS) || defined(QUIESCENCE_PVS)
-void SetPvsMoveSortValue(BoardItem* Board, const int Ply, MoveItem* GenMoveList, const int GenMoveCount)
-{
-    if (Board->FollowPV) {
-        Board->FollowPV = FALSE;
-
-        if (Board->BestMovesRoot[Ply].Move) {
-            for (int Index = 0; Index < GenMoveCount; ++Index) {
-                if (GenMoveList[Index].Move == Board->BestMovesRoot[Ply].Move) {
-#ifdef DEBUG_PVS
-                    printf("-- PVS: Move = %s%s\n", BoardName[MOVE_FROM(GenMoveList[Index].Move)], BoardName[MOVE_TO(GenMoveList[Index].Move)]);
-#endif // DEBUG_PVS
-
-                    GenMoveList[Index].SortValue = SORT_PVS_MOVE_VALUE;
-
-                    Board->FollowPV = TRUE;
-
-                    break;
-                }
-            }
-        }
-    }
-}
-#endif // PVS || QUIESCENCE_PVS
-
 void SetHashMoveSortValue(MoveItem* GenMoveList, const int GenMoveCount, const int HashMove)
 {
     if (HashMove) {

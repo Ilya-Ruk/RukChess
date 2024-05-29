@@ -8,20 +8,15 @@
 #include "Board.h"
 #include "Def.h"
 
-#define SORT_PVS_MOVE_VALUE             (1 << 30)
-#define SORT_HASH_MOVE_VALUE            (1 << 29)
+#define SORT_HASH_MOVE_VALUE            (1 << 30)
 
-#define SORT_PAWN_PROMOTE_MOVE_BONUS    (1 << 28)
-#define SORT_CAPTURE_MOVE_BONUS         (1 << 27)
+#define SORT_PAWN_PROMOTE_MOVE_BONUS    (1 << 29)
+#define SORT_CAPTURE_MOVE_BONUS         (1 << 28)
 
-#define SORT_KILLER_MOVE_1_VALUE        (1 << 26)
+#define SORT_KILLER_MOVE_1_VALUE        (1 << 27)
 #define SORT_KILLER_MOVE_2_VALUE        (SORT_KILLER_MOVE_1_VALUE - 1)
 
 #define SORT_COUNTER_MOVE_VALUE         (SORT_KILLER_MOVE_2_VALUE - 1)
-
-#if defined(PVS) || defined(QUIESCENCE_PVS)
-void SetPvsMoveSortValue(BoardItem* Board, const int Ply, MoveItem* GenMoveList, const int GenMoveCount);
-#endif // PVS || QUIESCENCE_PVS
 
 void SetHashMoveSortValue(MoveItem* GenMoveList, const int GenMoveCount, const int HashMove);
 

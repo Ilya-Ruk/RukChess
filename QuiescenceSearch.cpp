@@ -164,10 +164,6 @@ int QuiescenceSearch(BoardItem* Board, int Alpha, int Beta, const int Depth, con
     }
 #endif // QUIESCENCE_CHECK_EXTENSION
 
-#ifdef QUIESCENCE_PVS
-    SetPvsMoveSortValue(Board, Ply, MoveList, GenMoveCount);
-#endif // QUIESCENCE_PVS
-
     SetHashMoveSortValue(MoveList, GenMoveCount, HashMove);
 
     for (int MoveNumber = 0; MoveNumber < GenMoveCount; ++MoveNumber) {
@@ -176,9 +172,6 @@ int QuiescenceSearch(BoardItem* Board, int Alpha, int Beta, const int Depth, con
 #ifdef QUIESCENCE_SEE_MOVE_PRUNING
         if (
             !InCheck
-#ifdef QUIESCENCE_PVS
-            && MoveList[MoveNumber].SortValue != SORT_PVS_MOVE_VALUE
-#endif // QUIESCENCE_PVS
             && MoveList[MoveNumber].Move != HashMove
         ) {
             if (CaptureSEE(Board, MOVE_FROM(MoveList[MoveNumber].Move), MOVE_TO(MoveList[MoveNumber].Move), MOVE_PROMOTE_PIECE(MoveList[MoveNumber].Move), MoveList[MoveNumber].Type) < 0) { // Bad capture/quiet move

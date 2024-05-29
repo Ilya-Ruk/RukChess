@@ -153,10 +153,6 @@ typedef struct {
 
     HistoryItem MoveTable[MAX_GAME_MOVES]; // 49152 bytes
 
-#if defined(PVS) || defined(QUIESCENCE_PVS)
-    BOOL FollowPV;
-#endif // PVS || QUIESCENCE_PVS
-
     U64 Nodes;
 
 #ifdef DEBUG_STATISTIC

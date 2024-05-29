@@ -8,7 +8,7 @@
 #include "Board.h"
 #include "Def.h"
 
-#define MAX_HEURISTIC_SCORE     (1 << 25)
+#define MAX_HEURISTIC_SCORE     (1 << 26)
 
 #define BONUS(Depth)            ((Depth) * (Depth))
 
