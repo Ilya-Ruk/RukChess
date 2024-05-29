@@ -25,8 +25,6 @@
 
 #define MIN_USE_PLY             0       // 0 moves
 
-#ifdef TOGA_EVALUATION_FUNCTION
-
 #define MAX_TUNING_PARAMS       1000    // 742 used
 
 typedef struct {
@@ -172,8 +170,6 @@ int TuningSearch(BoardItem* Board, int Alpha, int Beta, const int Ply, const BOO
 
     return BestScore;
 }
-
-#endif // TOGA_EVALUATION_FUNCTION
 
 void Pgn2Fen(void)
 {
@@ -466,8 +462,6 @@ void Pgn2Fen(void)
 
     printf("Read PGN file...DONE\n");
 }
-
-#ifdef TOGA_EVALUATION_FUNCTION
 
 void ReadFenFile(void)
 {
@@ -1121,5 +1115,3 @@ void TuningLocalSearch(void)
 
     PositionStoreFree();
 }
-
-#endif // TOGA_EVALUATION_FUNCTION

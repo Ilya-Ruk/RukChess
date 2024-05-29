@@ -46,10 +46,6 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
     }
 #endif // DEBUG_MOVE
 
-#ifdef NNUE_EVALUATION_FUNCTION_2
-    Info->Accumulator = Board->Accumulator;
-#endif // NNUE_EVALUATION_FUNCTION_2
-
     if (Info->PassantSquare != -1) {
         Board->PassantSquare = -1;
 
@@ -241,10 +237,6 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
         printf("-- Board hash error! BoardHash = 0x%016llx OldBoardHash = 0x%016llx\n", Board->Hash, OldBoardHash);
     }
 #endif // DEBUG_HASH
-
-#ifdef NNUE_EVALUATION_FUNCTION_2
-    Board->Accumulator.AccumulationComputed = FALSE;
-#endif // NNUE_EVALUATION_FUNCTION_2
 }
 
 void UnmakeMove(BoardItem* Board)
@@ -414,10 +406,6 @@ void UnmakeMove(BoardItem* Board)
         }
     }
 #endif // DEBUG_MOVE
-
-#ifdef NNUE_EVALUATION_FUNCTION_2
-    Board->Accumulator = Info->Accumulator;
-#endif // NNUE_EVALUATION_FUNCTION_2
 }
 
 #ifdef NULL_MOVE_PRUNING
@@ -433,10 +421,6 @@ void MakeNullMove(BoardItem* Board)
     Info->FiftyMove = Board->FiftyMove;
 
     Info->Hash = Board->Hash;
-
-#ifdef NNUE_EVALUATION_FUNCTION_2
-    Info->Accumulator = Board->Accumulator;
-#endif // NNUE_EVALUATION_FUNCTION_2
 
     if (Info->PassantSquare != -1) {
         Board->PassantSquare = -1;
@@ -459,10 +443,6 @@ void MakeNullMove(BoardItem* Board)
         printf("-- Board hash error! BoardHash = 0x%016llx OldBoardHash = 0x%016llx\n", Board->Hash, OldBoardHash);
     }
 #endif // DEBUG_HASH
-
-#ifdef NNUE_EVALUATION_FUNCTION_2
-    Board->Accumulator.AccumulationComputed = FALSE;
-#endif // NNUE_EVALUATION_FUNCTION_2
 }
 
 void UnmakeNullMove(BoardItem* Board)
@@ -476,10 +456,6 @@ void UnmakeNullMove(BoardItem* Board)
     Board->FiftyMove = Info->FiftyMove;
 
     Board->Hash = Info->Hash;
-
-#ifdef NNUE_EVALUATION_FUNCTION_2
-    Board->Accumulator = Info->Accumulator;
-#endif // NNUE_EVALUATION_FUNCTION_2
 }
 
 #endif // NULL_MOVE_PRUNING

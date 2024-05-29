@@ -134,7 +134,6 @@
     <ClCompile Include="Heuristic.cpp" />
     <ClCompile Include="MCTS.cpp" />
     <ClCompile Include="Move.cpp" />
-    <ClCompile Include="NNUE2.cpp" />
     <ClCompile Include="QuiescenceSearch.cpp" />
     <ClCompile Include="Search.cpp" />
     <ClCompile Include="SEE.cpp" />
@@ -157,7 +156,6 @@
     <ClInclude Include="Heuristic.h" />
     <ClInclude Include="MCTS.h" />
     <ClInclude Include="Move.h" />
-    <ClInclude Include="NNUE2.h" />
     <ClInclude Include="QuiescenceSearch.h" />
     <ClInclude Include="Search.h" />
     <ClInclude Include="SEE.h" />

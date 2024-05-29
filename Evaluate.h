@@ -9,8 +9,6 @@
 #include "Def.h"
 #include "Types.h"
 
-#ifdef TOGA_EVALUATION_FUNCTION
-
 // Game phase (4.1)
 
 extern const int MaxGamePhase;
@@ -166,11 +164,5 @@ extern int PawnPassedEndingWeight[8]; // %
 void InitEvaluation(void);
 
 int Evaluate(BoardItem* Board);
-
-#elif defined(NNUE_EVALUATION_FUNCTION_2)
-
-int Evaluate(BoardItem* Board);
-
-#endif // TOGA_EVALUATION_FUNCTION || NNUE_EVALUATION_FUNCTION_2
 
 #endif // !EVALUATE_H

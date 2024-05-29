@@ -111,14 +111,6 @@ typedef struct {
     int SortValue;
 } MoveItem; // 12 bytes
 
-#ifdef NNUE_EVALUATION_FUNCTION_2
-typedef struct {
-    _declspec(align(64)) I16 Accumulation[2][512]; // [Perspective][Hidden dimension]
-
-    BOOL AccumulationComputed;
-} AccumulatorItem; // 2052 (aligned 2112) bytes
-#endif // NNUE_EVALUATION_FUNCTION_2
-
 typedef struct {
     int Type;
 
@@ -143,11 +135,7 @@ typedef struct {
     U64 BB_BlackPieces;
     U64 BB_Pieces[2][6]; // [Color][Piece]
 #endif // DEBUG_MOVE
-
-#ifdef NNUE_EVALUATION_FUNCTION_2
-    AccumulatorItem Accumulator;
-#endif // NNUE_EVALUATION_FUNCTION_2
-} HistoryItem; // 48 bytes/2176 bytes (NNUE2)
+} HistoryItem; // 48 bytes
 
 typedef struct {
     int Pieces[64]; // (Color << 3) | Piece
@@ -163,7 +151,7 @@ typedef struct {
 
     U64 Hash;
 
-    HistoryItem MoveTable[MAX_GAME_MOVES]; // 49152 bytes/2228224 bytes (NNUE2)
+    HistoryItem MoveTable[MAX_GAME_MOVES]; // 49152 bytes
 
 #if defined(PVS) || defined(QUIESCENCE_PVS)
     BOOL FollowPV;
@@ -189,11 +177,7 @@ typedef struct {
     int KillerMoveTable[MAX_PLY + 1][2]; // [Max. ply + 1][Two killer moves] // 1032 bytes
 
     int CounterMoveTable[2][6][64]; // [Color][Piece][Square] // 3072 bytes
-
-#ifdef NNUE_EVALUATION_FUNCTION_2
-    AccumulatorItem Accumulator;
-#endif // NNUE_EVALUATION_FUNCTION_2
-} BoardItem; // 648104 bytes/2829376 bytes (NNUE2)
+} BoardItem; // 648104 bytes
 
 extern const char* BoardName[64];
 

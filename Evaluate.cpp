@@ -7,11 +7,13 @@
 #include "BitBoard.h"
 #include "Board.h"
 #include "Def.h"
-#include "NNUE2.h"
 #include "Types.h"
 #include "Utils.h"
 
-#ifdef TOGA_EVALUATION_FUNCTION
+/*
+    https://www.chessprogramming.org/Toga_Log
+    https://manualzz.com/doc/6937632/toga-log-user-manual
+*/
 
 // Game phase (4.1)
 
@@ -1329,16 +1331,3 @@ int Evaluate(BoardItem* Board)
 
     return Score;
 }
-
-#elif defined(NNUE_EVALUATION_FUNCTION_2)
-
-int Evaluate(BoardItem* Board)
-{
-#ifdef DEBUG_STATISTIC
-    ++Board->EvaluateCount;
-#endif // DEBUG_STATISTIC
-
-    return NetworkEvaluate(Board);
-}
-
-#endif // TOGA_EVALUATION_FUNCTION || NNUE_EVALUATION_FUNCTION_2

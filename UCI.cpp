@@ -11,7 +11,6 @@
 #include "Gen.h"
 #include "Hash.h"
 #include "Move.h"
-#include "NNUE2.h"
 #include "Types.h"
 #include "Utils.h"
 
@@ -41,11 +40,6 @@ void UCI(void)
     char BookFileNameString[255];
     char* BookFileName;
 
-#ifdef NNUE_EVALUATION_FUNCTION_2
-    char NnueFileNameString[255];
-    char* NnueFileName;
-#endif // NNUE_EVALUATION_FUNCTION_2
-
     U64 WTime;
     U64 BTime;
 
@@ -63,16 +57,12 @@ void UCI(void)
     setvbuf(stdin, NULL, _IONBF, 0);
     setvbuf(stdout, NULL, _IONBF, 0);
 
-    printf("id name %s %s %s %s\n", PROGRAM_NAME, PROGRAM_VERSION, ALGORITHM_NAME, EVALUATION_NAME);
+    printf("id name %s %s %s\n", PROGRAM_NAME, PROGRAM_VERSION, ALGORITHM_NAME);
     printf("id author %s\n", AUTHOR);
 
     printf("option name Hash type spin default %d min %d max %d\n", DEFAULT_HASH_TABLE_SIZE, 1, MAX_HASH_TABLE_SIZE);
     printf("option name Threads type spin default %d min %d max %d\n", DEFAULT_THREADS, 1, MaxThreads);
     printf("option name BookFile type string default %s\n", DEFAULT_BOOK_FILE_NAME);
-
-#ifdef NNUE_EVALUATION_FUNCTION_2
-    printf("option name NnueFile type string default %s\n", DEFAULT_NNUE_FILE_NAME);
-#endif // NNUE_EVALUATION_FUNCTION_2
 
     SetFen(&CurrentBoard, StartFen);
 
@@ -123,21 +113,6 @@ void UCI(void)
 
             BookFileLoaded = LoadBook(BookFileNameString);
         }
-#ifdef NNUE_EVALUATION_FUNCTION_2
-        else if (!strncmp(Part, "setoption name NnueFile value ", 30)) {
-            Part += 30;
-
-            NnueFileName = NnueFileNameString;
-
-            while (*Part != '\r' && *Part != '\n' && *Part != '\0') {
-                *NnueFileName++ = *Part++; // Copy file name
-            }
-
-            *NnueFileName = '\0'; // Nul
-
-            NnueFileLoaded = LoadNetwork(NnueFileNameString);
-        }
-#endif // NNUE_EVALUATION_FUNCTION_2
         else if (!strncmp(Part, "position ", 9)) {
             Part += 9;
 
@@ -363,14 +338,6 @@ void UCI(void)
 
                 TimeForMove = 0ULL;
             }
-
-#ifdef NNUE_EVALUATION_FUNCTION_2
-            if (!NnueFileLoaded) {
-                printf("info string Network not loaded!\n");
-
-                continue; // Next command
-            }
-#endif // NNUE_EVALUATION_FUNCTION_2
 
             _beginthread(ComputerMoveThread, 0, NULL);
         }
