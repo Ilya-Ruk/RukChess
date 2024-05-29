@@ -16,15 +16,15 @@ const int MaxGamePhase = 24; // 1 x 4N + 1 x 4B + 2 x 4R + 4 x 2Q
 
 // Material (4.2)
 
-int PiecesScoreOpening[6] = { 70, 325, 325, 500, 975, 0 };    // PNBRQK
-int PiecesScoreEnding[6] = { 90, 325, 325, 500, 975, 0 };     // PNBRQK
+const int PiecesScoreOpening[6] = { 70, 325, 325, 500, 975, 0 };    // PNBRQK
+const int PiecesScoreEnding[6] = { 90, 325, 325, 500, 975, 0 };     // PNBRQK
 
-int BishopPairOpening = 50;
-int BishopPairEnding = 50;
+const int BishopPairOpening = 50;
+const int BishopPairEnding = 50;
 
 // Piece-square tables (4.3)
 
-int PawnSquareScoreOpening[64] = {
+const int PawnSquareScoreOpening[64] = {
     -15, -5, 0,  5,  5, 0, -5, -15,
     -15, -5, 0,  5,  5, 0, -5, -15,
     -15, -5, 0,  5,  5, 0, -5, -15,
@@ -35,7 +35,7 @@ int PawnSquareScoreOpening[64] = {
     -15, -5, 0,  5,  5, 0, -5, -15
 };
 
-int PawnSquareScoreEnding[64] = {
+const int PawnSquareScoreEnding[64] = {
     0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0,
@@ -46,7 +46,7 @@ int PawnSquareScoreEnding[64] = {
     0, 0, 0, 0, 0, 0, 0, 0
 };
 
-int KnightSquareScoreOpening[64] = {
+const int KnightSquareScoreOpening[64] = {
     -135, -25, -15, -10, -10, -15, -25, -135,
      -20, -10,   0,   5,   5,   0, -10,  -20,
       -5,   5,  15,  20,  20,  15,   5,   -5,
@@ -57,7 +57,7 @@ int KnightSquareScoreOpening[64] = {
      -50, -40, -30, -25, -25, -30, -40,  -50
 };
 
-int KnightSquareScoreEnding[64] = {
+const int KnightSquareScoreEnding[64] = {
     -40, -30, -20, -15, -15, -20, -30, -40,
     -30, -20, -10,  -5,  -5, -10, -20, -30,
     -20, -10,   0,   5,   5,   0, -10, -20,
@@ -68,7 +68,7 @@ int KnightSquareScoreEnding[64] = {
     -40, -30, -20, -15, -15, -20, -30, -40
 };
 
-int BishopSquareScoreOpening[64] = {
+const int BishopSquareScoreOpening[64] = {
      -8,  -8,  -6,  -4,  -4,  -6,  -8,  -8,
      -8,   0,  -2,   0,   0,  -2,   0,  -8,
      -6,  -2,   4,   2,   2,   4,  -2,  -6,
@@ -79,7 +79,7 @@ int BishopSquareScoreOpening[64] = {
     -18, -18, -16, -14, -14, -16, -18, -18
 };
 
-int BishopSquareScoreEnding[64] = {
+const int BishopSquareScoreEnding[64] = {
     -18, -12, -9, -6, -6, -9, -12, -18,
     -12,  -6, -3,  0,  0, -3,  -6, -12,
      -9,  -3,  0,  3,  3,  0,  -3,  -9,
@@ -90,7 +90,7 @@ int BishopSquareScoreEnding[64] = {
     -18, -12, -9, -6, -6, -9, -12, -18
 };
 
-int RookSquareScoreOpening[64] = {
+const int RookSquareScoreOpening[64] = {
     -6, -3, 0, 3, 3, 0, -3, -6,
     -6, -3, 0, 3, 3, 0, -3, -6,
     -6, -3, 0, 3, 3, 0, -3, -6,
@@ -101,7 +101,7 @@ int RookSquareScoreOpening[64] = {
     -6, -3, 0, 3, 3, 0, -3, -6
 };
 
-int RookSquareScoreEnding[64] = {
+const int RookSquareScoreEnding[64] = {
     0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0,
@@ -112,7 +112,7 @@ int RookSquareScoreEnding[64] = {
     0, 0, 0, 0, 0, 0, 0, 0
 };
 
-int QueenSquareScoreOpening[64] = {
+const int QueenSquareScoreOpening[64] = {
      0,  0,  0,  0,  0,  0,  0,  0,
      0,  0,  0,  0,  0,  0,  0,  0,
      0,  0,  0,  0,  0,  0,  0,  0,
@@ -123,7 +123,7 @@ int QueenSquareScoreOpening[64] = {
     -5, -5, -5, -5, -5, -5, -5, -5
 };
 
-int QueenSquareScoreEnding[64] = {
+const int QueenSquareScoreEnding[64] = {
     -24, -16, -12, -8, -8, -12, -16, -24,
     -16,  -8,  -4,  0,  0,  -4,  -8, -16,
     -12,  -4,   0,  4,  4,   0,  -4, -12,
@@ -134,7 +134,7 @@ int QueenSquareScoreEnding[64] = {
     -24, -16, -12, -8, -8, -12, -16, -24
 };
 
-int KingSquareScoreOpening[64] = {
+const int KingSquareScoreOpening[64] = {
     -40, -30, -50, -70, -70, -50, -30, -40,
     -30, -20, -40, -60, -60, -40, -20, -30,
     -20, -10, -30, -50, -50, -30, -10, -20,
@@ -145,7 +145,7 @@ int KingSquareScoreOpening[64] = {
      40,  50,  30,  10,  10,  30,  50,  40
 };
 
-int KingSquareScoreEnding[64] = {
+const int KingSquareScoreEnding[64] = {
     -72, -48, -36, -24, -24, -36, -48, -72,
     -48, -24, -12,   0,   0, -12, -24, -48,
     -36, -12,   0,  12,  12,   0, -12, -36,
@@ -158,80 +158,80 @@ int KingSquareScoreEnding[64] = {
 
 // Pawns (4.4)
 
-int PawnDoubledOpening = -10;
-int PawnDoubledEnding = -20;
+const int PawnDoubledOpening = -10;
+const int PawnDoubledEnding = -20;
 
-int PawnIsolatedOpening = -10;
-int PawnIsolatedEnding = -20;
+const int PawnIsolatedOpening = -10;
+const int PawnIsolatedEnding = -20;
 
-int PawnIsolatedOpenOpening = -20;
-int PawnIsolatedOpenEnding = -20;
+const int PawnIsolatedOpenOpening = -20;
+const int PawnIsolatedOpenEnding = -20;
 
-int PawnBackwardOpening = -8;
-int PawnBackwardEnding = -10;
+const int PawnBackwardOpening = -8;
+const int PawnBackwardEnding = -10;
 
-int PawnBackwardOpenOpening = -16;
-int PawnBackwardOpenEnding = -10;
+const int PawnBackwardOpenOpening = -16;
+const int PawnBackwardOpenEnding = -10;
 
-int PawnCandidateOpening[8] = { 0, 5, 5, 10, 20, 35, 55, 0 };
-int PawnCandidateEnding[8] = { 0, 10, 10, 20, 40, 70, 110, 0 };
+const int PawnCandidateOpening[8] = { 0, 5, 5, 10, 20, 35, 55, 0 };
+const int PawnCandidateEnding[8] = { 0, 10, 10, 20, 40, 70, 110, 0 };
 
 // Tempo (4.5)
 
-int TempoOpening = 20;
-int TempoEnding = 10;
+const int TempoOpening = 20;
+const int TempoEnding = 10;
 
 // Pattern (4.6)
 
-int TrappedBishopOpening = -100;
-int TrappedBishopEnding = -100;
+const int TrappedBishopOpening = -100;
+const int TrappedBishopEnding = -100;
 
-int BlockedBishopOpening = -50;
-int BlockedBishopEnding = -50;
+const int BlockedBishopOpening = -50;
+const int BlockedBishopEnding = -50;
 
-int BlockedRookOpening = -50;
-int BlockedRookEnding = -50;
+const int BlockedRookOpening = -50;
+const int BlockedRookEnding = -50;
 
 // Piece (4.7)
 
 // Mobility (4.7.1)
 
-int KnightMobilityMoveDecrease = 4;
-int BishopMobilityMoveDecrease = 6;
-int RookMobilityMoveDecrease = 7;
+const int KnightMobilityMoveDecrease = 4;
+const int BishopMobilityMoveDecrease = 6;
+const int RookMobilityMoveDecrease = 7;
 
-int KnightMobility = 4;
-int BishopMobility = 5;
+const int KnightMobility = 4;
+const int BishopMobility = 5;
 
-int RookMobilityOpening = 2;
-int RookMobilityEnding = 4;
+const int RookMobilityOpening = 2;
+const int RookMobilityEnding = 4;
 
 // Open file (4.7.2)
 
-int RookOnClosedFileOpening = -10;
-int RookOnClosedFileEnding = -10;
+const int RookOnClosedFileOpening = -10;
+const int RookOnClosedFileEnding = -10;
 
-int RookOnSemiOpenFileOpening = 0;
-int RookOnSemiOpenFileEnding = 0;
+const int RookOnSemiOpenFileOpening = 0;
+const int RookOnSemiOpenFileEnding = 0;
 
-int RookOnSemiOpenFileAdjacentToEnemyKingOpening = 10;
-int RookOnSemiOpenFileAdjacentToEnemyKingEnding = 0;
+const int RookOnSemiOpenFileAdjacentToEnemyKingOpening = 10;
+const int RookOnSemiOpenFileAdjacentToEnemyKingEnding = 0;
 
-int RookOnSemiOpenFileSameToEnemyKingOpening = 20;
-int RookOnSemiOpenFileSameToEnemyKingEnding = 0;
+const int RookOnSemiOpenFileSameToEnemyKingOpening = 20;
+const int RookOnSemiOpenFileSameToEnemyKingEnding = 0;
 
-int RookOnOpenFileOpening = 10;
-int RookOnOpenFileEnding = 10;
+const int RookOnOpenFileOpening = 10;
+const int RookOnOpenFileEnding = 10;
 
-int RookOnOpenFileAdjacentToEnemyKingOpening = 20;
-int RookOnOpenFileAdjacentToEnemyKingEnding = 10;
+const int RookOnOpenFileAdjacentToEnemyKingOpening = 20;
+const int RookOnOpenFileAdjacentToEnemyKingEnding = 10;
 
-int RookOnOpenFileSameToEnemyKingOpening = 30;
-int RookOnOpenFileSameToEnemyKingEnding = 10;
+const int RookOnOpenFileSameToEnemyKingOpening = 30;
+const int RookOnOpenFileSameToEnemyKingEnding = 10;
 
 // Outpost (4.7.3)
 
-int KnightOutpost[64] = {
+const int KnightOutpost[64] = {
     0, 0, 0,  0,  0, 0, 0, 0,
     0, 0, 0,  0,  0, 0, 0, 0,
     0, 0, 4,  5,  5, 4, 0, 0,
@@ -244,11 +244,11 @@ int KnightOutpost[64] = {
 
 // Seventh rank (4.7.4)
 
-int RookOnSeventhOpening = 20;
-int RookOnSeventhEnding = 40;
+const int RookOnSeventhOpening = 20;
+const int RookOnSeventhEnding = 40;
 
-int QueenOnSeventhOpening = 10;
-int QueenOnSeventhEnding = 20;
+const int QueenOnSeventhOpening = 10;
+const int QueenOnSeventhEnding = 20;
 
 // King distance (4.7.5)
 
@@ -256,32 +256,32 @@ int QueenOnSeventhEnding = 20;
 
 // Pawn shelter (4.8.1)
 
-int KingFriendlyPawnAdvanceBase = -36;
-int KingFriendlyPawnAdvanceDefault = -11;
+const int KingFriendlyPawnAdvanceBase = -36;
+const int KingFriendlyPawnAdvanceDefault = -11;
 
 // Pawn storm (4.8.2)
 
-int KingPawnStorm[8] = { 0, 0, 0, -10, -30, -60, 0, 0 };
+const int KingPawnStorm[8] = { 0, 0, 0, -10, -30, -60, 0, 0 };
 
 // Piece attack (4.8.3)
 
-int KingZoneAttackedBase = -20;
-int KingZoneAttackedWeight[8] = { 0, 0, 50, 75, 88, 94, 97, 99 }; // %
+const int KingZoneAttackedBase = -20;
+const int KingZoneAttackedWeight[8] = { 0, 0, 50, 75, 88, 94, 97, 99 }; // %
 
 // Passed pawns (4.9)
 
-int PawnPassedEndingBase1 = 20;
-int PawnPassedEndingBase2 = 120;
+const int PawnPassedEndingBase1 = 20;
+const int PawnPassedEndingBase2 = 120;
 
-int PawnPassedEndingHostileKingDistance = 20;
-int PawnPassedEndingFriendlyKingDistance = -5;
+const int PawnPassedEndingHostileKingDistance = 20;
+const int PawnPassedEndingFriendlyKingDistance = -5;
 
-int PawnPassedEndingConsideredFree = 60;
+const int PawnPassedEndingConsideredFree = 60;
 
-int PawnPassedEndingUnstoppable = 800;
+const int PawnPassedEndingUnstoppable = 800;
 
-int PawnPassedOpening[8] = { 0, 10, 10, 16, 28, 46, 70, 0 };
-int PawnPassedEndingWeight[8] = { 0, 0, 0, 10, 30, 60, 100, 0 }; // %
+const int PawnPassedOpening[8] = { 0, 10, 10, 16, 28, 46, 70, 0 };
+const int PawnPassedEndingWeight[8] = { 0, 0, 0, 10, 30, 60, 100, 0 }; // %
 
 // ------------------------------------------------------------------
 
