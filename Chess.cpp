@@ -23,7 +23,7 @@ int main(int argc, char** argv)
 
     // Print program name, program version, evaluation function name and copyright information
 
-    printf("%s %s %s\n", PROGRAM_NAME, PROGRAM_VERSION, ALGORITHM_NAME);
+    printf("%s %s %s\n", PROGRAM_NAME, PROGRAM_VERSION, EVALUATION_FUNCTION);
     printf("Copyright (C) %s %s\n", YEARS, AUTHOR);
 
     // Print debug information

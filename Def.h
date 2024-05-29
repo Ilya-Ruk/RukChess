@@ -19,19 +19,6 @@
 
 //#define DEBUG_STATISTIC
 
-// Monte Carlo tree search
-
-/*
-    https://homes.di.unimi.it/~cesabian/Pubblicazioni/ml-02.pdf
-    http://ggp.stanford.edu/readings/uct.pdf
-    http://old.sztaki.hu/~szcsaba/papers/cg06-ext.pdf
-    https://netman.aiops.org/~peidan/ANM2017/7.AnomalyLocalization/LectureCoverage/mcts-survey-master-origin.pdf
-    https://int8.io/monte-carlo-tree-search-beginners-guide/
-    https://github.com/int8/gomcts
-    http://www.tckerrigan.com/Chess/TSCP/Community/tscp_mcts_export.zip
-*/
-//#define MCTS
-
 // Common
 
 #define ASPIRATION_WINDOW
@@ -79,11 +66,11 @@
 #define PROGRAM_NAME                            "RukChess"
 #define PROGRAM_VERSION                         "4.0.0dev"
 
-#ifdef MCTS
-#define ALGORITHM_NAME                          "MCTS"
-#else // PVS
-#define ALGORITHM_NAME                          "PVS"
-#endif // MCTS || PVS
+/*
+    https://www.chessprogramming.org/Toga_Log
+    https://manualzz.com/doc/6937632/toga-log-user-manual
+*/
+#define EVALUATION_FUNCTION                     "Toga"
 
 #define YEARS                                   "1999-2024"
 #define AUTHOR                                  "Ilya Rukavishnikov"

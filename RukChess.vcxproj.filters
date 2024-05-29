@@ -72,9 +72,6 @@
     <ClCompile Include="Utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MCTS.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BitBoard.h">
@@ -138,9 +135,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Utils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MCTS.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

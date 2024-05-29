@@ -10,11 +10,6 @@
 #include "Types.h"
 #include "Utils.h"
 
-/*
-    https://www.chessprogramming.org/Toga_Log
-    https://manualzz.com/doc/6937632/toga-log-user-manual
-*/
-
 // Game phase (4.1)
 
 const int MaxGamePhase = 24; // 1 x 4N + 1 x 4B + 2 x 4R + 4 x 2Q
