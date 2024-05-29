@@ -139,7 +139,6 @@
     <ClCompile Include="Sort.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="Tests.cpp" />
-    <ClCompile Include="Tuning.cpp" />
     <ClCompile Include="UCI.cpp" />
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
@@ -161,7 +160,6 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Tests.h" />
-    <ClInclude Include="Tuning.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="UCI.h" />
     <ClInclude Include="Utils.h" />

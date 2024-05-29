@@ -11,7 +11,6 @@
 #include "Gen.h"
 #include "Hash.h"
 #include "Tests.h"
-#include "Tuning.h"
 #include "UCI.h"
 #include "Utils.h"
 
@@ -85,11 +84,6 @@ int main(int argc, char** argv)
     // Initialize evaluation function
 
     InitEvaluation();
-
-    // Initialize tuning function and read params (if present)
-
-    InitTuningParams();
-    LoadTuningParams();
 
     // Initialize LMP
 
@@ -168,16 +162,7 @@ int main(int argc, char** argv)
 
         printf("12: Generate book file (book.txt) from PGN file (book.pgn)\n");
 
-        printf("13: Convert PGN file (games.pgn) to FEN file (games.fen)\n");
-
-        printf("14: Find best K (required games.fen)\n");
-
-        printf("15: Tuning evaluation function - Local search (required games.fen)\n");
-
-        printf("16: Load tuning params (params.txt)\n");
-        printf("17: Save tuning params (params.txt)\n");
-
-        printf("18: Exit\n");
+        printf("13: Exit\n");
 
         printf("\n");
 
@@ -240,27 +225,7 @@ int main(int argc, char** argv)
                 GenerateBook();
                 break;
 
-            case 13:
-                Pgn2Fen();
-                break;
-
-            case 14:
-                FindBestK();
-                break;
-
-            case 15:
-                TuningLocalSearch();
-                break;
-
-            case 16:
-                LoadTuningParams();
-                break;
-
-            case 17:
-                SaveTuningParams();
-                break;
-
-            case 18: // Exit
+            case 13: // Exit
                 return 0;
         } // switch
 
