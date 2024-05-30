@@ -149,11 +149,11 @@ int Search(BoardItem* Board, int Alpha, int Beta, int Depth, const int Ply, Move
     }
 
     if (Ply >= MAX_PLY) {
-        return (int)Evaluate(Board);
+        return Evaluate(Board);
     }
 
     if (Board->HalfMoveNumber >= MAX_GAME_MOVES) {
-        return (int)Evaluate(Board);
+        return Evaluate(Board);
     }
 
     if (IsPrincipal && Board->SelDepth < Ply + 1) {
@@ -223,7 +223,7 @@ int Search(BoardItem* Board, int Alpha, int Beta, int Depth, const int Ply, Move
             StaticScore = HashStaticScore;
         }
         else {
-            StaticScore = (int)Evaluate(Board);
+            StaticScore = Evaluate(Board);
 
             if (!SkipMove) {
                 SaveHash(Board->Hash, -MAX_PLY, 0, 0, StaticScore, 0, HASH_STATIC_SCORE);

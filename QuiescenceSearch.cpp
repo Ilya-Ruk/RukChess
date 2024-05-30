@@ -90,11 +90,11 @@ int QuiescenceSearch(BoardItem* Board, int Alpha, int Beta, const int Depth, con
     }
 
     if (Ply >= MAX_PLY) {
-        return (int)Evaluate(Board);
+        return Evaluate(Board);
     }
 
     if (Board->HalfMoveNumber >= MAX_GAME_MOVES) {
-        return (int)Evaluate(Board);
+        return Evaluate(Board);
     }
 
     LoadHash(Board->Hash, &HashDepth, Ply, &HashScore, &HashStaticScore, &HashMove, &HashFlag);
@@ -143,7 +143,7 @@ int QuiescenceSearch(BoardItem* Board, int Alpha, int Beta, const int Depth, con
             }
         }
         else {
-            BestScore = StaticScore = (int)Evaluate(Board);
+            BestScore = StaticScore = Evaluate(Board);
         }
 
         if (BestScore >= Beta) {
