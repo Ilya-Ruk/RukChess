@@ -7,7 +7,6 @@
 #include "BitBoard.h"
 #include "Board.h"
 #include "Def.h"
-#include "Evaluate.h"
 #include "Hash.h"
 #include "Types.h"
 
