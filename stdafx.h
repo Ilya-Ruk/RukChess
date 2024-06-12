@@ -13,7 +13,7 @@
 #include <stdlib.h>     // atoi(), atof(), malloc(), realloc(), calloc(), free(), qsort()
 #include <string.h>     // strcmp(), strncmp(), strstr(), strcpy_s(), strchr()
 #include <sys/timeb.h>  // _timeb, _ftime_s()
-#include <windows.h>    // GetLogicalProcessorInformationEx(), GetNumaNodeProcessorMaskEx(), GetCurrentThread()
+#include <windows.h>    // GetLogicalProcessorInformationEx(), GetNumaNodeProcessorMaskEx(), GetCurrentThread(), Sleep()
 #include <process.h>    // _beginthread(), _endthread()
 #include <omp.h>        // Open MP
 #include <intrin.h>     // __popcnt64(), _BitScanForward64(), _BitScanReverse64(), _mm_prefetch()

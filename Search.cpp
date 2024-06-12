@@ -620,19 +620,21 @@ NextMove:
             if (BestScore > Alpha) {
                 BestMove = MoveList[MoveNumber];
 
-                if (IsPrincipal) {
-                    if (Ply == 0) { // Root node
-                        if (BestMove.Move == BestMoves[0].Move) { // Move not changed
-                            if (TimeStep > 0) {
-                                --TimeStep;
+                if (omp_get_thread_num() == 0) { // Master thread
+                    if (IsPrincipal) {
+                        if (Ply == 0) { // Root node
+                            if (BestMove.Move == BestMoves[0].Move) { // Move not changed
+                                if (TimeStep > 0) {
+                                    --TimeStep;
+                                }
+                            }
+                            else { // Move changed
+                                TimeStep = MAX_TIME_STEPS - 1;
                             }
                         }
-                        else { // Move changed
-                            TimeStep = MAX_TIME_STEPS - 1;
-                        }
-                    }
 
-                    SaveBestMoves(BestMoves, BestMove, TempBestMoves);
+                        SaveBestMoves(BestMoves, BestMove, TempBestMoves);
+                    }
                 }
 
                 if (IsPrincipal && BestScore < Beta) {

@@ -168,12 +168,18 @@ typedef struct {
 
     int HeuristicTable[2][6][64]; // [Color][Piece][Square] // 3072 bytes
 
+#ifdef COUNTER_MOVE_HISTORY
     int CounterMoveHistoryTable[6][64][6 * 64]; // [Piece][Square][Piece * Square] // 589824 bytes
+#endif // COUNTER_MOVE_HISTORY
 
     int KillerMoveTable[MAX_PLY + 1][2]; // [Max. ply + 1][Two killer moves] // 1032 bytes
 
     int CounterMoveTable[2][6][64]; // [Color][Piece][Square] // 3072 bytes
 } BoardItem; // 648104 bytes
+
+typedef struct {
+    int ThreadId;
+} ThreadItem;
 
 extern const char* BoardName[64];
 
