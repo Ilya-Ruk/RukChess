@@ -177,10 +177,6 @@ typedef struct {
     int CounterMoveTable[2][6][64]; // [Color][Piece][Square] // 3072 bytes
 } BoardItem; // 648104 bytes
 
-typedef struct {
-    int ThreadId;
-} ThreadItem;
-
 extern const char* BoardName[64];
 
 extern const char PiecesCharWhite[6];
