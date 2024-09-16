@@ -35,7 +35,7 @@ void ClearHeuristic(BoardItem* Board)
 }
 
 #ifdef COUNTER_MOVE_HISTORY
-void SetCounterMoveHistoryPointer(BoardItem* Board, volatile int** CMH_Pointer, const int Ply)
+void SetCounterMoveHistoryPointer(BoardItem* Board, int** CMH_Pointer, const int Ply)
 {
     HistoryItem* Info;
 

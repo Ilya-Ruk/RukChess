@@ -7,7 +7,6 @@
 
 #include "Board.h"
 #include "Def.h"
-#include "Types.h"
 
 void InitEvaluation(void);
 
