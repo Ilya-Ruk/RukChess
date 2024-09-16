@@ -119,15 +119,6 @@ int Search(BoardItem* Board, int Alpha, int Beta, int Depth, const int Ply, Move
         return 0;
     }
 
-#ifdef MATE_DISTANCE_PRUNING
-    Alpha = MAX(Alpha, -INF + Ply);
-    Beta = MIN(Beta, INF - Ply - 1);
-
-    if (Alpha >= Beta) {
-        return Alpha;
-    }
-#endif // MATE_DISTANCE_PRUNING
-
     if (Ply > 0) {
         if (IsInsufficientMaterial(Board)) {
             return 0;
@@ -146,6 +137,15 @@ int Search(BoardItem* Board, int Alpha, int Beta, int Depth, const int Ply, Move
         if (PositionRepeat1(Board)) {
             return 0;
         }
+
+#ifdef MATE_DISTANCE_PRUNING
+        Alpha = MAX(Alpha, -INF + Ply);
+        Beta = MIN(Beta, INF - Ply - 1);
+
+        if (Alpha >= Beta) {
+            return Alpha;
+        }
+#endif // MATE_DISTANCE_PRUNING
     }
 
     if (Ply >= MAX_PLY) {

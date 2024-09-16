@@ -62,15 +62,6 @@ int QuiescenceSearch(BoardItem* Board, int Alpha, int Beta, const int Depth, con
         return 0;
     }
 
-#ifdef QUIESCENCE_MATE_DISTANCE_PRUNING
-    Alpha = MAX(Alpha, -INF + Ply);
-    Beta = MIN(Beta, INF - Ply - 1);
-
-    if (Alpha >= Beta) {
-        return Alpha;
-    }
-#endif // QUIESCENCE_MATE_DISTANCE_PRUNING
-
     if (IsInsufficientMaterial(Board)) {
         return 0;
     }
@@ -88,6 +79,15 @@ int QuiescenceSearch(BoardItem* Board, int Alpha, int Beta, const int Depth, con
     if (PositionRepeat1(Board)) {
         return 0;
     }
+
+#ifdef QUIESCENCE_MATE_DISTANCE_PRUNING
+    Alpha = MAX(Alpha, -INF + Ply);
+    Beta = MIN(Beta, INF - Ply - 1);
+
+    if (Alpha >= Beta) {
+        return Alpha;
+    }
+#endif // QUIESCENCE_MATE_DISTANCE_PRUNING
 
     if (Ply >= MAX_PLY) {
         return Evaluate(Board);
