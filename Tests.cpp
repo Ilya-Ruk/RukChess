@@ -6,6 +6,7 @@
 
 #include "Board.h"
 #include "Def.h"
+#include "Evaluate.h"
 #include "Game.h"
 #include "Hash.h"
 #include "Types.h"
@@ -533,62 +534,6 @@ void GeneratorTest2(void)
     }
 }
 
-void PerformanceTest(void)
-{
-    int MaxCycles;
-    int MaxMoves;
-
-    U64 TotalTestNodes = 0ULL;
-    U64 TotalTestTime = 0ULL;
-
-    InputParametrs();
-
-    printf("\n");
-
-    printf("Max. cycles: ");
-    scanf_s("%d", &MaxCycles);
-
-    MaxCycles = MAX(MaxCycles, 1);
-
-    printf("Max. moves: ");
-    scanf_s("%d", &MaxMoves);
-
-    MaxMoves = MAX(MaxMoves, 1);
-
-    for (int Cycle = 0; Cycle < MaxCycles; ++Cycle) {
-        printf("\n");
-
-        printf("Cycle = %d\n", Cycle + 1);
-
-        // Prepare new game
-
-        SetFen(&CurrentBoard, StartFen);
-
-        ClearHash();
-
-        PrintBoard(&CurrentBoard);
-
-        for (int Move = 0; Move < MaxMoves * 2; ++Move) {
-            if (!ComputerMove()) {
-                return;
-            }
-
-            TotalTestNodes += CurrentBoard.Nodes;
-            TotalTestTime += TotalTime;
-        }
-    }
-
-    printf("\n");
-
-    printf("Total nodes %llu Total time %.2f\n", TotalTestNodes, (double)TotalTestTime / 1000.0);
-
-    printf("Average nodes %llu Average time %.2f\n", TotalTestNodes / (U64)MaxCycles, (double)TotalTestTime / (double)MaxCycles / 1000.0);
-
-    if (TotalTestTime > 1000ULL) {
-        printf("NPS %llu\n", 1000ULL * TotalTestNodes / TotalTestTime);
-    }
-}
-
 void Tests(char* Tests[], const int TestCount)
 {
     char* Fen;
@@ -661,4 +606,119 @@ void BratkoKopecTest(void)
 void WinAtChessTest(void)
 {
     Tests(WinAtChessTests, WinAtChessTestCount);
+}
+
+void PerformanceTest(void)
+{
+    int MaxCycles;
+    int MaxMoves;
+
+    U64 TotalTestNodes = 0ULL;
+    U64 TotalTestTime = 0ULL;
+
+    InputParametrs();
+
+    printf("\n");
+
+    printf("Max. cycles: ");
+    scanf_s("%d", &MaxCycles);
+
+    MaxCycles = MAX(MaxCycles, 1);
+
+    printf("Max. moves: ");
+    scanf_s("%d", &MaxMoves);
+
+    MaxMoves = MAX(MaxMoves, 1);
+
+    for (int Cycle = 0; Cycle < MaxCycles; ++Cycle) {
+        printf("\n");
+
+        printf("Cycle = %d\n", Cycle + 1);
+
+        // Prepare new game
+
+        SetFen(&CurrentBoard, StartFen);
+
+        ClearHash();
+
+        PrintBoard(&CurrentBoard);
+
+        for (int Move = 0; Move < MaxMoves * 2; ++Move) {
+            if (!ComputerMove()) {
+                return;
+            }
+
+            TotalTestNodes += CurrentBoard.Nodes;
+            TotalTestTime += TotalTime;
+        }
+    }
+
+    printf("\n");
+
+    printf("Total nodes %llu Total time %.2f\n", TotalTestNodes, (double)TotalTestTime / 1000.0);
+
+    printf("Average nodes %llu Average time %.2f\n", TotalTestNodes / (U64)MaxCycles, (double)TotalTestTime / (double)MaxCycles / 1000.0);
+
+    if (TotalTestTime > 1000ULL) {
+        printf("NPS %llu\n", 1000ULL * TotalTestNodes / TotalTestTime);
+    }
+}
+
+void TestsEvaluate(char* Tests[], const int TestCount)
+{
+    int MaxCycles;
+
+    char* Fen;
+
+    LARGE_INTEGER EvaluateTimeStart;
+    LARGE_INTEGER EvaluateTimeStop;
+
+    LARGE_INTEGER Frequency;
+
+    I64 EvaluateTotalTime = 0LL;
+
+    printf("\n");
+
+    printf("Max. cycles: ");
+    scanf_s("%d", &MaxCycles);
+
+    MaxCycles = MAX(MaxCycles, 1);
+
+    printf("\n");
+
+    for (int Cycle = 0; Cycle < MaxCycles; ++Cycle) {
+        printf("Cycle = %d\n", Cycle + 1);
+
+        for (int TestNumber = 0; TestNumber < TestCount; ++TestNumber) {
+            Fen = Tests[TestNumber * 2];
+
+            SetFen(&CurrentBoard, Fen);
+
+            QueryPerformanceCounter(&EvaluateTimeStart);
+
+            Evaluate(&CurrentBoard);
+
+            QueryPerformanceCounter(&EvaluateTimeStop);
+
+            EvaluateTotalTime += EvaluateTimeStop.QuadPart - EvaluateTimeStart.QuadPart;
+        }
+    }
+
+    QueryPerformanceFrequency(&Frequency);
+
+    // We now have the elapsed number of ticks, along with the number of ticks-per-second.
+    // We use these values to convert to the number of elapsed microseconds.
+    // To guard against loss-of-precision, we convert to microseconds before dividing by ticks-per-second.
+    EvaluateTotalTime *= 1000000LL;
+    EvaluateTotalTime /= Frequency.QuadPart;
+
+    printf("\n");
+
+    printf("EPS %lld\n", 1000000LL * (I64)TestCount * (I64)MaxCycles / EvaluateTotalTime);
+}
+
+void PerformanceTestEvaluate(void)
+{
+//    TestsEvaluate(BratkoKopecTests, BratkoKopecTestCount);
+    TestsEvaluate(WinAtChessTests, WinAtChessTestCount);
 }

@@ -10,9 +10,10 @@
 void GeneratorTest1(void);
 void GeneratorTest2(void);
 
-void PerformanceTest(void);
-
 void BratkoKopecTest(void);
 void WinAtChessTest(void);
+
+void PerformanceTest(void);
+void PerformanceTestEvaluate(void);
 
 #endif // !TESTS_H

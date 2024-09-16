@@ -21,5 +21,6 @@
 #include <float.h>      // DBL_MAX
 #include <limits.h>     // INT_MAX
 #include <math.h>       // round(), pow(), log(), sqrt()
+#include <profileapi.h> // QueryPerformanceCounter(), QueryPerformanceFrequency()
 
 #endif // !STDAFX_H

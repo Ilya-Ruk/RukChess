@@ -155,16 +155,17 @@ int main(int argc, char** argv)
         printf(" 7: Built-in drive generator test\n");
         printf(" 8: Load game from file (chess.fen) and drive generator test\n");
 
-        printf(" 9: Built-in performance test\n");
+        printf(" 9: Bratko-Kopec test (24 positions)\n");
+        printf("10: Win-At-Chess test (300 positions)\n");
 
-        printf("10: Bratko-Kopec test (24 positions)\n");
-        printf("11: Win-At-Chess test (300 positions)\n");
+        printf("11: Built-in performance test\n");
+        printf("12: Built-in performance test (evaluate function)\n");
 
-        printf("12: Generate book file (book.txt) from PGN file (book.pgn)\n");
+        printf("13: Generate book file (book.txt) from PGN file (book.pgn)\n");
 
-        printf("13: Convert PGN file (games.pgn) to FEN file (games.fen)\n");
+        printf("14: Convert PGN file (games.pgn) to FEN file (games.fen)\n");
 
-        printf("14: Exit\n");
+        printf("15: Exit\n");
 
         printf("\n");
 
@@ -212,26 +213,30 @@ int main(int argc, char** argv)
                 break;
 
             case 9:
-                PerformanceTest();
-                break;
-
-            case 10:
                 BratkoKopecTest();
                 break;
 
-            case 11:
+            case 10:
                 WinAtChessTest();
                 break;
 
+            case 11:
+                PerformanceTest();
+                break;
+
             case 12:
-                GenerateBook();
+                PerformanceTestEvaluate();
                 break;
 
             case 13:
+                GenerateBook();
+                break;
+
+            case 14:
                 Pgn2Fen();
                 break;
 
-            case 14: // Exit
+            case 15: // Exit
                 return 0;
         } // switch
 
