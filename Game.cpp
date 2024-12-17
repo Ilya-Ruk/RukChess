@@ -142,21 +142,17 @@ BOOL PrintResult(const BOOL InCheck, const MoveItem BestMove, const MoveItem Pon
             if (InCheck) { // Checkmate
                 printf("\n");
 
-                printf("Checkmate!\n");
-
-                printf("\n");
-
                 if (CurrentBoard.CurrentColor == WHITE) {
-                    printf("{0-1} Black wins!\n");
+                    printf("0-1 {Black mates}!\n");
                 }
                 else { // BLACK
-                    printf("{1-0} White wins!\n");
+                    printf("1-0 {White mates}!\n");
                 }
             }
             else { // Stalemate
                 printf("\n");
 
-                printf("{1/2-1/2} Stalemate!\n");
+                printf("1/2-1/2 {Draw by stalemate}!\n");
             }
 
             return FALSE;
@@ -202,15 +198,11 @@ BOOL PrintResult(const BOOL InCheck, const MoveItem BestMove, const MoveItem Pon
         if (BestScore <= -INF + 1 || BestScore >= INF - 1) { // Checkmate
             printf("\n");
 
-            printf("Checkmate!\n");
-
-            printf("\n");
-
             if (CurrentBoard.CurrentColor == WHITE) {
-                printf("{0-1} Black wins!\n");
+                printf("0-1 {Black mates}!\n");
             }
             else { // BLACK
-                printf("{1-0} White wins!\n");
+                printf("1-0 {White mates}!\n");
             }
 
             return FALSE;
@@ -219,7 +211,7 @@ BOOL PrintResult(const BOOL InCheck, const MoveItem BestMove, const MoveItem Pon
         if (IsInsufficientMaterial(&CurrentBoard)) {
             printf("\n");
 
-            printf("{1/2-1/2} Draw by insufficient material!\n");
+            printf("1/2-1/2 {Draw by insufficient mating material}!\n");
 
             return FALSE;
         }
@@ -227,7 +219,7 @@ BOOL PrintResult(const BOOL InCheck, const MoveItem BestMove, const MoveItem Pon
         if (CurrentBoard.FiftyMove >= 100) {
             printf("\n");
 
-            printf("{1/2-1/2} Draw by fifty move rule!\n");
+            printf("1/2-1/2 {Draw by fifty moves rule}!\n");
 
             return FALSE;
         }
@@ -235,7 +227,7 @@ BOOL PrintResult(const BOOL InCheck, const MoveItem BestMove, const MoveItem Pon
         if (PositionRepeat2(&CurrentBoard) == 2) {
             printf("\n");
 
-            printf("{1/2-1/2} Draw by repetition!\n");
+            printf("1/2-1/2 {Draw by 3-fold repetition}!\n");
 
             return FALSE;
         }
@@ -445,7 +437,7 @@ BOOL ComputerMove(void)
                 break; // for (depth)
             }
 
-            if (ThreadScore <= -INF + Depth || ThreadScore >= INF - Depth) { // Checkmate
+            if (ThreadScore < -INF + Depth || ThreadScore > INF - Depth) { // Checkmate
                 break; // for (depth)
             }
         } // for
@@ -594,7 +586,7 @@ BOOL HumanMove(void)
                     if (IsInsufficientMaterial(&CurrentBoard)) {
                         printf("\n");
 
-                        printf("{1/2-1/2} Draw by insufficient material!\n");
+                        printf("1/2-1/2 {Draw by insufficient mating material}!\n");
 
                         return FALSE;
                     }
@@ -602,7 +594,7 @@ BOOL HumanMove(void)
                     if (CurrentBoard.FiftyMove >= 100) {
                         printf("\n");
 
-                        printf("{1/2-1/2} Draw by fifty move rule!\n");
+                        printf("1/2-1/2 {Draw by fifty moves rule}!\n");
 
                         return FALSE;
                     }
@@ -610,7 +602,7 @@ BOOL HumanMove(void)
                     if (PositionRepeat2(&CurrentBoard) == 2) {
                         printf("\n");
 
-                        printf("{1/2-1/2} Draw by repetition!\n");
+                        printf("1/2-1/2 {Draw by 3-fold repetition}!\n");
 
                         return FALSE;
                     }
