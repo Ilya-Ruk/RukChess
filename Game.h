@@ -17,6 +17,8 @@ extern int MaxThreads;
 extern int MaxDepth;
 extern U64 MaxTime;
 
+extern U64 ReduceTime;
+
 extern U64 TimeForMove;
 
 extern U64 TimeStart;

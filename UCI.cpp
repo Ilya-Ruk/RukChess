@@ -54,8 +54,6 @@ void UCI(void)
 
     int Mate;
 
-    U64 ReduceTime;
-
     double Ratio;
 
     setvbuf(stdin, NULL, _IONBF, 0);
@@ -68,6 +66,7 @@ void UCI(void)
     printf("option name Threads type spin default %d min %d max %d\n", DEFAULT_THREADS, 1, MaxThreads);
     printf("option name BookFile type string default %s\n", DEFAULT_BOOK_FILE_NAME);
     printf("option name NnueFile type string default %s\n", DEFAULT_NNUE_FILE_NAME);
+    printf("option name ReduceTime type spin default %d min %d max %d\n", DEFAULT_REDUCE_TIME, 1, MAX_REDUCE_TIME);
 
     SetFen(&CurrentBoard, StartFen);
 
@@ -130,6 +129,13 @@ void UCI(void)
             *NnueFileName = '\0'; // Nul
 
             NnueFileLoaded = LoadNetwork(NnueFileNameString);
+        }
+        else if (strncmp(Part, "setoption name ReduceTime value ", 32) == 0) {
+            Part += 32;
+
+            ReduceTime = (U64)atoi(Part);
+
+            ReduceTime = (ReduceTime >= 1 && ReduceTime <= MAX_REDUCE_TIME) ? ReduceTime : DEFAULT_REDUCE_TIME;
         }
         else if (strncmp(Part, "position ", 9) == 0) {
             Part += 9;
@@ -316,9 +322,12 @@ void UCI(void)
 
             if (MaxTime == 0ULL) {
                 if (CurrentBoard.CurrentColor == WHITE && WTime > 0ULL) {
-                    ReduceTime = MIN(WTime * (U64)REDUCE_TIME_PERCENT / 100ULL, (U64)MAX_REDUCE_TIME) + (U64)REDUCE_TIME;
-
-                    MaxTime = MAX(WTime - ReduceTime, 1ULL);
+                    if (WTime > ReduceTime) {
+                        MaxTime = WTime - ReduceTime;
+                    }
+                    else {
+                        MaxTime = 1ULL;
+                    }
 
                     TimeForMove = (MaxTime / (U64)MovesToGo) + WInc;
 
@@ -331,9 +340,12 @@ void UCI(void)
                     MaxTime = MIN(((MaxTime / (U64)MIN(MovesToGo, MAX_TIME_MOVES_TO_GO)) + WInc), MaxTime);
                 }
                 else if (CurrentBoard.CurrentColor == BLACK && BTime > 0ULL) {
-                    ReduceTime = MIN(BTime * (U64)REDUCE_TIME_PERCENT / 100ULL, (U64)MAX_REDUCE_TIME) + (U64)REDUCE_TIME;
-
-                    MaxTime = MAX(BTime - ReduceTime, 1ULL);
+                    if (BTime > ReduceTime) {
+                        MaxTime = BTime - ReduceTime;
+                    }
+                    else {
+                        MaxTime = 1ULL;
+                    }
 
                     TimeForMove = (MaxTime / (U64)MovesToGo) + BInc;
 
@@ -346,13 +358,18 @@ void UCI(void)
                     MaxTime = MIN(((MaxTime / (U64)MIN(MovesToGo, MAX_TIME_MOVES_TO_GO)) + BInc), MaxTime);
                 }
                 else {
-                    MaxTime = (U64)MAX_TIME * 1000ULL - (U64)REDUCE_TIME;
+                    MaxTime = (U64)MAX_TIME * 1000ULL - ReduceTime;
 
                     TimeForMove = 0ULL;
                 }
             }
             else { // MaxTime > 0ULL
-                MaxTime = MAX(MaxTime - (U64)REDUCE_TIME, 1ULL);
+                if (MaxTime > ReduceTime) {
+                    MaxTime -= ReduceTime;
+                }
+                else {
+                    MaxTime = 1ULL;
+                }
 
                 TimeForMove = 0ULL;
             }

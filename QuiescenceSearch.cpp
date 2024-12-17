@@ -56,7 +56,7 @@ int QuiescenceSearch(BoardItem* Board, int Alpha, int Beta, const int Depth, con
     if (omp_get_thread_num() == 0) { // Master thread
         if (
             CompletedDepth >= MIN_SEARCH_DEPTH
-            && (Board->Nodes & 32767) == 0
+            && (Board->Nodes & 4095) == 0
             && Clock() >= TimeStop
         ) {
             StopSearch = TRUE;

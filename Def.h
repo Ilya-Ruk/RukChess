@@ -74,7 +74,7 @@
 // Program name, program version, evaluation function name and copyright information
 
 #define PROGRAM_NAME                            "RukChess"
-#define PROGRAM_VERSION                         "4.0.0"
+#define PROGRAM_VERSION                         "4.0.1"
 
 /*
     https://github.com/Ilya-Ruk/RukChessTrainer
@@ -110,12 +110,10 @@
 
 #define MAX_TIME                                86400   // Maximum time per move, seconds
 
-#define REDUCE_TIME                             150     // msec.
-
-#define REDUCE_TIME_PERCENT                     5       // %
+#define DEFAULT_REDUCE_TIME                     25      // msec.
 #define MAX_REDUCE_TIME                         1000    // msec.
 
-#define MAX_MOVES_TO_GO                         40      // 25
+#define MAX_MOVES_TO_GO                         25
 #define MAX_TIME_MOVES_TO_GO                    3
 
 #define MAX_TIME_STEPS                          10

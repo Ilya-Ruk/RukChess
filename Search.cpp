@@ -113,7 +113,7 @@ int Search(BoardItem* Board, int Alpha, int Beta, int Depth, const int Ply, Move
         if (
             Ply > 0
             && CompletedDepth >= MIN_SEARCH_DEPTH
-            && (Board->Nodes & 32767) == 0
+            && (Board->Nodes & 4095) == 0
             && Clock() >= TimeStop
         ) {
             StopSearch = TRUE;

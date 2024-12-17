@@ -1,5 +1,11 @@
 # RukChess change log
 
+## RukChess 4.0.1 (dev)
+
+1. Time control bugfix
+2. Added UCI option ReduceTime
+3. Corrected the code
+
 ## RukChess 4.0.0 (10.12.2024)
 
 1. OMP bugfix

@@ -19,6 +19,8 @@ int MaxThreads;
 int MaxDepth;
 U64 MaxTime;
 
+U64 ReduceTime = DEFAULT_REDUCE_TIME;
+
 U64 TimeForMove;
 
 U64 TimeStart;
@@ -633,7 +635,13 @@ void InputParametrs(void)
 
     MaxTime = (InputMaxTime >= 1 && InputMaxTime <= MAX_TIME) ? (U64)InputMaxTime : (U64)MAX_TIME;
     MaxTime *= 1000ULL;
-    MaxTime -= (U64)REDUCE_TIME;
+
+    if (MaxTime > ReduceTime) {
+        MaxTime -= ReduceTime;
+    }
+    else {
+        MaxTime = 1ULL;
+    }
 
     TimeForMove = 0ULL;
 
