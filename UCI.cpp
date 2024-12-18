@@ -222,9 +222,13 @@ void UCI(void)
                     }
 
                     if (!MoveFound || MoveInCheck) { // Move not found or illegal move
-                        printf("info string Illegal move!\n");
+                        printf("info string Illegal move (%s%s", BoardName[From], BoardName[To]);
 
-                        // TODO: print illegal move
+                        if (PromotePiece != 0) {
+                            printf("%c", PiecesCharBlack[PromotePiece]);
+                        }
+
+                        printf(")!\n");
 
                         break; // while (moves)
                     }
