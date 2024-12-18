@@ -476,7 +476,7 @@ BOOL HumanMove(void)
 
     int From;
     int To;
-    int PromotePiece;
+    int PromotePieceType;
 
     int Move;
 
@@ -539,22 +539,22 @@ BOOL HumanMove(void)
             To = SQUARE_CREATE(File, Rank);
 
             if (ReadStr[4] == 'N' || ReadStr[4] == 'n') {
-                PromotePiece = KNIGHT;
+                PromotePieceType = KNIGHT;
             }
             else if (ReadStr[4] == 'B' || ReadStr[4] == 'b') {
-                PromotePiece = BISHOP;
+                PromotePieceType = BISHOP;
             }
             else if (ReadStr[4] == 'R' || ReadStr[4] == 'r') {
-                PromotePiece = ROOK;
+                PromotePieceType = ROOK;
             }
             else if (ReadStr[4] == 'Q' || ReadStr[4] == 'q') {
-                PromotePiece = QUEEN;
+                PromotePieceType = QUEEN;
             }
             else {
-                PromotePiece = 0;
+                PromotePieceType = 0;
             }
 
-            Move = MOVE_CREATE(From, To, PromotePiece);
+            Move = MOVE_CREATE(From, To, PromotePieceType);
 
             for (int MoveNumber = 0; MoveNumber < GenMoveCount; ++MoveNumber) {
                 if (MoveList[MoveNumber].Move == Move) {

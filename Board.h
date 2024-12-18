@@ -127,7 +127,7 @@
 
 typedef struct {
     int Type;
-    int Move; // (PromotePiece << 12) | (From << 6) | To
+    int Move; // (PromotePieceType << 12) | (From << 6) | To
     int SortValue;
 } MoveItem; // 12 bytes
 
@@ -137,18 +137,18 @@ typedef struct {
 #ifdef USE_NNUE_UPDATE
     BOOL AccumulationComputed;
 #endif // USE_NNUE_UPDATE
-} AccumulatorItem; // 2052 (aligned 2080) bytes
+} AccumulatorItem; // 1028 (aligned 1088) bytes
 
 typedef struct {
     int Type;
 
     int From;
-    int PieceFrom;
+    int PieceTypeFrom;
 
     int To;
-    int PieceTo;
+    int PieceTypeTo;
 
-    int PromotePiece;
+    int PromotePieceType;
 
     int PassantSquare;
     int EatPawnSquare;
@@ -165,7 +165,7 @@ typedef struct {
 #endif // DEBUG_MOVE
 
     AccumulatorItem Accumulator;
-} HistoryItem; // 2144 bytes
+} HistoryItem; // 1152 bytes
 
 typedef struct {
     int Pieces[64]; // (Color << 3) | Piece
@@ -181,7 +181,7 @@ typedef struct {
 
     U64 Hash;
 
-    HistoryItem MoveTable[MAX_GAME_MOVES]; // 2195456 bytes
+    HistoryItem MoveTable[MAX_GAME_MOVES]; // 1179648 bytes
 
     U64 Nodes;
 
@@ -211,7 +211,7 @@ typedef struct {
 #endif // COUNTER_MOVE
 
     AccumulatorItem Accumulator;
-} BoardItem; // 2796512 bytes
+} BoardItem; // 1779776 bytes
 
 extern const char* BoardName[64];
 

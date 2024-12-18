@@ -25,7 +25,7 @@ void UCI(void)
 
     int From;
     int To;
-    int PromotePiece;
+    int PromotePieceType;
 
     int Move;
 
@@ -172,32 +172,32 @@ void UCI(void)
                     To = SQUARE_CREATE(File, Rank);
 
                     if (Part[4] == 'N' || Part[4] == 'n') {
-                        PromotePiece = KNIGHT;
+                        PromotePieceType = KNIGHT;
 
                         Part += 5;
                     }
                     else if (Part[4] == 'B' || Part[4] == 'b') {
-                        PromotePiece = BISHOP;
+                        PromotePieceType = BISHOP;
 
                         Part += 5;
                     }
                     else if (Part[4] == 'R' || Part[4] == 'r') {
-                        PromotePiece = ROOK;
+                        PromotePieceType = ROOK;
 
                         Part += 5;
                     }
                     else if (Part[4] == 'Q' || Part[4] == 'q') {
-                        PromotePiece = QUEEN;
+                        PromotePieceType = QUEEN;
 
                         Part += 5;
                     }
                     else {
-                        PromotePiece = 0;
+                        PromotePieceType = 0;
 
                         Part += 4;
                     }
 
-                    Move = MOVE_CREATE(From, To, PromotePiece);
+                    Move = MOVE_CREATE(From, To, PromotePieceType);
 
                     MoveFound = FALSE;
                     MoveInCheck = FALSE;
@@ -224,8 +224,8 @@ void UCI(void)
                     if (!MoveFound || MoveInCheck) { // Move not found or illegal move
                         printf("info string Illegal move (%s%s", BoardName[From], BoardName[To]);
 
-                        if (PromotePiece != 0) {
-                            printf("%c", PiecesCharBlack[PromotePiece]);
+                        if (PromotePieceType != 0) {
+                            printf("%c", PiecesCharBlack[PromotePieceType]);
                         }
 
                         printf(")!\n");

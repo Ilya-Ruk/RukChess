@@ -345,7 +345,7 @@ BOOL UpdateAccumulator(BoardItem* Board)
     for (int Perspective = 0; Perspective < 2; ++Perspective) { // White/Black
         // Delete piece (from)
 
-        PieceWithColor = PIECE_CREATE(Info->PieceFrom, CHANGE_COLOR(Board->CurrentColor));
+        PieceWithColor = PIECE_CREATE(Info->PieceTypeFrom, CHANGE_COLOR(Board->CurrentColor));
 
         WeightIndex = CalculateWeightIndex(Perspective, Info->From, PieceWithColor);
 
@@ -361,7 +361,7 @@ BOOL UpdateAccumulator(BoardItem* Board)
             AccumulatorSub(Board, Perspective, WeightIndex);
         }
         else if (Info->Type & MOVE_CAPTURE) {
-            PieceWithColor = PIECE_CREATE(Info->PieceTo, Board->CurrentColor);
+            PieceWithColor = PIECE_CREATE(Info->PieceTypeTo, Board->CurrentColor);
 
             WeightIndex = CalculateWeightIndex(Perspective, Info->To, PieceWithColor);
 
@@ -371,14 +371,14 @@ BOOL UpdateAccumulator(BoardItem* Board)
         // Add piece (to)
 
         if (Info->Type & MOVE_PAWN_PROMOTE) {
-            PieceWithColor = PIECE_CREATE(Info->PromotePiece, CHANGE_COLOR(Board->CurrentColor));
+            PieceWithColor = PIECE_CREATE(Info->PromotePieceType, CHANGE_COLOR(Board->CurrentColor));
 
             WeightIndex = CalculateWeightIndex(Perspective, Info->To, PieceWithColor);
 
             AccumulatorAdd(Board, Perspective, WeightIndex);
         }
         else {
-            PieceWithColor = PIECE_CREATE(Info->PieceFrom, CHANGE_COLOR(Board->CurrentColor));
+            PieceWithColor = PIECE_CREATE(Info->PieceTypeFrom, CHANGE_COLOR(Board->CurrentColor));
 
             WeightIndex = CalculateWeightIndex(Perspective, Info->To, PieceWithColor);
 
@@ -394,7 +394,7 @@ BOOL UpdateAccumulator(BoardItem* Board)
     for (int Perspective = 0; Perspective < 2; ++Perspective) { // White/Black
         for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) { // 256
             if (Board->Accumulator.Accumulation[Perspective][Index] != Accumulator.Accumulation[Perspective][Index]) {
-                printf("-- Accumulator error! Color = %d Piece = %d From = %d To = %d Move type = %d\n", CHANGE_COLOR(Board->CurrentColor), Info->PieceFrom, Info->From, Info->To, Info->Type);
+                printf("-- Accumulator error! Color = %d Piece = %d From = %d To = %d Move type = %d\n", CHANGE_COLOR(Board->CurrentColor), Info->PieceTypeFrom, Info->From, Info->To, Info->Type);
 
                 break; // for (256)
             }

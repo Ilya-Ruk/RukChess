@@ -73,7 +73,7 @@ void SetCounterMoveSortValue(const BoardItem* Board, const int Ply, MoveItem* Ge
         return;
     }
 
-    int CounterMove = Board->CounterMoveTable[CHANGE_COLOR(Board->CurrentColor)][Info->PieceFrom][Info->To];
+    int CounterMove = Board->CounterMoveTable[CHANGE_COLOR(Board->CurrentColor)][Info->PieceTypeFrom][Info->To];
 
 #ifdef KILLER_MOVE
     int KillerMove1 = Board->KillerMoveTable[Ply][0];

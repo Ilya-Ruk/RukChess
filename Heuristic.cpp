@@ -55,7 +55,7 @@ void SetCounterMoveHistoryPointer(BoardItem* Board, int** CMH_Pointer, const int
         return;
     }
 
-    CMH_Pointer[0] = Board->CounterMoveHistoryTable[Info->PieceFrom][Info->To];
+    CMH_Pointer[0] = Board->CounterMoveHistoryTable[Info->PieceTypeFrom][Info->To];
 
     if (Ply == 1) {
         CMH_Pointer[1] = NULL;
@@ -71,7 +71,7 @@ void SetCounterMoveHistoryPointer(BoardItem* Board, int** CMH_Pointer, const int
         return;
     }
 
-    CMH_Pointer[1] = Board->CounterMoveHistoryTable[Info->PieceFrom][Info->To];
+    CMH_Pointer[1] = Board->CounterMoveHistoryTable[Info->PieceTypeFrom][Info->To];
 }
 #endif // COUNTER_MOVE_HISTORY
 
@@ -111,7 +111,7 @@ void UpdateCounterMove(BoardItem* Board, const int Move, const int Ply)
         return;
     }
 
-    Board->CounterMoveTable[CHANGE_COLOR(Board->CurrentColor)][Info->PieceFrom][Info->To] = Move;
+    Board->CounterMoveTable[CHANGE_COLOR(Board->CurrentColor)][Info->PieceTypeFrom][Info->To] = Move;
 }
 
 void ClearCounterMove(BoardItem* Board)

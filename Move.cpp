@@ -23,18 +23,18 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
     Info->Type = Move.Type;
 
     Info->From = From;
-    Info->PieceFrom = PIECE_TYPE(Board->Pieces[From]);
+    Info->PieceTypeFrom = PIECE_TYPE(Board->Pieces[From]);
 
-    assert(Info->PieceFrom >= PAWN && Info->PieceFrom <= KING);
+    assert(Info->PieceTypeFrom >= PAWN && Info->PieceTypeFrom <= KING);
 
     Info->To = To;
-    Info->PieceTo = PIECE_TYPE(Board->Pieces[To]);
+    Info->PieceTypeTo = PIECE_TYPE(Board->Pieces[To]);
 
-    assert((Info->PieceTo >= PAWN && Info->PieceTo <= QUEEN) || Info->PieceTo == PIECE_TYPE(NO_PIECE));
+    assert((Info->PieceTypeTo >= PAWN && Info->PieceTypeTo <= QUEEN) || Info->PieceTypeTo == PIECE_TYPE(NO_PIECE));
 
-    Info->PromotePiece = MOVE_PROMOTE_PIECE_TYPE(Move.Move);
+    Info->PromotePieceType = MOVE_PROMOTE_PIECE_TYPE(Move.Move);
 
-    assert((Info->PromotePiece >= KNIGHT && Info->PromotePiece <= QUEEN) || Info->PromotePiece == 0);
+    assert((Info->PromotePieceType >= KNIGHT && Info->PromotePieceType <= QUEEN) || Info->PromotePieceType == 0);
 
     Info->PassantSquare = Board->PassantSquare;
 
@@ -119,34 +119,34 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
         }
         else if (Move.Type & MOVE_CAPTURE) {
             Board->BB_BlackPieces &= ~BB_SQUARE(To);
-            Board->BB_Pieces[BLACK][Info->PieceTo] &= ~BB_SQUARE(To);
+            Board->BB_Pieces[BLACK][Info->PieceTypeTo] &= ~BB_SQUARE(To);
 
-            Board->Hash ^= PieceHash[BLACK][Info->PieceTo][To];
+            Board->Hash ^= PieceHash[BLACK][Info->PieceTypeTo][To];
         }
 
         if (Move.Type & MOVE_PAWN_PROMOTE) {
-            Board->Pieces[To] = PIECE_CREATE(Info->PromotePiece, WHITE);
+            Board->Pieces[To] = PIECE_CREATE(Info->PromotePieceType, WHITE);
 
             Board->BB_WhitePieces |= BB_SQUARE(To);
-            Board->BB_Pieces[WHITE][Info->PromotePiece] |= BB_SQUARE(To);
+            Board->BB_Pieces[WHITE][Info->PromotePieceType] |= BB_SQUARE(To);
 
-            Board->Hash ^= PieceHash[WHITE][Info->PromotePiece][To];
+            Board->Hash ^= PieceHash[WHITE][Info->PromotePieceType][To];
         }
         else {
             Board->Pieces[To] = Board->Pieces[From];
 
             Board->BB_WhitePieces |= BB_SQUARE(To);
-            Board->BB_Pieces[WHITE][Info->PieceFrom] |= BB_SQUARE(To);
+            Board->BB_Pieces[WHITE][Info->PieceTypeFrom] |= BB_SQUARE(To);
 
-            Board->Hash ^= PieceHash[WHITE][Info->PieceFrom][To];
+            Board->Hash ^= PieceHash[WHITE][Info->PieceTypeFrom][To];
         }
 
         Board->Pieces[From] = NO_PIECE;
 
         Board->BB_WhitePieces &= ~BB_SQUARE(From);
-        Board->BB_Pieces[WHITE][Info->PieceFrom] &= ~BB_SQUARE(From);
+        Board->BB_Pieces[WHITE][Info->PieceTypeFrom] &= ~BB_SQUARE(From);
 
-        Board->Hash ^= PieceHash[WHITE][Info->PieceFrom][From];
+        Board->Hash ^= PieceHash[WHITE][Info->PieceTypeFrom][From];
     }
     else { // BLACK
         if (Move.Type & MOVE_PAWN_2) {
@@ -203,34 +203,34 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
         }
         else if (Move.Type & MOVE_CAPTURE) {
             Board->BB_WhitePieces &= ~BB_SQUARE(To);
-            Board->BB_Pieces[WHITE][Info->PieceTo] &= ~BB_SQUARE(To);
+            Board->BB_Pieces[WHITE][Info->PieceTypeTo] &= ~BB_SQUARE(To);
 
-            Board->Hash ^= PieceHash[WHITE][Info->PieceTo][To];
+            Board->Hash ^= PieceHash[WHITE][Info->PieceTypeTo][To];
         }
 
         if (Move.Type & MOVE_PAWN_PROMOTE) {
-            Board->Pieces[To] = PIECE_CREATE(Info->PromotePiece, BLACK);
+            Board->Pieces[To] = PIECE_CREATE(Info->PromotePieceType, BLACK);
 
             Board->BB_BlackPieces |= BB_SQUARE(To);
-            Board->BB_Pieces[BLACK][Info->PromotePiece] |= BB_SQUARE(To);
+            Board->BB_Pieces[BLACK][Info->PromotePieceType] |= BB_SQUARE(To);
 
-            Board->Hash ^= PieceHash[BLACK][Info->PromotePiece][To];
+            Board->Hash ^= PieceHash[BLACK][Info->PromotePieceType][To];
         }
         else {
             Board->Pieces[To] = Board->Pieces[From];
 
             Board->BB_BlackPieces |= BB_SQUARE(To);
-            Board->BB_Pieces[BLACK][Info->PieceFrom] |= BB_SQUARE(To);
+            Board->BB_Pieces[BLACK][Info->PieceTypeFrom] |= BB_SQUARE(To);
 
-            Board->Hash ^= PieceHash[BLACK][Info->PieceFrom][To];
+            Board->Hash ^= PieceHash[BLACK][Info->PieceTypeFrom][To];
         }
 
         Board->Pieces[From] = NO_PIECE;
 
         Board->BB_BlackPieces &= ~BB_SQUARE(From);
-        Board->BB_Pieces[BLACK][Info->PieceFrom] &= ~BB_SQUARE(From);
+        Board->BB_Pieces[BLACK][Info->PieceTypeFrom] &= ~BB_SQUARE(From);
 
-        Board->Hash ^= PieceHash[BLACK][Info->PieceFrom][From];
+        Board->Hash ^= PieceHash[BLACK][Info->PieceTypeFrom][From];
     }
 
     if (Move.Type & (MOVE_CAPTURE | MOVE_PAWN | MOVE_PAWN_2)) {
@@ -266,10 +266,10 @@ void UnmakeMove(BoardItem* Board)
     Board->CurrentColor ^= 1;
 
     if (Board->CurrentColor == WHITE) {
-        Board->Pieces[Info->From] = PIECE_CREATE(Info->PieceFrom, WHITE);
+        Board->Pieces[Info->From] = PIECE_CREATE(Info->PieceTypeFrom, WHITE);
 
         Board->BB_WhitePieces |= BB_SQUARE(Info->From);
-        Board->BB_Pieces[WHITE][Info->PieceFrom] |= BB_SQUARE(Info->From);
+        Board->BB_Pieces[WHITE][Info->PieceTypeFrom] |= BB_SQUARE(Info->From);
 
         if (Info->Type & MOVE_CASTLE_KING) { // White O-O
             Board->Pieces[SQ_F1] = NO_PIECE;
@@ -312,16 +312,16 @@ void UnmakeMove(BoardItem* Board)
             Board->BB_WhitePieces &= ~BB_SQUARE(Info->To);
 
             if (Info->Type & MOVE_PAWN_PROMOTE) {
-                Board->BB_Pieces[WHITE][Info->PromotePiece] &= ~BB_SQUARE(Info->To);
+                Board->BB_Pieces[WHITE][Info->PromotePieceType] &= ~BB_SQUARE(Info->To);
             }
             else {
-                Board->BB_Pieces[WHITE][Info->PieceFrom] &= ~BB_SQUARE(Info->To);
+                Board->BB_Pieces[WHITE][Info->PieceTypeFrom] &= ~BB_SQUARE(Info->To);
             }
 
-            Board->Pieces[Info->To] = PIECE_CREATE(Info->PieceTo, BLACK);
+            Board->Pieces[Info->To] = PIECE_CREATE(Info->PieceTypeTo, BLACK);
 
             Board->BB_BlackPieces |= BB_SQUARE(Info->To);
-            Board->BB_Pieces[BLACK][Info->PieceTo] |= BB_SQUARE(Info->To);
+            Board->BB_Pieces[BLACK][Info->PieceTypeTo] |= BB_SQUARE(Info->To);
         }
         else {
             Board->Pieces[Info->To] = NO_PIECE;
@@ -329,18 +329,18 @@ void UnmakeMove(BoardItem* Board)
             Board->BB_WhitePieces &= ~BB_SQUARE(Info->To);
 
             if (Info->Type & MOVE_PAWN_PROMOTE) {
-                Board->BB_Pieces[WHITE][Info->PromotePiece] &= ~BB_SQUARE(Info->To);
+                Board->BB_Pieces[WHITE][Info->PromotePieceType] &= ~BB_SQUARE(Info->To);
             }
             else {
-                Board->BB_Pieces[WHITE][Info->PieceFrom] &= ~BB_SQUARE(Info->To);
+                Board->BB_Pieces[WHITE][Info->PieceTypeFrom] &= ~BB_SQUARE(Info->To);
             }
         }
     }
     else { // BLACK
-        Board->Pieces[Info->From] = PIECE_CREATE(Info->PieceFrom, BLACK);
+        Board->Pieces[Info->From] = PIECE_CREATE(Info->PieceTypeFrom, BLACK);
 
         Board->BB_BlackPieces |= BB_SQUARE(Info->From);
-        Board->BB_Pieces[BLACK][Info->PieceFrom] |= BB_SQUARE(Info->From);
+        Board->BB_Pieces[BLACK][Info->PieceTypeFrom] |= BB_SQUARE(Info->From);
 
         if (Info->Type & MOVE_CASTLE_KING) { // Black O-O
             Board->Pieces[SQ_F8] = NO_PIECE;
@@ -383,16 +383,16 @@ void UnmakeMove(BoardItem* Board)
             Board->BB_BlackPieces &= ~BB_SQUARE(Info->To);
 
             if (Info->Type & MOVE_PAWN_PROMOTE) {
-                Board->BB_Pieces[BLACK][Info->PromotePiece] &= ~BB_SQUARE(Info->To);
+                Board->BB_Pieces[BLACK][Info->PromotePieceType] &= ~BB_SQUARE(Info->To);
             }
             else {
-                Board->BB_Pieces[BLACK][Info->PieceFrom] &= ~BB_SQUARE(Info->To);
+                Board->BB_Pieces[BLACK][Info->PieceTypeFrom] &= ~BB_SQUARE(Info->To);
             }
 
-            Board->Pieces[Info->To] = PIECE_CREATE(Info->PieceTo, WHITE);
+            Board->Pieces[Info->To] = PIECE_CREATE(Info->PieceTypeTo, WHITE);
 
             Board->BB_WhitePieces |= BB_SQUARE(Info->To);
-            Board->BB_Pieces[WHITE][Info->PieceTo] |= BB_SQUARE(Info->To);
+            Board->BB_Pieces[WHITE][Info->PieceTypeTo] |= BB_SQUARE(Info->To);
         }
         else {
             Board->Pieces[Info->To] = NO_PIECE;
@@ -400,10 +400,10 @@ void UnmakeMove(BoardItem* Board)
             Board->BB_BlackPieces &= ~BB_SQUARE(Info->To);
 
             if (Info->Type & MOVE_PAWN_PROMOTE) {
-                Board->BB_Pieces[BLACK][Info->PromotePiece] &= ~BB_SQUARE(Info->To);
+                Board->BB_Pieces[BLACK][Info->PromotePieceType] &= ~BB_SQUARE(Info->To);
             }
             else {
-                Board->BB_Pieces[BLACK][Info->PieceFrom] &= ~BB_SQUARE(Info->To);
+                Board->BB_Pieces[BLACK][Info->PieceTypeFrom] &= ~BB_SQUARE(Info->To);
             }
         }
     }

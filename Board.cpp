@@ -135,7 +135,7 @@ void NotateMove(BoardItem* Board, const MoveItem Move, char* Result)
     int From = MOVE_FROM(Move.Move);
     int To = MOVE_TO(Move.Move);
 
-    int PieceFrom = PIECE_TYPE(Board->Pieces[From]);
+    int PieceTypeFrom = PIECE_TYPE(Board->Pieces[From]);
 
     int GenMoveCount;
     MoveItem MoveList[MAX_GEN_MOVES];
@@ -150,7 +150,7 @@ void NotateMove(BoardItem* Board, const MoveItem Move, char* Result)
     BOOL ShowFileFrom = FALSE;
     BOOL ShowRankFrom = FALSE;
 
-    if (PieceFrom == PAWN && (Move.Type & MOVE_CAPTURE)) {
+    if (PieceTypeFrom == PAWN && (Move.Type & MOVE_CAPTURE)) {
         ShowFileFrom = TRUE;
     }
 
@@ -166,7 +166,7 @@ void NotateMove(BoardItem* Board, const MoveItem Move, char* Result)
             continue; // Next move
         }
 
-        if (PIECE_TYPE(Board->Pieces[MOVE_FROM(MoveList[MoveNumber].Move)]) != PieceFrom) {
+        if (PIECE_TYPE(Board->Pieces[MOVE_FROM(MoveList[MoveNumber].Move)]) != PieceTypeFrom) {
             continue; // Next move
         }
 
@@ -238,7 +238,7 @@ void NotateMove(BoardItem* Board, const MoveItem Move, char* Result)
         Result += 5;
     }
     else {
-        switch (PieceFrom) {
+        switch (PieceTypeFrom) {
             case KNIGHT:
                 *Result++ = 'N';
                 break;
