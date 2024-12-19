@@ -1,6 +1,6 @@
 # RukChess change log
 
-## RukChess 4.0.1 (dev)
+## RukChess 4.0.1 (19.12.2024)
 
 1. Time control bugfix
 2. Added UCI option ReduceTime
