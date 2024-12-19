@@ -135,7 +135,7 @@ int main(int argc, char** argv)
         NnueFileLoaded = LoadNetwork(DEFAULT_NNUE_FILE_NAME);
     }
 
-    // UCI or Console interface?
+    // UCI or Terminal User Interface (TUI)?
 
     printf("\n");
 
@@ -153,7 +153,7 @@ int main(int argc, char** argv)
         goto Done;
     }
 
-    // Console interface
+    // Terminal User Interface (TUI)
 
     if (!NnueFileLoaded) {
         printf("Network not loaded!\n");
