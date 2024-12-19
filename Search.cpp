@@ -318,7 +318,7 @@ int Search(BoardItem* Board, int Alpha, int Beta, int Depth, const int Ply, Move
                     continue; // Next move
                 }
 
-                if (CaptureSEE(Board, MoveList[MoveNumber].Type, MoveList[MoveNumber].Move) < BetaCut - StaticScore) {
+                if (SEE(Board, MoveList[MoveNumber].Type, MoveList[MoveNumber].Move) < BetaCut - StaticScore) {
                     continue; // Next move
                 }
 
@@ -427,7 +427,7 @@ NextMove:
             && MoveList[MoveNumber].SortValue >= 0
             && MoveList[MoveNumber].Move != HashMove
         ) {
-            SEE_Value = CaptureSEE(Board, MoveList[MoveNumber].Type, MoveList[MoveNumber].Move);
+            SEE_Value = SEE(Board, MoveList[MoveNumber].Type, MoveList[MoveNumber].Move);
 
             if (SEE_Value < 0) { // Bad capture move
                 MoveList[MoveNumber].SortValue = SEE_Value - SORT_CAPTURE_MOVE_BONUS; // Search move later
@@ -541,7 +541,7 @@ NextMove:
 #else
                 UnmakeMove(Board);
 
-                if (CaptureSEE(Board, MoveList[MoveNumber].Type, MoveList[MoveNumber].Move) < -100 * Depth) { // Bad capture move (Xiphos)
+                if (SEE(Board, MoveList[MoveNumber].Type, MoveList[MoveNumber].Move) < -100 * Depth) { // Bad capture move (Xiphos)
                     continue; // Next move
                 }
 
@@ -574,7 +574,7 @@ NextMove:
                 if (Depth <= 3) { // Hakkapeliitta
                     UnmakeMove(Board);
 
-                    if (CaptureSEE(Board, MoveList[MoveNumber].Type, MoveList[MoveNumber].Move) < 0) { // Bad quiet move
+                    if (SEE(Board, MoveList[MoveNumber].Type, MoveList[MoveNumber].Move) < 0) { // Bad quiet move
                         continue; // Next move
                     }
 

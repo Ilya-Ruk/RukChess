@@ -37,14 +37,14 @@ U64 AttackTo(const BoardItem* Board, const int Square, const U64 Occupied)
     return Attackers;
 }
 
-int CaptureSEE(const BoardItem* Board, const int MoveType, const int Move)
+int SEE(const BoardItem* Board, const int MoveType, const int Move)
 {
     int Gain[32];
 
     int From = MOVE_FROM(Move);
     int To = MOVE_TO(Move);
 
-    int Piece;
+    int PieceType;
 
     U64 BB_From = BB_SQUARE(From);
 
@@ -82,12 +82,12 @@ int CaptureSEE(const BoardItem* Board, const int MoveType, const int Move)
     }
 
     if (MoveType & MOVE_PAWN_PROMOTE) {
-        Piece = MOVE_PROMOTE_PIECE_TYPE(Move);
+        PieceType = MOVE_PROMOTE_PIECE_TYPE(Move);
 
-        Gain[0] += PiecesScoreSEE[Piece] - PiecesScoreSEE[PAWN];
+        Gain[0] += PiecesScoreSEE[PieceType] - PiecesScoreSEE[PAWN];
     }
     else {
-        Piece = PIECE_TYPE(Board->Pieces[From]);
+        PieceType = PIECE_TYPE(Board->Pieces[From]);
     }
 
     Occupied &= ~BB_From;
@@ -108,21 +108,21 @@ int CaptureSEE(const BoardItem* Board, const int MoveType, const int Move)
             break; // while
         }
 
-        Gain[Depth] = -Gain[Depth - 1] + PiecesScoreSEE[Piece];
+        Gain[Depth] = -Gain[Depth - 1] + PiecesScoreSEE[PieceType];
 
         ++Depth;
 
-        if (Piece == KING) {
+        if (PieceType == KING) {
             break; // while
         }
 
-        for (Piece = 0; Piece < 6; ++Piece) { // PNBRQK
-            if (CurrentAttackers & Board->BB_Pieces[Color][Piece]) {
+        for (PieceType = 0; PieceType < 6; ++PieceType) { // PNBRQK
+            if (CurrentAttackers & Board->BB_Pieces[Color][PieceType]) {
 #ifdef DEBUG_SEE
-                printf("-- SEE: From = %s\n", BoardName[LSB(CurrentAttackers & Board->BB_Pieces[Color][Piece])]);
+                printf("-- SEE: From = %s\n", BoardName[LSB(CurrentAttackers & Board->BB_Pieces[Color][PieceType])]);
 #endif // DEBUG_SEE
 
-                BB_From = BB_SQUARE(LSB(CurrentAttackers & Board->BB_Pieces[Color][Piece]));
+                BB_From = BB_SQUARE(LSB(CurrentAttackers & Board->BB_Pieces[Color][PieceType]));
 
                 break; // for
             }
@@ -138,8 +138,8 @@ int CaptureSEE(const BoardItem* Board, const int MoveType, const int Move)
 
         Attackers &= Occupied;
 
-        if (Piece == PAWN && (RANK(To) == 0 || RANK(To) == 7)) { // Pawn promote
-            Piece = QUEEN;
+        if (PieceType == PAWN && (RANK(To) == 0 || RANK(To) == 7)) { // Pawn promote
+            PieceType = QUEEN;
 
             Gain[Depth] += PiecesScoreSEE[QUEEN] - PiecesScoreSEE[PAWN];
         }

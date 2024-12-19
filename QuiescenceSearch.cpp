@@ -178,7 +178,7 @@ int QuiescenceSearch(BoardItem* Board, int Alpha, int Beta, const int Depth, con
 
 #ifdef QUIESCENCE_SEE_MOVE_PRUNING
         if (!InCheck && MoveList[MoveNumber].Move != HashMove) {
-            if (CaptureSEE(Board, MoveList[MoveNumber].Type, MoveList[MoveNumber].Move) < 0) { // Bad capture/quiet move
+            if (SEE(Board, MoveList[MoveNumber].Type, MoveList[MoveNumber].Move) < 0) { // Bad capture/quiet move
                 continue; // Next move
             }
         }
