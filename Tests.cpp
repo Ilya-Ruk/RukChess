@@ -602,7 +602,7 @@ void WinAtChessTest(void)
     Tests(WinAtChessTests, WinAtChessTestCount);
 }
 
-void PerformanceTest(void)
+void SearchPerformanceTest(void)
 {
     int MaxCycles;
     int MaxMoves;
@@ -658,7 +658,7 @@ void PerformanceTest(void)
     }
 }
 
-void TestsEvaluate(const char* Tests[], const int TestCount)
+void EvaluateTests(const char* Tests[], const int TestCount)
 {
     int MaxCycles;
 
@@ -711,8 +711,8 @@ void TestsEvaluate(const char* Tests[], const int TestCount)
     printf("EPS %lld\n", 1000000LL * (I64)TestCount * (I64)MaxCycles / EvaluateTotalTime);
 }
 
-void PerformanceTestEvaluate(void)
+void EvaluatePerformanceTest(void)
 {
-//    TestsEvaluate(BratkoKopecTests, BratkoKopecTestCount);
-    TestsEvaluate(WinAtChessTests, WinAtChessTestCount);
+//    EvaluateTests(BratkoKopecTests, BratkoKopecTestCount);
+    EvaluateTests(WinAtChessTests, WinAtChessTestCount);
 }

@@ -20,7 +20,7 @@ void GeneratorTest2(void);
 void BratkoKopecTest(void);
 void WinAtChessTest(void);
 
-void PerformanceTest(void);
-void PerformanceTestEvaluate(void);
+void SearchPerformanceTest(void);
+void EvaluatePerformanceTest(void);
 
 #endif // !TESTS_H

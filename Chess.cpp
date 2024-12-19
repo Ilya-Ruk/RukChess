@@ -182,8 +182,8 @@ int main(int argc, char** argv)
         printf(" 9: Bratko-Kopec test (24 positions)\n");
         printf("10: Win-At-Chess test (300 positions)\n");
 
-        printf("11: Built-in performance test\n");
-        printf("12: Built-in performance test (evaluate function)\n");
+        printf("11: Built-in search performance test\n");
+        printf("12: Built-in evaluate performance test\n");
 
         printf("13: Generate book file (book.txt) from PGN file (book.pgn)\n");
 
@@ -245,11 +245,11 @@ int main(int argc, char** argv)
                 break;
 
             case 11:
-                PerformanceTest();
+                SearchPerformanceTest();
                 break;
 
             case 12:
-                PerformanceTestEvaluate();
+                EvaluatePerformanceTest();
                 break;
 
             case 13:
