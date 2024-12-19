@@ -2,7 +2,7 @@
 
 ## RukChess 4.0.1 (19.12.2024)
 
-1. Time control bugfix
+1. Time control bugfix (https://github.com/Ilya-Ruk/RukChess/issues/5)
 2. Added UCI option ReduceTime
 3. Corrected the code
 
