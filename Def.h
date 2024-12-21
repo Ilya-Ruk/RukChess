@@ -110,8 +110,8 @@
 
 #define MAX_TIME                                86400   // Maximum time per move, seconds
 
-#define DEFAULT_REDUCE_TIME                     25      // msec.
-#define MAX_REDUCE_TIME                         1000    // msec.
+#define DEFAULT_REDUCE_TIME                     25      // Milliseconds
+#define MAX_REDUCE_TIME                         1000    // Milliseconds
 
 #define MAX_MOVES_TO_GO                         25
 #define MAX_TIME_MOVES_TO_GO                    3
