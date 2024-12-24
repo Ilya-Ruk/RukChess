@@ -1,5 +1,9 @@
 # RukChess change log
 
+## RukChess 4.0.2 (dev)
+
+1. Corrected the code
+
 ## RukChess 4.0.1 (19.12.2024)
 
 1. Time control bugfix (https://github.com/Ilya-Ruk/RukChess/issues/5)

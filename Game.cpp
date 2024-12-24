@@ -55,7 +55,7 @@ void PrintBestMoves(const BoardItem* Board, const int Depth, const MoveItem* Bes
             printf(" score cp %d", BestScore);
         }
 
-        if (TotalTime > 1000ULL) {
+        if (TotalTime >= 1000ULL) {
             printf(" nps %llu", 1000ULL * Board->Nodes / TotalTime);
         }
 
@@ -106,7 +106,7 @@ BOOL PrintResult(const BOOL InCheck, const MoveItem BestMove, const MoveItem Pon
     if (PrintMode == PRINT_MODE_UCI) {
         printf("info nodes %llu", CurrentBoard.Nodes);
 
-        if (TotalTime > 1000ULL) {
+        if (TotalTime >= 1000ULL) {
             printf(" nps %llu", 1000ULL * CurrentBoard.Nodes / TotalTime);
         }
 
@@ -185,7 +185,7 @@ BOOL PrintResult(const BOOL InCheck, const MoveItem BestMove, const MoveItem Pon
 
         printf("Score %.2f Nodes %llu Hashfull %.2f%% Time %.2f", (double)BestScore / 100.0, CurrentBoard.Nodes, (double)FullHash() / 10.0, (double)TotalTime / 1000.0);
 
-        if (TotalTime > 1000ULL) {
+        if (TotalTime >= 1000ULL) {
             printf(" NPS %llu", 1000ULL * CurrentBoard.Nodes / TotalTime);
         }
 

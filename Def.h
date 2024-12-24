@@ -74,7 +74,7 @@
 // Program name, program version, evaluation function name and copyright information
 
 #define PROGRAM_NAME                            "RukChess"
-#define PROGRAM_VERSION                         "4.0.1"
+#define PROGRAM_VERSION                         "4.0.2dev"
 
 /*
     https://github.com/Ilya-Ruk/RukChessTrainer
@@ -103,7 +103,7 @@
 #define DEFAULT_THREADS                         1
 #define MAX_THREADS                             64
 
-#define DEFAULT_BOOK_FILE_NAME                  "book.txt"
+#define DEFAULT_BOOK_FILE_NAME                  "book.txt"              // 25.10.2024
 #define DEFAULT_NNUE_FILE_NAME                  "net-3ba7af1fe396.nnue" // 05.12.2024
 
 // Time management (Xiphos)

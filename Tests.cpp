@@ -653,7 +653,7 @@ void SearchPerformanceTest(void)
 
     printf("Average nodes %llu Average time %.2f\n", TotalTestNodes / (U64)MaxCycles, (double)TotalTestTime / (double)MaxCycles / 1000.0);
 
-    if (TotalTestTime > 1000ULL) {
+    if (TotalTestTime >= 1000ULL) {
         printf("NPS %llu\n", 1000ULL * TotalTestNodes / TotalTestTime);
     }
 }

@@ -390,6 +390,8 @@ void UCI(void)
             StopSearch = TRUE;
         }
         else if (strncmp(Part, "quit", 4) == 0) {
+            StopSearch = TRUE;
+
             return;
         }
         else {

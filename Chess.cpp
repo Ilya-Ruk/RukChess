@@ -122,10 +122,6 @@ int main(int argc, char** argv)
 
     SetRandState(Clock());
 
-    // Load book
-
-    BookFileLoaded = LoadBook(DEFAULT_BOOK_FILE_NAME);
-
     // Load network
 
     if (argc > 1) {
@@ -133,6 +129,15 @@ int main(int argc, char** argv)
     }
     else {
         NnueFileLoaded = LoadNetwork(DEFAULT_NNUE_FILE_NAME);
+    }
+
+    // Load book
+
+    if (argc > 2) {
+        BookFileLoaded = LoadBook(argv[2]);
+    }
+    else {
+        BookFileLoaded = LoadBook(DEFAULT_BOOK_FILE_NAME);
     }
 
     // UCI or Terminal User Interface (TUI)?
