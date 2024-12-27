@@ -30,27 +30,29 @@ Net file size: 4 bytes (magic) + 8 bytes (hash) + ((768 x 256) input weights + 2
 Quantization precision (input): 64  
 Quantization precision (output): 512
 
-# [Rating](https://computerchess.org.uk/ccrl/)
+# Rating
 
-## [CCRL Blitz](https://computerchess.org.uk/ccrl/404/) (08.12.2024)
+## [CCRL Blitz](https://computerchess.org.uk/ccrl/404/) (21.12.2024)
 
 |Version|Net|ELO|
 |-------|---|---|
 |3.0 NNUE2|[Net 001, Epoch 040, Hash 0x71eb63511cb1](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20001/rukchess_040.nnue)|3257|
 |3.0.15 NNUE2|[Net 070, Epoch 120, Hash 0x755b16a94877](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20070/rukchess_120.nnue)|3272|
-|3.0.17 NNUE2|[Net 110, Epoch 022, Hash 0x6e5001eb7720](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20110/rukchess_022.nnue)|3271|
+|3.0.17 NNUE2|[Net 110, Epoch 022, Hash 0x6e5001eb7720](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20110/rukchess_022.nnue)|3272|
+|4.0.0 NNUE2|[Net 159, Epoch 077, Hash 0x3ba7af1fe396](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20159/rukchess_077.nnue)|3306|
 
-## [CCRL 40/15](https://computerchess.org.uk/ccrl/4040/) (16.11.2024)
+## [CCRL 40/15](https://computerchess.org.uk/ccrl/4040/) (25.12.2024)
 
 |Version|Net|ELO|
 |-------|---|---|
-|3.0 NNUE2|[Net 001, Epoch 040, Hash 0x71eb63511cb1](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20001/rukchess_040.nnue)|3216|
-|3.0.12 NNUE2|[Net 001, Epoch 040, Hash 0x71eb63511cb1](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20001/rukchess_040.nnue)|3215|
+|3.0 NNUE2|[Net 001, Epoch 040, Hash 0x71eb63511cb1](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20001/rukchess_040.nnue)|3215|
+|3.0.12 NNUE2|[Net 001, Epoch 040, Hash 0x71eb63511cb1](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20001/rukchess_040.nnue)|3214|
 |3.0.15 NNUE2|[Net 070, Epoch 120, Hash 0x755b16a94877](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20070/rukchess_120.nnue)|3226|
-|3.0.15 NNUE2 (4 CPU)|[Net 070, Epoch 120, Hash 0x755b16a94877](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20070/rukchess_120.nnue)|3305|
+|3.0.15 NNUE2 (4 CPU)|[Net 070, Epoch 120, Hash 0x755b16a94877](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20070/rukchess_120.nnue)|3304|
 |3.0.17 NNUE2|[Net 110, Epoch 022, Hash 0x6e5001eb7720](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20110/rukchess_022.nnue)|3209|
 |3.0.18 NNUE2|[Net 122, Epoch 081, Hash 0x7cf57d4dc994](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20122/rukchess_081.nnue)|3230|
-|3.0.19 NNUE2|[Net 122, Epoch 081, Hash 0x7cf57d4dc994](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20122/rukchess_081.nnue)|3259|
+|3.0.19 NNUE2|[Net 122, Epoch 081, Hash 0x7cf57d4dc994](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20122/rukchess_081.nnue)|3261|
+|4.0.0 NNUE2|[Net 159, Epoch 077, Hash 0x3ba7af1fe396](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20159/rukchess_077.nnue)|3260|
 
 # Chess programs
 1. https://www.ioccc.org/years.html#1992_vern
