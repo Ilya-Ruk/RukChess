@@ -82,7 +82,7 @@
 */
 #define EVALUATION_FUNCTION_NAME                "NNUE2"
 
-#define YEARS                                   "1999-2024"
+#define YEARS                                   "1999-2025"
 #define AUTHOR                                  "Ilya Rukavishnikov"
 
 // Max. limits and default values
