@@ -226,6 +226,7 @@ extern const char MoveSubsequentChar[];
 extern const char StartFen[];
 
 extern BoardItem CurrentBoard;
+extern BoardItem ThreadBoardList[MAX_THREADS];
 
 #ifdef LATE_MOVE_PRUNING
 extern int LateMovePruningTable[7]; // [LMP depth]

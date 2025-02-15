@@ -245,7 +245,9 @@ BOOL ComputerMove(void)
 {
     BOOL InCheck;
 
-    BoardItem ThreadBoard;
+    int ThreadId;
+
+    BoardItem* ThreadBoard;
     int ThreadScore;
 
     volatile int ThreadDepth[MAX_PLY];
@@ -306,22 +308,28 @@ BOOL ComputerMove(void)
         goto Done;
     }
 
+    for (int Thread = 0; Thread < omp_get_max_threads(); ++Thread) {
+        ThreadBoardList[Thread] = CurrentBoard;
+    }
+
     for (int Depth = 0; Depth < MAX_PLY; ++Depth) {
         ThreadDepth[Depth] = 0;
     }
 
 #ifdef ASPIRATION_WINDOW
-#pragma omp parallel private(ThreadBoard, ThreadScore, SearchDepthCount, Alpha, Beta, Delta)
+#pragma omp parallel private(ThreadId, ThreadBoard, ThreadScore, SearchDepthCount, Alpha, Beta, Delta, TargetTimeLocal)
 #else
-#pragma omp parallel private(ThreadBoard, ThreadScore, SearchDepthCount)
+#pragma omp parallel private(ThreadId, ThreadBoard, ThreadScore, SearchDepthCount, TargetTimeLocal)
 #endif // ASPIRATION_WINDOW
     {
-#if defined(BIND_THREAD_V1) || defined(BIND_THREAD_V2)
-        BindThread(omp_get_thread_num());
-#endif // BIND_THREAD_V1 || BIND_THREAD_V2
+        ThreadId = omp_get_thread_num();
 
-        ThreadBoard = CurrentBoard;
+        ThreadBoard = &ThreadBoardList[ThreadId];
         ThreadScore = 0;
+
+#if defined(BIND_THREAD_V1) || defined(BIND_THREAD_V2)
+        BindThread(ThreadId);
+#endif // BIND_THREAD_V1 || BIND_THREAD_V2
 
         for (int Depth = 1; Depth <= MaxDepth; ++Depth) {
 #pragma omp critical
@@ -329,27 +337,27 @@ BOOL ComputerMove(void)
                 SearchDepthCount = ++ThreadDepth[Depth - 1];
             }
 
-            if (omp_get_thread_num() > 0) { // Helper thread
-                if (Depth > 1 && Depth < MaxDepth && SearchDepthCount > MAX((MaxThreads + 1) / 2, 2)) {
+            if (ThreadId > 0) { // Helper thread
+                if (Depth > 1 && Depth < MaxDepth && SearchDepthCount > MAX((omp_get_max_threads() + 1) / 2, 2)) {
                     continue; // Next depth
                 }
             }
 /*
 #pragma omp critical
             {
-                printf("-- Start: Depth = %d Thread number = %d\n", Depth, omp_get_thread_num());
+                printf("-- Start: Depth = %d Thread number = %d\n", Depth, ThreadId);
             }
 */
-            ThreadBoard.Nodes = 0ULL;
+            ThreadBoard->Nodes = 0ULL;
 
 #ifdef USE_STATISTIC
-            ThreadBoard.HashCount = 0ULL;
-            ThreadBoard.EvaluateCount = 0ULL;
-            ThreadBoard.CutoffCount = 0ULL;
-            ThreadBoard.QuiescenceCount = 0ULL;
+            ThreadBoard->HashCount = 0ULL;
+            ThreadBoard->EvaluateCount = 0ULL;
+            ThreadBoard->CutoffCount = 0ULL;
+            ThreadBoard->QuiescenceCount = 0ULL;
 #endif // USE_STATISTIC
 
-            ThreadBoard.SelDepth = 0;
+            ThreadBoard->SelDepth = 0;
 
 #ifdef ASPIRATION_WINDOW
             if (Depth >= ASPIRATION_WINDOW_START_DEPTH) {
@@ -359,7 +367,7 @@ BOOL ComputerMove(void)
                 Beta = MIN((ThreadScore + Delta), INF);
 
                 while (Delta <= INF) {
-                    ThreadScore = Search(&ThreadBoard, Alpha, Beta, Depth, 0, ThreadBoard.BestMovesRoot, TRUE, InCheck, FALSE, 0);
+                    ThreadScore = Search(ThreadBoard, Alpha, Beta, Depth, 0, ThreadBoard->BestMovesRoot, TRUE, InCheck, FALSE, 0);
 
                     if (StopSearch) {
                         break; // while
@@ -381,38 +389,38 @@ BOOL ComputerMove(void)
             }
             else {
 #endif // ASPIRATION_WINDOW
-                ThreadScore = Search(&ThreadBoard, -INF, INF, Depth, 0, ThreadBoard.BestMovesRoot, TRUE, InCheck, FALSE, 0);
+                ThreadScore = Search(ThreadBoard, -INF, INF, Depth, 0, ThreadBoard->BestMovesRoot, TRUE, InCheck, FALSE, 0);
 #ifdef ASPIRATION_WINDOW
             }
 #endif // ASPIRATION_WINDOW
 
 #pragma omp critical
             {
-//                printf("-- End: Depth = %d Thread number = %d\n", Depth, omp_get_thread_num());
+//                printf("-- End: Depth = %d Thread number = %d\n", Depth, ThreadId);
 
-                CurrentBoard.Nodes += ThreadBoard.Nodes;
+                CurrentBoard.Nodes += ThreadBoard->Nodes;
 
 #ifdef USE_STATISTIC
-                CurrentBoard.HashCount += ThreadBoard.HashCount;
-                CurrentBoard.EvaluateCount += ThreadBoard.EvaluateCount;
-                CurrentBoard.CutoffCount += ThreadBoard.CutoffCount;
-                CurrentBoard.QuiescenceCount += ThreadBoard.QuiescenceCount;
+                CurrentBoard.HashCount += ThreadBoard->HashCount;
+                CurrentBoard.EvaluateCount += ThreadBoard->EvaluateCount;
+                CurrentBoard.CutoffCount += ThreadBoard->CutoffCount;
+                CurrentBoard.QuiescenceCount += ThreadBoard->QuiescenceCount;
 #endif // USE_STATISTIC
 
-                CurrentBoard.SelDepth = MAX(CurrentBoard.SelDepth, ThreadBoard.SelDepth);
+                CurrentBoard.SelDepth = MAX(CurrentBoard.SelDepth, ThreadBoard->SelDepth);
             }
 
             if (StopSearch) {
                 break; // for (depth)
             }
 
-            if (omp_get_thread_num() == 0) { // Master thread
+            if (ThreadId == 0) { // Master thread
                 CompletedDepth = Depth;
 
 #pragma omp critical
                 {
                     for (int Ply = 0; Ply < MAX_PLY; ++Ply) {
-                        CurrentBoard.BestMovesRoot[Ply] = ThreadBoard.BestMovesRoot[Ply];
+                        CurrentBoard.BestMovesRoot[Ply] = ThreadBoard->BestMovesRoot[Ply];
 
                         if (!CurrentBoard.BestMovesRoot[Ply].Move) {
                             break; // for (ply)
@@ -435,7 +443,7 @@ BOOL ComputerMove(void)
                 }
             }
 
-            if (!ThreadBoard.BestMovesRoot[0].Move) { // No legal moves
+            if (!ThreadBoard->BestMovesRoot[0].Move) { // No legal moves
                 break; // for (depth)
             }
 
@@ -444,7 +452,7 @@ BOOL ComputerMove(void)
             }
         } // for
 
-        if (omp_get_thread_num() == 0) { // Master thread
+        if (ThreadId == 0) { // Master thread
             StopSearch = TRUE; // Stop helper threads
         }
     } // pragma omp parallel
