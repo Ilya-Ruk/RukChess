@@ -18,7 +18,7 @@ U64 PassantHash[64];        // [Square]
 BOOL InitHashTable(const int SizeInMb) // Xiphos
 {
     U64 Items;
-    U64 RoundItems = 1;
+    U64 RoundItems = 1ULL;
 
     HashItem* HashItemPointer;
 

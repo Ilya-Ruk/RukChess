@@ -89,7 +89,6 @@ void UCI(void)
             Part += 26;
 
             HashSize = atoi(Part);
-
             HashSize = (HashSize >= 1 && HashSize <= MAX_HASH_TABLE_SIZE) ? HashSize : DEFAULT_HASH_TABLE_SIZE;
 
             InitHashTable(HashSize);
@@ -99,7 +98,6 @@ void UCI(void)
             Part += 29;
 
             Threads = atoi(Part);
-
             Threads = (Threads >= 1 && Threads <= MaxThreads) ? Threads : DEFAULT_THREADS;
 
             omp_set_num_threads(Threads);
