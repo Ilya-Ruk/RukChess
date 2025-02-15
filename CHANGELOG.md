@@ -2,13 +2,20 @@
 
 ## RukChess 4.0.2 (dev)
 
-1. Corrected the code
+1. Changed MAX_MOVES_TO_GO from 25 to 40
+2. Save best moves in all threads
+3. Added array (ThreadBoardList) to store board for thread
+4. Added the ability to specify the name of the book file in a parameter to the program
+5. Corrected the code
 
 ## RukChess 4.0.1 (19.12.2024)
 
 1. Time control bugfix (https://github.com/Ilya-Ruk/RukChess/issues/5)
 2. Added UCI option ReduceTime
-3. Corrected the code
+3. Changed MAX_MOVES_TO_GO from 40 to 25
+4. Changed DEFAULT_REDUCE_TIME from 150 to 25 milliseconds
+5. Changed time control from 32767 to 4095 nodes
+6. Corrected the code
 
 ## RukChess 4.0.0 (10.12.2024)
 
@@ -33,9 +40,9 @@
 19. Deleted MCTS
 20. Mate distance pruning after draw conditions and if not root node
 21. Added built-in performance test NNUE
-22. Save best moves only in master thread (function Search)
-23. Deleted use SaveBestMoves function from function QuiescenceSearch
-24. Changed MAX_THREADS from 128 to 64
+22. Save best moves only in master thread
+23. Don't save best moves in QuiescenceSearch function
+24. Changed MAX_THREADS from 128 to 64 (MSVC limit for OpenMP)
 25. Corrected ComputerMove function
 26. Added allocate memory error check
 27. Changed time control from 65535 to 32767 nodes
