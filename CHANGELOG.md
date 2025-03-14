@@ -1,5 +1,10 @@
 # RukChess change log
 
+## RukChess 4.0.3 (dev)
+
+1. Pure shared hash table
+2. Corrected the code
+
 ## RukChess 4.0.2 (15.02.2025)
 
 1. Changed MAX_MOVES_TO_GO from 25 to 40

@@ -250,10 +250,6 @@ BOOL ComputerMove(void)
     BoardItem* ThreadBoard;
     int ThreadScore;
 
-    volatile int ThreadDepth[MAX_PLY];
-
-    int SearchDepthCount;
-
 #ifdef ASPIRATION_WINDOW
     int Alpha;
     int Beta;
@@ -312,14 +308,10 @@ BOOL ComputerMove(void)
         ThreadBoardList[Thread] = CurrentBoard;
     }
 
-    for (int Depth = 0; Depth < MAX_PLY; ++Depth) {
-        ThreadDepth[Depth] = 0;
-    }
-
 #ifdef ASPIRATION_WINDOW
-#pragma omp parallel private(ThreadId, ThreadBoard, ThreadScore, SearchDepthCount, Alpha, Beta, Delta, TargetTimeLocal)
+#pragma omp parallel private(ThreadId, ThreadBoard, ThreadScore, Alpha, Beta, Delta, TargetTimeLocal)
 #else
-#pragma omp parallel private(ThreadId, ThreadBoard, ThreadScore, SearchDepthCount, TargetTimeLocal)
+#pragma omp parallel private(ThreadId, ThreadBoard, ThreadScore, TargetTimeLocal)
 #endif // ASPIRATION_WINDOW
     {
         ThreadId = omp_get_thread_num();
@@ -332,16 +324,6 @@ BOOL ComputerMove(void)
 #endif // BIND_THREAD_V1 || BIND_THREAD_V2
 
         for (int Depth = 1; Depth <= MaxDepth; ++Depth) {
-#pragma omp critical
-            {
-                SearchDepthCount = ++ThreadDepth[Depth - 1];
-            }
-
-            if (ThreadId > 0) { // Helper thread
-                if (Depth > 1 && Depth < MaxDepth && SearchDepthCount > MAX((omp_get_max_threads() + 1) / 2, 2)) {
-                    continue; // Next depth
-                }
-            }
 /*
 #pragma omp critical
             {
