@@ -132,7 +132,7 @@ void UCI(void)
             Part += 32;
 
             ReduceTime = (U64)atoi(Part);
-            ReduceTime = (ReduceTime >= 1 && ReduceTime <= MAX_REDUCE_TIME) ? ReduceTime : DEFAULT_REDUCE_TIME;
+            ReduceTime = (ReduceTime >= 1ULL && ReduceTime <= (U64)MAX_REDUCE_TIME) ? ReduceTime : (U64)DEFAULT_REDUCE_TIME;
         }
         else if (strncmp(Part, "position ", 9) == 0) {
             Part += 9;

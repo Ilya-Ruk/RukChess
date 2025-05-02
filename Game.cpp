@@ -19,7 +19,7 @@ int MaxThreads;
 int MaxDepth;
 U64 MaxTime;
 
-U64 ReduceTime = DEFAULT_REDUCE_TIME;
+U64 ReduceTime = (U64)DEFAULT_REDUCE_TIME;
 
 U64 TimeForMove;
 
