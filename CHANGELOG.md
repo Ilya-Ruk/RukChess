@@ -4,6 +4,8 @@
 
 1. Pure shared hash table
 2. Corrected the code
+3. Increased hidden layer from 256 to 512
+4. New neural net "[Net 177, Epoch 100, Hash 0x7520daeb2a9e](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20177/rukchess_100.nnue)"
 
 ## RukChess 4.0.2 (15.02.2025)
 

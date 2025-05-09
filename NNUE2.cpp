@@ -12,23 +12,23 @@
 #include "Utils.h"
 
 #define NNUE_FILE_MAGIC             ('B' | 'R' << 8 | 'K' << 16 | 'R' << 24)
-//#define NNUE_FILE_HASH            0x00003BA7AF1FE396
-#define NNUE_FILE_SIZE              789520
+//#define NNUE_FILE_HASH            0X00007520DAEB2A9E
+#define NNUE_FILE_SIZE              1579024
 
 #define INPUT_DIMENSION             768
-#define HIDDEN_DIMENSION            256
+#define HIDDEN_DIMENSION            512
 #define OUTPUT_DIMENSION            1
 
 #define QUANTIZATION_PRECISION_IN   64
 #define QUANTIZATION_PRECISION_OUT  512
 
 #ifdef USE_NNUE_AVX2
-#define NUM_REGS                    (HIDDEN_DIMENSION * sizeof(I16) / sizeof(__m256i)) // 16
+#define NUM_REGS                    (HIDDEN_DIMENSION * sizeof(I16) / sizeof(__m256i)) // 32
 #endif // USE_NNUE_AVX2
 
-_declspec(align(64)) I16 InputWeights[INPUT_DIMENSION * HIDDEN_DIMENSION];  // 768 x 256 = 196608
-_declspec(align(64)) I16 InputBiases[HIDDEN_DIMENSION];                     // 256
-_declspec(align(64)) I16 OutputWeights[HIDDEN_DIMENSION * 2];               // 256 x 2 = 512
+_declspec(align(64)) I16 InputWeights[INPUT_DIMENSION * HIDDEN_DIMENSION];  // 768 x 512 = 393216
+_declspec(align(64)) I16 InputBiases[HIDDEN_DIMENSION];                     // 512
+_declspec(align(64)) I16 OutputWeights[HIDDEN_DIMENSION * 2];               // 512 x 2 = 1024
 I32 OutputBias;                                                             // 1
 
 BOOL NnueFileLoaded = FALSE;
@@ -106,7 +106,7 @@ BOOL LoadNetwork(const char* NnueFileName)
     MaxValue = -FLT_MAX;
 #endif // PRINT_MIN_MAX_VALUES
 
-    for (int Index = 0; Index < INPUT_DIMENSION * HIDDEN_DIMENSION; ++Index) { // 768 x 256 = 196608
+    for (int Index = 0; Index < INPUT_DIMENSION * HIDDEN_DIMENSION; ++Index) { // 768 x 512 = 393216
         fread(&Value, sizeof(float), 1, File);
 
 #ifdef PRINT_MIN_MAX_VALUES
@@ -128,7 +128,7 @@ BOOL LoadNetwork(const char* NnueFileName)
     MaxValue = -FLT_MAX;
 #endif // PRINT_MIN_MAX_VALUES
 
-    for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) { // 256
+    for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) { // 512
         fread(&Value, sizeof(float), 1, File);
 
 #ifdef PRINT_MIN_MAX_VALUES
@@ -150,7 +150,7 @@ BOOL LoadNetwork(const char* NnueFileName)
     MaxValue = -FLT_MAX;
 #endif // PRINT_MIN_MAX_VALUES
 
-    for (int Index = 0; Index < HIDDEN_DIMENSION * 2; ++Index) { // 256 x 2 = 512
+    for (int Index = 0; Index < HIDDEN_DIMENSION * 2; ++Index) { // 512 x 2 = 1024
         fread(&Value, sizeof(float), 1, File);
 
 #ifdef PRINT_MIN_MAX_VALUES
@@ -258,11 +258,11 @@ void RefreshAccumulator(BoardItem* Board)
 
             __m256i* Column = (__m256i*)&InputWeights[WeightIndex * HIDDEN_DIMENSION];
 
-            for (int Reg = 0; Reg < NUM_REGS; ++Reg) { // 16
+            for (int Reg = 0; Reg < NUM_REGS; ++Reg) { // 32
                 AccumulatorTile[Reg] = _mm256_add_epi16(AccumulatorTile[Reg], Column[Reg]);
             }
 #else
-            for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) { // 256
+            for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) { // 512
                 (*Accumulation)[Perspective][Index] += InputWeights[WeightIndex * HIDDEN_DIMENSION + Index];
             }
 #endif // USE_NNUE_AVX2
@@ -287,11 +287,11 @@ void AccumulatorAdd(BoardItem* Board, const int Perspective, const int WeightInd
 
     __m256i* Column = (__m256i*)&InputWeights[WeightIndex * HIDDEN_DIMENSION];
 
-    for (int Reg = 0; Reg < NUM_REGS; ++Reg) { // 16
+    for (int Reg = 0; Reg < NUM_REGS; ++Reg) { // 32
         AccumulatorTile[Reg] = _mm256_add_epi16(AccumulatorTile[Reg], Column[Reg]);
     }
 #else
-    for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) { // 256
+    for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) { // 512
         (*Accumulation)[Perspective][Index] += InputWeights[WeightIndex * HIDDEN_DIMENSION + Index];
     }
 #endif // USE_NNUE_AVX2
@@ -306,11 +306,11 @@ void AccumulatorSub(BoardItem* Board, const int Perspective, const int WeightInd
 
     __m256i* Column = (__m256i*)&InputWeights[WeightIndex * HIDDEN_DIMENSION];
 
-    for (int Reg = 0; Reg < NUM_REGS; ++Reg) { // 16
+    for (int Reg = 0; Reg < NUM_REGS; ++Reg) { // 32
         AccumulatorTile[Reg] = _mm256_sub_epi16(AccumulatorTile[Reg], Column[Reg]);
     }
 #else
-    for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) { // 256
+    for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) { // 512
         (*Accumulation)[Perspective][Index] -= InputWeights[WeightIndex * HIDDEN_DIMENSION + Index];
     }
 #endif // USE_NNUE_AVX2
@@ -392,7 +392,7 @@ BOOL UpdateAccumulator(BoardItem* Board)
     RefreshAccumulator(Board);
 
     for (int Perspective = 0; Perspective < 2; ++Perspective) { // White/Black
-        for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) { // 256
+        for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) { // 512
             if (Board->Accumulator.Accumulation[Perspective][Index] != Accumulator.Accumulation[Perspective][Index]) {
                 printf("-- Accumulator error! Color = %d Piece = %d From = %d To = %d Move type = %d\n", CHANGE_COLOR(Board->CurrentColor), Info->PieceTypeFrom, Info->From, Info->To, Info->Type);
 
@@ -414,7 +414,7 @@ I32 OutputLayer(BoardItem* Board)
     I32 Result = OutputBias;
 
 #ifdef PRINT_ACCUMULATOR
-    for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) { // 256
+    for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) { // 512
         const I16 Acc0 = Board->Accumulator.Accumulation[Board->CurrentColor][Index];
         const I16 Acc1 = Board->Accumulator.Accumulation[CHANGE_COLOR(Board->CurrentColor)][Index];
 
@@ -434,7 +434,7 @@ I32 OutputLayer(BoardItem* Board)
     __m256i* Weights0 = (__m256i*)&OutputWeights;
     __m256i* Weights1 = (__m256i*)&OutputWeights[HIDDEN_DIMENSION];
 
-    for (int Reg = 0; Reg < NUM_REGS; ++Reg) { // 16
+    for (int Reg = 0; Reg < NUM_REGS; ++Reg) { // 32
         const __m256i Acc0 = _mm256_max_epi16(ConstZero, AccumulatorTile0[Reg]); // ReLU
         const __m256i Acc1 = _mm256_max_epi16(ConstZero, AccumulatorTile1[Reg]); // ReLU
 
@@ -451,12 +451,12 @@ I32 OutputLayer(BoardItem* Board)
 #else
     I16 (*Accumulation)[2][HIDDEN_DIMENSION] = &Board->Accumulator.Accumulation;
 
-    for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) { // 256
+    for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) { // 512
         const I16 Acc0 = MAX(0, (*Accumulation)[Board->CurrentColor][Index]); // ReLU
         const I16 Acc1 = MAX(0, (*Accumulation)[CHANGE_COLOR(Board->CurrentColor)][Index]); // ReLU
 
         Result += Acc0 * OutputWeights[Index]; // Offset 0
-        Result += Acc1 * OutputWeights[HIDDEN_DIMENSION + Index]; // Offset 256
+        Result += Acc1 * OutputWeights[HIDDEN_DIMENSION + Index]; // Offset 512
     }
 #endif // USE_NNUE_AVX2
 
@@ -471,7 +471,7 @@ int Evaluate(BoardItem* Board)
     ++Board->EvaluateCount;
 #endif // USE_STATISTIC
 
-    // Transform: Board -> (256 x 2)
+    // Transform: Board -> (512 x 2)
 
 #ifdef USE_NNUE_UPDATE
     if (!Board->Accumulator.AccumulationComputed) {
@@ -483,7 +483,7 @@ int Evaluate(BoardItem* Board)
     }
 #endif // USE_NNUE_UPDATE
 
-    // Output: (256 x 2) -> 1
+    // Output: (512 x 2) -> 1
 
     OutputValue = OutputLayer(Board);
 
