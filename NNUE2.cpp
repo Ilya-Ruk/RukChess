@@ -12,7 +12,7 @@
 #include "Utils.h"
 
 #define NNUE_FILE_MAGIC             ('B' | 'R' << 8 | 'K' << 16 | 'R' << 24)
-//#define NNUE_FILE_HASH            0X00007520DAEB2A9E
+//#define NNUE_FILE_HASH            0X00007342FB032855
 #define NNUE_FILE_SIZE              1579024
 
 #define INPUT_DIMENSION             768

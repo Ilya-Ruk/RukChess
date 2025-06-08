@@ -1,11 +1,11 @@
 # RukChess change log
 
-## RukChess 4.0.3 (dev)
+## RukChess 4.1.0 (08.06.2025)
 
 1. Pure shared hash table
 2. Corrected the code
 3. Increased hidden layer from 256 to 512
-4. New neural net "[Net 177, Epoch 100, Hash 0x7520daeb2a9e](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20177/rukchess_100.nnue)"
+4. New neural net "[Net 183, Epoch 111, Hash 0x7342fb032855](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20183/rukchess_111.nnue)"
 
 ## RukChess 4.0.2 (15.02.2025)
 
