@@ -71,18 +71,12 @@
 
 // Parameter values
 
-// Program name, program version, evaluation function name and copyright information
+// Program name, program version and copyright information
 
 #define PROGRAM_NAME                            "RukChess"
 #define PROGRAM_VERSION                         "4.1.0"
 
-/*
-    https://github.com/Ilya-Ruk/RukChessTrainer
-    https://github.com/Ilya-Ruk/RukChessNets
-*/
-#define EVALUATION_FUNCTION_NAME                "NNUE2"
-
-#define YEARS                                   "1999-2025"
+#define YEAR                                    "2025"
 #define AUTHOR                                  "Ilya Rukavishnikov"
 
 // Max. limits and default values

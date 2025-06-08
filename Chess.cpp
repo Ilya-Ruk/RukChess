@@ -23,10 +23,10 @@ int main(int argc, char** argv)
 
     int Choice;
 
-    // Print program name, program version, evaluation function name and copyright information
+    // Print program name, program version and copyright information
 
-    printf("%s %s %s\n", PROGRAM_NAME, PROGRAM_VERSION, EVALUATION_FUNCTION_NAME);
-    printf("Copyright (C) %s %s\n", YEARS, AUTHOR);
+    printf("%s %s\n", PROGRAM_NAME, PROGRAM_VERSION);
+    printf("Copyright (C) %s %s\n", YEAR, AUTHOR);
 
     // Print debug information
 
