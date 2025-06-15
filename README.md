@@ -19,40 +19,43 @@ In 1999, I came across the source code of a chess program (now available at http
 1. [RukChessWeb](https://github.com/Ilya-Ruk/RukChessWeb)
 
 # Architecture of efficiently updatable neural network (NNUE)
-((768 input x 256 hidden) x 2 perspectives) x 1 output
+((768 input x 512 hidden) x 2 perspectives) x 1 output
 
 Input layer: 2 colors x 6 pieces x 64 squares = 768  
-Hidden layer (ReLU): 256 hidden x 2 perspectives = 512  
+Hidden layer (ReLU): 512 hidden x 2 perspectives = 1024  
 Output layer: 1
 
-Net file size: 4 bytes (magic) + 8 bytes (hash) + ((768 x 256) input weights + 256 input biases + (256 x 2) output weights + 1 output bias) x 4 bytes (float) = 789520 bytes
+Net file size: 4 bytes (magic) + 8 bytes (hash) + ((768 x 512) input weights + 512 input biases + (512 x 2) output weights + 1 output bias) x 4 bytes (float) = 1579024 bytes
 
 Quantization precision (input): 64  
 Quantization precision (output): 512
 
 # Rating
 
-## [CCRL Blitz](https://computerchess.org.uk/ccrl/404/) (15.02.2025)
+## [CCRL Blitz](https://computerchess.org.uk/ccrl/404/) (14.06.2025)
 
 |Version|Net|ELO|
 |-------|---|---|
-|3.0 NNUE2|[Net 001, Epoch 040, Hash 0x71eb63511cb1](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20001/rukchess_040.nnue)|3258|
-|3.0.15 NNUE2|[Net 070, Epoch 120, Hash 0x755b16a94877](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20070/rukchess_120.nnue)|3273|
-|3.0.17 NNUE2|[Net 110, Epoch 022, Hash 0x6e5001eb7720](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20110/rukchess_022.nnue)|3273|
-|4.0.0 NNUE2|[Net 159, Epoch 077, Hash 0x3ba7af1fe396](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20159/rukchess_077.nnue)|3303|
+|3.0 NNUE2|[Net 001, Epoch 040, Hash 0x71eb63511cb1](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20001/rukchess_040.nnue)|3252|
+|3.0.15 NNUE2|[Net 070, Epoch 120, Hash 0x755b16a94877](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20070/rukchess_120.nnue)|3266|
+|3.0.17 NNUE2|[Net 110, Epoch 022, Hash 0x6e5001eb7720](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20110/rukchess_022.nnue)|3267|
+|4.0.0 NNUE2|[Net 159, Epoch 077, Hash 0x3ba7af1fe396](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20159/rukchess_077.nnue)|3295|
+|4.1.0 NNUE2|[Net 183, Epoch 111, Hash 0x7342fb032855](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20183/rukchess_111.nnue)|3339|
 
-## [CCRL 40/15](https://computerchess.org.uk/ccrl/4040/) (14.02.2025)
+## [CCRL 40/15](https://computerchess.org.uk/ccrl/4040/) (14.06.2025)
 
 |Version|Net|ELO|
 |-------|---|---|
 |3.0 NNUE2|[Net 001, Epoch 040, Hash 0x71eb63511cb1](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20001/rukchess_040.nnue)|3215|
-|3.0.12 NNUE2|[Net 001, Epoch 040, Hash 0x71eb63511cb1](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20001/rukchess_040.nnue)|3214|
+|3.0.12 NNUE2|[Net 001, Epoch 040, Hash 0x71eb63511cb1](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20001/rukchess_040.nnue)|3211|
 |3.0.15 NNUE2|[Net 070, Epoch 120, Hash 0x755b16a94877](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20070/rukchess_120.nnue)|3225|
-|3.0.15 NNUE2 (4 CPU)|[Net 070, Epoch 120, Hash 0x755b16a94877](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20070/rukchess_120.nnue)|3304|
-|3.0.17 NNUE2|[Net 110, Epoch 022, Hash 0x6e5001eb7720](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20110/rukchess_022.nnue)|3208|
-|3.0.18 NNUE2|[Net 122, Epoch 081, Hash 0x7cf57d4dc994](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20122/rukchess_081.nnue)|3229|
-|3.0.19 NNUE2|[Net 122, Epoch 081, Hash 0x7cf57d4dc994](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20122/rukchess_081.nnue)|3261|
-|4.0.1 NNUE2|[Net 159, Epoch 077, Hash 0x3ba7af1fe396](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20159/rukchess_077.nnue)|3229|
+|3.0.15 NNUE2 (4 CPU)|[Net 070, Epoch 120, Hash 0x755b16a94877](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20070/rukchess_120.nnue)|3305|
+|3.0.17 NNUE2|[Net 110, Epoch 022, Hash 0x6e5001eb7720](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20110/rukchess_022.nnue)|3209|
+|3.0.18 NNUE2|[Net 122, Epoch 081, Hash 0x7cf57d4dc994](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20122/rukchess_081.nnue)|3230|
+|3.0.19 NNUE2|[Net 122, Epoch 081, Hash 0x7cf57d4dc994](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20122/rukchess_081.nnue)|3263|
+|4.0.1 NNUE2|[Net 159, Epoch 077, Hash 0x3ba7af1fe396](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20159/rukchess_077.nnue)|3235|
+|4.0.2 NNUE2|[Net 159, Epoch 077, Hash 0x3ba7af1fe396](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20159/rukchess_077.nnue)|3255|
+|4.1.0 NNUE2|[Net 183, Epoch 111, Hash 0x7342fb032855](https://github.com/Ilya-Ruk/RukChessNets/blob/master/Nets%20183/rukchess_111.nnue)|?|
 
 # Chess programs
 1. https://www.ioccc.org/years.html#1992_vern
