@@ -429,7 +429,7 @@ BOOL ComputerMove(void)
                 break; // for (depth)
             }
 
-            if (ThreadScore < -INF + Depth || ThreadScore > INF - Depth) { // Checkmate
+            if (ThreadScore <= -INF + Depth || ThreadScore >= INF - Depth) { // Checkmate
                 break; // for (depth)
             }
         } // for
