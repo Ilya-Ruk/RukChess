@@ -358,8 +358,9 @@ BOOL ComputerMove(void)
                     Delta += Delta / 4 + 5;
 
                     if (ThreadScore <= Alpha) {
-                        Alpha = MAX((ThreadScore - Delta), -INF);
                         Beta = (Alpha + Beta) / 2;
+
+                        Alpha = MAX((ThreadScore - Delta), -INF);
                     }
                     else if (ThreadScore >= Beta) {
                         Beta = MIN((ThreadScore + Delta), INF);

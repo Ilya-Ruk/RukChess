@@ -1,5 +1,13 @@
 # RukChess change log
 
+## RukChess 4.2.0 (11.01.2026)
+
+1. Disabled CHECK_EXTENSION
+2. Added COUNTER_MOVE_HISTORY_EXTENSION
+3. Changed MAX_HEURISTIC_SCORE to 8192
+4. Changed BONUS formula
+5. Corrected the code
+
 ## RukChess 4.1.0 (08.06.2025)
 
 1. Pure shared hash table

@@ -522,6 +522,17 @@ NextMove:
         }
 #endif // SINGULAR_EXTENSION
 
+#if defined(COUNTER_MOVE_HISTORY) && defined(COUNTER_MOVE_HISTORY_EXTENSION)
+        if (
+            !Extension
+            && !(MoveList[MoveNumber].Type & (MOVE_CAPTURE | MOVE_PAWN_PROMOTE)) // Not capture/promote move
+            && (CMH_Pointer[0] && CMH_Pointer[0][(PIECE_TYPE(Board->Pieces[MOVE_FROM(MoveList[MoveNumber].Move)]) << 6) + MOVE_TO(MoveList[MoveNumber].Move)] >= MAX_HEURISTIC_SCORE / 2)
+            && (CMH_Pointer[1] && CMH_Pointer[1][(PIECE_TYPE(Board->Pieces[MOVE_FROM(MoveList[MoveNumber].Move)]) << 6) + MOVE_TO(MoveList[MoveNumber].Move)] >= MAX_HEURISTIC_SCORE / 2)
+        ) { // Xiphos
+            Extension = 1;
+        }
+#endif // COUNTER_MOVE_HISTORY && COUNTER_MOVE_HISTORY_EXTENSION
+
 #if defined(FUTILITY_PRUNING) || defined(LATE_MOVE_PRUNING) || defined(SEE_QUIET_MOVE_PRUNING) || defined(SEE_CAPTURE_MOVE_PRUNING)
         if (
             !Extension
@@ -588,13 +599,13 @@ NextMove:
 
         NewDepth = Depth - 1 + Extension;
 
-        if (IsPrincipal && LegalMoveCount == 1) { // First move
+        if (IsPrincipal && LegalMoveCount == 1) {
             // Search with full window
             TempBestMoves[0] = (MoveItem){ 0, 0, 0 }; // End of move list
 
             Score = -Search(Board, -Beta, -Alpha, NewDepth, Ply + 1, TempBestMoves, TRUE, GiveCheck, TRUE, 0);
         }
-        else { // Other moves
+        else { // !IsPrincipal || LegalMoveCount > 1
 #ifdef LATE_MOVE_REDUCTION
             if (
                 !Extension

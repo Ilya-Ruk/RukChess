@@ -13,6 +13,8 @@
 #define MAX(First, Second)  ((First) >= (Second) ? (First) : (Second))
 #define MIN(First, Second)  ((First) < (Second) ? (First) : (Second))
 
+#define SQR(Value)          ((Value) * (Value))
+
 /*
     Time in milliseconds since midnight (00:00:00), January 1, 1970, coordinated universal time (UTC)
 */

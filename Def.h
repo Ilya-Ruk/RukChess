@@ -43,8 +43,9 @@
 #define KILLER_MOVE                             // Two killer moves
 #define COUNTER_MOVE
 #define BAD_CAPTURE_LAST
-#define CHECK_EXTENSION
+//#define CHECK_EXTENSION
 #define SINGULAR_EXTENSION
+#define COUNTER_MOVE_HISTORY_EXTENSION          // Required COUNTER_MOVE_HISTORY
 #define FUTILITY_PRUNING
 #define LATE_MOVE_PRUNING
 #define SEE_QUIET_MOVE_PRUNING
@@ -74,9 +75,9 @@
 // Program name, program version and copyright information
 
 #define PROGRAM_NAME                            "RukChess"
-#define PROGRAM_VERSION                         "4.1.0"
+#define PROGRAM_VERSION                         "4.2.0"
 
-#define YEAR                                    "2025"
+#define YEAR                                    "2026"
 #define AUTHOR                                  "Ilya Rukavishnikov"
 
 // Max. limits and default values
