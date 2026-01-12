@@ -1,5 +1,9 @@
 # RukChess change log
 
+## RukChess 4.3.0 (dev)
+
+1. Disabled pruning in IID
+
 ## RukChess 4.2.0 (11.01.2026)
 
 1. Disabled CHECK_EXTENSION

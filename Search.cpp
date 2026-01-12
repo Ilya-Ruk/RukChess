@@ -372,7 +372,7 @@ int Search(BoardItem* Board, int Alpha, int Beta, int Depth, const int Ply, Move
         // Search with full window for reduced depth
         TempBestMoves[0] = (MoveItem){ 0, 0, 0 }; // End of move list
 
-        Search(Board, Alpha, Beta, (IsPrincipal ? Depth - 2 : Depth / 2), Ply, TempBestMoves, IsPrincipal, InCheck, UsePruning, 0);
+        Search(Board, Alpha, Beta, (IsPrincipal ? Depth - 2 : Depth / 2), Ply, TempBestMoves, IsPrincipal, InCheck, FALSE, 0);
 
         if (StopSearch) {
             return 0;
