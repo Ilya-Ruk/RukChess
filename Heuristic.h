@@ -9,9 +9,9 @@
 #include "Def.h"
 #include "Utils.h"
 
-#define MAX_HEURISTIC_SCORE     (1 << 13)
+#define MAX_HEURISTIC_SCORE     (1 << 14) // 16384
 
-#define BONUS(Depth)            (SQR(MIN((Depth), 16)) * 32)
+#define BONUS(Depth)            (SQR(MIN((Depth), 16)) * 64) // Max. 16384
 
 void UpdateHeuristic(BoardItem* Board, int** CMH_Pointer, const int Move, const int Bonus);
 void ClearHeuristic(BoardItem* Board);
