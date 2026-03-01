@@ -21,7 +21,7 @@ typedef struct Node {
     int Total;
 
     struct Node* Children[MAX_CHILDREN];
-} NodeItem; // 284 bytes (aligned 288 bytes)
+} NodeItem; // 288 bytes
 
 typedef struct {
     U64 Hash;
@@ -30,13 +30,13 @@ typedef struct {
     int To;
 
     int Total;
-} BookItem; // 20 bytes (aligned 24 bytes)
+} BookItem; // 24 bytes
 
 typedef struct {
     int Count;
 
     BookItem* Item;
-} BookStoreItem;
+} BookStoreItem; // 16 bytes
 
 extern BookStoreItem BookStore;
 
@@ -45,6 +45,7 @@ extern BOOL BookFileLoaded;
 void GenerateBook(void);
 
 BOOL LoadBook(const char* BookFileName);
+void FreeBook(void);
 
 BOOL GetBookMove(const BoardItem* Board, MoveItem* BestMoves);
 

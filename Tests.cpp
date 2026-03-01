@@ -462,7 +462,7 @@ void GeneratorTest1(void)
     // Cache not used
 
     InitHashTable(1);
-    ClearHash();
+    ClearHashTable();
 
     // Threads not used
 
@@ -504,7 +504,7 @@ void GeneratorTest2(void)
     // Cache not used
 
     InitHashTable(1);
-    ClearHash();
+    ClearHashTable();
 
     // Threads not used
 
@@ -558,7 +558,7 @@ void Tests(const char* Tests[], const int TestCount)
 
         SetFen(&CurrentBoard, Fen);
 
-        ClearHash();
+        ClearHashTable();
 
         PrintBoard(&CurrentBoard);
 
@@ -633,7 +633,7 @@ void SearchPerformanceTest(void)
 
         SetFen(&CurrentBoard, StartFen);
 
-        ClearHash();
+        ClearHashTable();
 
         PrintBoard(&CurrentBoard);
 

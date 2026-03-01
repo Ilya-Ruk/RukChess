@@ -83,7 +83,7 @@ void UCI(void)
         else if (strncmp(Part, "ucinewgame", 10) == 0) {
             SetFen(&CurrentBoard, StartFen);
 
-            ClearHash();
+            ClearHashTable();
         }
         else if (strncmp(Part, "setoption name Hash value ", 26) == 0) {
             Part += 26;
@@ -92,7 +92,7 @@ void UCI(void)
             HashSize = (HashSize >= 1 && HashSize <= MAX_HASH_TABLE_SIZE) ? HashSize : DEFAULT_HASH_TABLE_SIZE;
 
             InitHashTable(HashSize);
-            ClearHash();
+            ClearHashTable();
         }
         else if (strncmp(Part, "setoption name Threads value ", 29) == 0) {
             Part += 29;

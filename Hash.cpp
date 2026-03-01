@@ -46,6 +46,18 @@ BOOL InitHashTable(const int SizeInMb) // Xiphos
     return TRUE;
 }
 
+void ClearHashTable(void)
+{
+    HashStore.Iteration = 0;
+
+    memset(HashStore.Item, 0, HashStore.Size);
+}
+
+void FreeHashTable(void)
+{
+    free(HashStore.Item);
+}
+
 void InitHashBoards(void)
 {
 //    printf("HashDataS = %zd HashDataU = %zd HashItem = %zd\n", sizeof(HashDataS), sizeof(HashDataU), sizeof(HashItem));
@@ -110,13 +122,6 @@ void InitHash(BoardItem* Board)
     }
 
     Board->Hash = Hash;
-}
-
-void ClearHash(void)
-{
-    HashStore.Iteration = 0;
-
-    memset(HashStore.Item, 0, HashStore.Size);
 }
 
 void AddHashStoreIteration(void)

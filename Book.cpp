@@ -167,7 +167,7 @@ void GenerateBook(void)
     // Cache not used
 
     InitHashTable(1);
-    ClearHash();
+    ClearHashTable();
 
     // Threads not used
 
@@ -659,6 +659,13 @@ BOOL LoadBook(const char* BookFileName)
     printf("Load book...DONE (%d)\n", BookStore.Count);
 
     return TRUE;
+}
+
+void FreeBook(void)
+{
+    if (BookFileLoaded) {
+        free(BookStore.Item);
+    }
 }
 
 BOOL GetBookMove(const BoardItem* Board, MoveItem* BestMoves)
