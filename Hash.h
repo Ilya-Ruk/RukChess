@@ -44,7 +44,7 @@ typedef struct {
     U8 Iteration; // 4 bits
 
     HashItem* Item;
-} HashStoreItem;
+} HashStoreItem; // 32 bytes
 
 extern HashStoreItem HashStore;
 
@@ -53,12 +53,12 @@ extern U64 ColorHash;
 extern U64 PassantHash[64];     // [Square]
 
 BOOL InitHashTable(const int SizeInMb); // Xiphos
+void ClearHashTable(void);
+void FreeHashTable(void);
 
 void InitHashBoards(void);
 
 void InitHash(BoardItem* Board);
-
-void ClearHash(void);
 
 void AddHashStoreIteration(void);
 

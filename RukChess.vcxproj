@@ -76,6 +76,7 @@
     <ClCompile Include="Gen.cpp" />
     <ClCompile Include="Hash.cpp" />
     <ClCompile Include="Heuristic.cpp" />
+    <ClCompile Include="MCTS.cpp" />
     <ClCompile Include="Move.cpp" />
     <ClCompile Include="NNUE2.cpp" />
     <ClCompile Include="QuiescenceSearch.cpp" />
@@ -97,6 +98,7 @@
     <ClInclude Include="Gen.h" />
     <ClInclude Include="Hash.h" />
     <ClInclude Include="Heuristic.h" />
+    <ClInclude Include="MCTS.h" />
     <ClInclude Include="Move.h" />
     <ClInclude Include="NNUE2.h" />
     <ClInclude Include="QuiescenceSearch.h" />

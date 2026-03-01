@@ -9,6 +9,7 @@
 #include "Game.h"
 #include "Gen.h"
 #include "Hash.h"
+#include "MCTS.h"
 #include "NNUE2.h"
 #include "Tests.h"
 #include "Tuning.h"
@@ -34,6 +35,7 @@ int main(int argc, char** argv)
 //    printf("AccumulatorItem = %zd\n", sizeof(AccumulatorItem));
 //    printf("HistoryItem = %zd\n", sizeof(HistoryItem));
 //    printf("BoardItem = %zd\n", sizeof(BoardItem));
+//    printf("NodeItemMCTS = %zd\n", sizeof(NodeItemMCTS));
 
 //    BoardItem Board;
 
@@ -79,7 +81,7 @@ int main(int argc, char** argv)
         goto Done;
     }
 
-    ClearHash();
+    ClearHashTable();
 
     printf("\n");
 
@@ -139,7 +141,7 @@ int main(int argc, char** argv)
         BookFileLoaded = LoadBook(DEFAULT_BOOK_FILE_NAME);
     }
 
-    // UCI or Terminal User Interface (TUI)?
+    // Universal Chess Interface (UCI) or Terminal User Interface (TUI)?
 
     printf("\n");
 
@@ -157,7 +159,7 @@ int main(int argc, char** argv)
         goto Done;
     }
 
-    // Terminal User Interface (TUI)
+    // TUI
 
     if (!NnueFileLoaded) {
         printf("Network not loaded!\n");
@@ -273,11 +275,9 @@ int main(int argc, char** argv)
 
 Done:
 
-    if (BookFileLoaded) {
-        free(BookStore.Item);
-    }
+    FreeBook();
 
-    free(HashStore.Item);
+    FreeHashTable();
 
     return 0;
 }

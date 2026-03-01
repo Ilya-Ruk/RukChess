@@ -82,7 +82,7 @@
 
 // Max. limits and default values
 
-#define MAX_PLY                                 128
+#define MAX_PLY                                 512
 
 #define MAX_GEN_MOVES                           256     // The maximum number of moves in the position
 #define MAX_GAME_MOVES                          1024    // The maximum number of moves in the game
@@ -94,6 +94,9 @@
 
 #define DEFAULT_HASH_TABLE_SIZE                 512     // Mbyte
 #define MAX_HASH_TABLE_SIZE                     4096    // Mbyte
+
+#define DEFAULT_MCTS_HASH_TABLE_SIZE            512     // Mbyte
+#define MAX_MCTS_HASH_TABLE_SIZE                4096    // Mbyte
 
 #define DEFAULT_THREADS                         1
 #define MAX_THREADS                             64

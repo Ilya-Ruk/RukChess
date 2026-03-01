@@ -10,6 +10,7 @@
 #include "Gen.h"
 #include "Hash.h"
 #include "Heuristic.h"
+#include "MCTS.h"
 #include "Move.h"
 #include "Search.h"
 #include "Types.h"
@@ -245,19 +246,19 @@ BOOL ComputerMove(void)
 {
     BOOL InCheck;
 
-    int ThreadId;
+//    int ThreadId;
 
-    BoardItem* ThreadBoard;
-    int ThreadScore;
+//    BoardItem* ThreadBoard;
+//    int ThreadScore;
 
 #ifdef ASPIRATION_WINDOW
-    int Alpha;
-    int Beta;
+//    int Alpha;
+//    int Beta;
 
-    int Delta;
+//    int Delta;
 #endif // ASPIRATION_WINDOW
 
-    U64 TargetTimeLocal;
+//    U64 TargetTimeLocal;
 
     int BestScore = 0;
 
@@ -304,6 +305,12 @@ BOOL ComputerMove(void)
         goto Done;
     }
 
+    MonteCarloTreeSearch(&CurrentBoard, CurrentBoard.BestMovesRoot, &BestScore);
+
+    CompletedDepth = 1;
+
+    PrintBestMoves(&CurrentBoard, CompletedDepth, CurrentBoard.BestMovesRoot, BestScore);
+/*
     for (int Thread = 0; Thread < omp_get_max_threads(); ++Thread) {
         ThreadBoardList[Thread] = CurrentBoard;
     }
@@ -329,7 +336,7 @@ BOOL ComputerMove(void)
             {
                 printf("-- Start: Depth = %d Thread number = %d\n", Depth, ThreadId);
             }
-*/
+*//*
             ThreadBoard->Nodes = 0ULL;
 
 #ifdef USE_STATISTIC
@@ -439,7 +446,7 @@ BOOL ComputerMove(void)
             StopSearch = TRUE; // Stop helper threads
         }
     } // pragma omp parallel
-
+*/
 Done:
 
     TimeStop = Clock();
@@ -644,7 +651,7 @@ void InputParametrs(void)
     InputHashSize = (InputHashSize >= 1 && InputHashSize <= MAX_HASH_TABLE_SIZE) ? InputHashSize : DEFAULT_HASH_TABLE_SIZE;
 
     InitHashTable(InputHashSize);
-    ClearHash();
+    ClearHashTable();
 
     printf("Threads (min. 1 max. %d; 0 = %d): ", MaxThreads, DEFAULT_THREADS);
     scanf_s("%d", &InputThreads);
