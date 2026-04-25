@@ -49,8 +49,8 @@ BOOL IsGameOver(BoardItem* Board, const int Ply, int* Result)
         if (Board->FiftyMove >= 100) {
             if (IsInCheck(Board, Board->CurrentColor)) {
                 if (!HasLegalMoves(Board)) { // Checkmate
-//                    *Result = -INF + Ply;
                     *Result = -1;
+//                    *Result = -INF + Ply;
 
 //                    printf("GameOver: FiftyMove -> Checkmate (%d)\n", *Result);
 
@@ -76,8 +76,8 @@ BOOL IsGameOver(BoardItem* Board, const int Ply, int* Result)
 
     if (!HasLegalMoves(Board)) { // No legal moves
         if (IsInCheck(Board, Board->CurrentColor)) { // Checkmate
-//            *Result = -INF + Ply;
             *Result = -1;
+//            *Result = -INF + Ply;
 
 //            printf("GameOver: Checkmate (%d)\n", *Result);
         }
@@ -263,6 +263,16 @@ NodeItemMCTS* TreePolicy(NodeItemMCTS* Node, BoardItem* Board, int* Ply)
     return Node;
 }
 
+double SigmoidMCTS(const int Score)
+{
+    return 1.0 / (1.0 + pow(10.0, -(double)Score / 400.0)); // [0.0..1.0]
+}
+
+double SigmoidMCTS2(const int Score)
+{
+    return SigmoidMCTS(Score) * 2.0 - 1.0; // [-1.0..1.0]
+}
+
 double RolloutRandom(NodeItemMCTS* Node, BoardItem* Board, int* Ply)
 {
     int GameResult;
@@ -319,18 +329,7 @@ double RolloutRandom(NodeItemMCTS* Node, BoardItem* Board, int* Ply)
 //        printf("RolloutRandom (unmake move): Ply = %d Ply2 = %d\n", *Ply, Ply2);
     }
 
-//    return (double)GameResult / INF; // [-1.0..1.0]
-    return (double)GameResult;
-}
-
-double SigmoidMCTS(const int Score)
-{
-    return 1.0 / (1.0 + pow(10.0, -(double)Score / 400.0)); // [0.0..1.0]
-}
-
-double SigmoidMCTS2(const int Score)
-{
-    return SigmoidMCTS(Score) * 2.0 - 1.0; // [-1.0..1.0]
+    return (double)GameResult; // 0.0 or -1.0
 }
 
 double RolloutSearch(NodeItemMCTS* Node, BoardItem* Board, int* Ply)
@@ -343,7 +342,6 @@ double RolloutSearch(NodeItemMCTS* Node, BoardItem* Board, int* Ply)
     int BestScore = 0;
 
     if (IsGameOver(Board, 0, &GameResult)) {
-//        return (double)GameResult / INF; // [-1.0..1.0]
         return SigmoidMCTS2(GameResult); // [-1.0..1.0]
     }
 
@@ -371,7 +369,6 @@ double RolloutSearch(NodeItemMCTS* Node, BoardItem* Board, int* Ply)
 
 //    printf("BestScore = %d Sigmoid = %f\n", BestScore, SigmoidMCTS2(BestScore));
 
-//    return (double)BestScore / INF; // [-1.0..1.0]
     return SigmoidMCTS2(BestScore); // [-1.0..1.0]
 }
 
@@ -384,7 +381,6 @@ double RolloutQuiescenceSearch(NodeItemMCTS* Node, BoardItem* Board, int* Ply)
     int BestScore;
 
     if (IsGameOver(Board, 0, &GameResult)) {
-//        return (double)GameResult / INF; // [-1.0..1.0]
         return SigmoidMCTS2(GameResult); // [-1.0..1.0]
     }
 
@@ -394,7 +390,6 @@ double RolloutQuiescenceSearch(NodeItemMCTS* Node, BoardItem* Board, int* Ply)
 
 //    printf("BestScore = %d Sigmoid = %f\n", BestScore, SigmoidMCTS2(BestScore));
 
-//    return (double)BestScore / INF; // [-1.0..1.0]
     return SigmoidMCTS2(BestScore); // [-1.0..1.0]
 }
 
@@ -405,7 +400,6 @@ double RolloutEvaluate(NodeItemMCTS* Node, BoardItem* Board, int* Ply)
     int BestScore;
 
     if (IsGameOver(Board, 0, &GameResult)) {
-//        return (double)GameResult / INF; // [-1.0..1.0]
         return SigmoidMCTS2(GameResult); // [-1.0..1.0]
     }
 
@@ -413,7 +407,6 @@ double RolloutEvaluate(NodeItemMCTS* Node, BoardItem* Board, int* Ply)
 
 //    printf("BestScore = %d Sigmoid = %f\n", BestScore, SigmoidMCTS2(BestScore));
 
-//    return (double)BestScore / INF; // [-1.0..1.0]
     return SigmoidMCTS2(BestScore); // [-1.0..1.0]
 }
 
