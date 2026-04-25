@@ -60,8 +60,6 @@ void FreeHashTable(void)
 
 void InitHashBoards(void)
 {
-//    printf("HashDataS = %zd HashDataU = %zd HashItem = %zd\n", sizeof(HashDataS), sizeof(HashDataU), sizeof(HashItem));
-
     for (int Color = 0; Color < 2; ++Color) {
         for (int Piece = 0; Piece < 6; ++Piece) {
             for (int Square = 0; Square < 64; ++Square) {

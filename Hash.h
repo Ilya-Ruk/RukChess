@@ -44,9 +44,7 @@ typedef struct {
     U8 Iteration; // 4 bits
 
     HashItem* Item;
-} HashStoreItem; // 32 bytes
-
-extern HashStoreItem HashStore;
+} HashStoreItem;
 
 extern U64 PieceHash[2][6][64]; // [Color][Piece][Square]
 extern U64 ColorHash;
