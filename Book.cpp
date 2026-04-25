@@ -531,8 +531,6 @@ BOOL LoadBook(const char* BookFileName)
 
     BookItem* BookItemPointer;
 
-//    printf("BookItem = %zd\n", sizeof(BookItem));
-
     printf("\n");
 
     printf("Load book...\n");
@@ -555,15 +553,17 @@ BOOL LoadBook(const char* BookFileName)
 
     // Allocate memory to store book
 
-    BookStore.Item = (BookItem*)malloc(BookStore.Count * sizeof(BookItem));
+    BookItemPointer = (BookItem*)realloc(BookStore.Item, BookStore.Count * sizeof(BookItem));
 
-    if (BookStore.Item == NULL) { // Allocate memory error
+    if (BookItemPointer == NULL) { // Allocate memory error
         printf("Allocate memory to store book error!\n");
 
         fclose(File);
 
         return FALSE;
     }
+
+    BookStore.Item = BookItemPointer;
 
     // Set the pointer to the beginning of the file
 
@@ -658,6 +658,8 @@ BOOL LoadBook(const char* BookFileName)
 
     printf("Load book...DONE (%d)\n", BookStore.Count);
 
+    BookFileLoaded = TRUE;
+
     return TRUE;
 }
 
@@ -665,6 +667,8 @@ void FreeBook(void)
 {
     if (BookFileLoaded) {
         free(BookStore.Item);
+
+        BookFileLoaded = FALSE;
     }
 }
 
@@ -683,6 +687,10 @@ BOOL GetBookMove(const BoardItem* Board, MoveItem* BestMoves)
     MoveItem MoveList[MAX_GEN_MOVES];
 
     U64 RandomValue;
+
+    if (!BookFileLoaded) {
+        return FALSE;
+    }
 
     FirstIndex = -1;
     BookCount = 0;

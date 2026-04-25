@@ -300,7 +300,7 @@ BOOL ComputerMove(void)
 
     AddHashStoreIteration();
 
-    if (BookFileLoaded && GetBookMove(&CurrentBoard, CurrentBoard.BestMovesRoot)) {
+    if (GetBookMove(&CurrentBoard, CurrentBoard.BestMovesRoot)) {
         goto Done;
     }
 

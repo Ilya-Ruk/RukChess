@@ -133,10 +133,10 @@ int main(int argc, char** argv)
     // Load book
 
     if (argc > 2) {
-        BookFileLoaded = LoadBook(argv[2]);
+        LoadBook(argv[2]);
     }
     else {
-        BookFileLoaded = LoadBook(DEFAULT_BOOK_FILE_NAME);
+        LoadBook(DEFAULT_BOOK_FILE_NAME);
     }
 
     // Universal Chess Interface (UCI) or Terminal User Interface (TUI)?

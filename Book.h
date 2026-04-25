@@ -36,11 +36,7 @@ typedef struct {
     int Count;
 
     BookItem* Item;
-} BookStoreItem; // 16 bytes
-
-extern BookStoreItem BookStore;
-
-extern BOOL BookFileLoaded;
+} BookStoreItem;
 
 void GenerateBook(void);
 

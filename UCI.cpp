@@ -113,7 +113,7 @@ void UCI(void)
 
             *BookFileName = '\0'; // Nul
 
-            BookFileLoaded = LoadBook(BookFileNameString);
+            LoadBook(BookFileNameString);
         }
         else if (strncmp(Part, "setoption name NnueFile value ", 30) == 0) {
             Part += 30;
