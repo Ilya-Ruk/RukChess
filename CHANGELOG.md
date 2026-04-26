@@ -5,6 +5,7 @@
 1. Disabled pruning in IID
 2. Increased MAX_HEURISTIC_SCORE to 16384
 3. Updated BONUS formula
+4. Corrected the code
 
 ## RukChess 4.2.0 (11.01.2026)
 
