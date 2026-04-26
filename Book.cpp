@@ -510,7 +510,7 @@ int HashCompare(const void* BookItem1, const void* BookItem2)
     return 0;
 }
 
-BOOL LoadBook(const char* BookFileName)
+void LoadBook(const char* BookFileName)
 {
     FILE* File;
 
@@ -535,12 +535,14 @@ BOOL LoadBook(const char* BookFileName)
 
     printf("Load book...\n");
 
+    FreeBook(); // The book may have been loaded earlier
+
     fopen_s(&File, BookFileName, "r");
 
     if (File == NULL) { // File open error
         printf("File '%s' open error!\n", BookFileName);
 
-        return FALSE;
+        return;
     }
 
     // The first cycle to get the number of book items
@@ -553,17 +555,15 @@ BOOL LoadBook(const char* BookFileName)
 
     // Allocate memory to store book
 
-    BookItemPointer = (BookItem*)realloc(BookStore.Item, BookStore.Count * sizeof(BookItem));
+    BookStore.Item = (BookItem*)calloc(BookStore.Count, sizeof(BookItem));
 
-    if (BookItemPointer == NULL) { // Allocate memory error
+    if (BookStore.Item == NULL) { // Allocate memory error
         printf("Allocate memory to store book error!\n");
 
         fclose(File);
 
-        return FALSE;
+        return;
     }
-
-    BookStore.Item = BookItemPointer;
 
     // Set the pointer to the beginning of the file
 
@@ -593,7 +593,7 @@ BOOL LoadBook(const char* BookFileName)
 
             fclose(File);
 
-            return FALSE;
+            return;
         }
 
         ++Part; // Space
@@ -607,7 +607,7 @@ BOOL LoadBook(const char* BookFileName)
 
             fclose(File);
 
-            return FALSE;
+            return;
         }
 
         while (*Part != ' ') {
@@ -625,7 +625,7 @@ BOOL LoadBook(const char* BookFileName)
 
             fclose(File);
 
-            return FALSE;
+            return;
         }
 
         while (*Part != ' ') {
@@ -656,11 +656,9 @@ BOOL LoadBook(const char* BookFileName)
 */
     fclose(File);
 
-    printf("Load book...DONE (%d)\n", BookStore.Count);
-
     BookFileLoaded = TRUE;
 
-    return TRUE;
+    printf("Load book...DONE (%d)\n", BookStore.Count);
 }
 
 void FreeBook(void)

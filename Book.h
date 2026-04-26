@@ -40,7 +40,7 @@ typedef struct {
 
 void GenerateBook(void);
 
-BOOL LoadBook(const char* BookFileName);
+void LoadBook(const char* BookFileName);
 void FreeBook(void);
 
 BOOL GetBookMove(const BoardItem* Board, MoveItem* BestMoves);
