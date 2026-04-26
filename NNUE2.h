@@ -9,9 +9,9 @@
 #include "Def.h"
 #include "Types.h"
 
-extern BOOL NnueFileLoaded;
+void LoadNetwork(const char* NnueFileName);
 
-BOOL LoadNetwork(const char* NnueFileName);
+BOOL IsNetworkLoaded(void);
 
 int Evaluate(BoardItem* Board);
 

@@ -126,7 +126,7 @@ void UCI(void)
 
             *NnueFileName = '\0'; // Nul
 
-            NnueFileLoaded = LoadNetwork(NnueFileNameString);
+            LoadNetwork(NnueFileNameString);
         }
         else if (strncmp(Part, "setoption name ReduceTime value ", 32) == 0) {
             Part += 32;
@@ -375,7 +375,7 @@ void UCI(void)
                 TimeForMove = 0ULL;
             }
 
-            if (!NnueFileLoaded) {
+            if (!IsNetworkLoaded()) {
                 printf("info string Network not loaded!\n");
 
                 continue; // Next command

@@ -43,7 +43,7 @@ I32 LoadInt32(const float Value, const int Precision)
     return (I32)roundf(Value * (float)Precision);
 }
 
-BOOL LoadNetwork(const char* NnueFileName)
+void LoadNetwork(const char* NnueFileName)
 {
     FILE* File;
 
@@ -63,12 +63,14 @@ BOOL LoadNetwork(const char* NnueFileName)
 
     printf("Load network...\n");
 
+    NnueFileLoaded = FALSE;
+
     fopen_s(&File, NnueFileName, "rb");
 
     if (File == NULL) { // File open error
         printf("File '%s' open error!\n", NnueFileName);
 
-        return FALSE;
+        return;
     }
 
     // File magic
@@ -82,7 +84,7 @@ BOOL LoadNetwork(const char* NnueFileName)
 
         fclose(File);
 
-        return FALSE;
+        return;
     }
 
     // File hash
@@ -96,7 +98,7 @@ BOOL LoadNetwork(const char* NnueFileName)
 
         fclose(File);
 
-        return FALSE;
+        return;
     }
 */
     // Feature weights
@@ -186,7 +188,7 @@ BOOL LoadNetwork(const char* NnueFileName)
 
         fclose(File);
 
-        return FALSE;
+        return;
     }
 
     // Set the pointer to the ending of the file
@@ -204,14 +206,19 @@ BOOL LoadNetwork(const char* NnueFileName)
 
         fclose(File);
 
-        return FALSE;
+        return;
     }
 
     fclose(File);
 
-    printf("Load network...DONE (%s; 0x%012llx)\n", NnueFileName, FileHash);
+    NnueFileLoaded = TRUE;
 
-    return TRUE;
+    printf("Load network...DONE (%s; 0x%012llx)\n", NnueFileName, FileHash);
+}
+
+BOOL IsNetworkLoaded(void)
+{
+    return NnueFileLoaded;
 }
 
 int CalculateWeightIndex(const int Perspective, const int Square, const int PieceWithColor)

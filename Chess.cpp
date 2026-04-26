@@ -124,10 +124,10 @@ int main(int argc, char** argv)
     // Load network
 
     if (argc > 1) {
-        NnueFileLoaded = LoadNetwork(argv[1]);
+        LoadNetwork(argv[1]);
     }
     else {
-        NnueFileLoaded = LoadNetwork(DEFAULT_NNUE_FILE_NAME);
+        LoadNetwork(DEFAULT_NNUE_FILE_NAME);
     }
 
     // Load book
@@ -159,7 +159,7 @@ int main(int argc, char** argv)
 
     // TUI
 
-    if (!NnueFileLoaded) {
+    if (!IsNetworkLoaded()) {
         printf("Network not loaded!\n");
 
         Sleep(3000);
