@@ -17,8 +17,6 @@
 
 int main(int argc, char** argv)
 {
-    BOOL InitHashTableResult;
-
     char Buf[64];
 
     int Choice;
@@ -43,6 +41,13 @@ int main(int argc, char** argv)
 //    printf("BoardItem.CounterMoveHistoryTable = %zd\n", sizeof(Board.CounterMoveHistoryTable));
 //    printf("BoardItem.KillerMoveTable = %zd\n", sizeof(Board.KillerMoveTable));
 //    printf("BoardItem.CounterMoveTable = %zd\n", sizeof(Board.CounterMoveTable));
+
+//    printf("NodeItem = %zd\n", sizeof(NodeItem));
+//    printf("BookItem = %zd\n", sizeof(BookItem));
+
+//    printf("HashDataS = %zd\n", sizeof(HashDataS));
+//    printf("HashDataU = %zd\n", sizeof(HashDataU));
+//    printf("HashItem = %zd\n", sizeof(HashItem));
 
     // Initialize threads
 
@@ -71,15 +76,7 @@ int main(int argc, char** argv)
 
     // Initialize hash table
 
-    InitHashTableResult = InitHashTable(DEFAULT_HASH_TABLE_SIZE);
-
-    if (!InitHashTableResult) { // Init hash table error
-        Sleep(3000);
-
-        goto Done;
-    }
-
-    ClearHashTable();
+    InitHashTable(DEFAULT_HASH_TABLE_SIZE);
 
     printf("\n");
 
@@ -158,6 +155,14 @@ int main(int argc, char** argv)
     }
 
     // TUI
+
+    if (!IsHashTableInitialized()) {
+        printf("Hash table not initialized!\n");
+
+        Sleep(3000);
+
+        goto Done;
+    }
 
     if (!IsNetworkLoaded()) {
         printf("Network not loaded!\n");

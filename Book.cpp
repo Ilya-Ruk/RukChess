@@ -167,7 +167,6 @@ void GenerateBook(void)
     // Cache not used
 
     InitHashTable(1);
-    ClearHashTable();
 
     // Threads not used
 

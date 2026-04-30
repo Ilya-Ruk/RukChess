@@ -11,16 +11,18 @@
 
 HashStoreItem HashStore;
 
+BOOL HashTableInitialized = FALSE;
+
 U64 PieceHash[2][6][64];    // [Color][Piece][Square]
 U64 ColorHash;
 U64 PassantHash[64];        // [Square]
 
-BOOL InitHashTable(const int SizeInMb) // Xiphos
+void InitHashTable(const int SizeInMb) // Xiphos
 {
     U64 Items;
     U64 RoundItems = 1ULL;
 
-    HashItem* HashItemPointer;
+    FreeHashTable(); // The hash table may have been initialized earlier
 
     Items = ((U64)SizeInMb << 20) / sizeof(HashItem);
 
@@ -33,29 +35,38 @@ BOOL InitHashTable(const int SizeInMb) // Xiphos
 
     HashStore.Iteration = 0;
 
-    HashItemPointer = (HashItem*)realloc(HashStore.Item, HashStore.Size);
+    HashStore.Item = (HashItem*)calloc(RoundItems, sizeof(HashItem));
 
-    if (HashItemPointer == NULL) { // Allocate memory error
+    if (HashStore.Item == NULL) { // Allocate memory error
         printf("Allocate memory to hash table error!\n");
 
-        return FALSE;
+        return;
     }
 
-    HashStore.Item = HashItemPointer;
-
-    return TRUE;
+    HashTableInitialized = TRUE;
 }
 
 void ClearHashTable(void)
 {
-    HashStore.Iteration = 0;
+    if (HashTableInitialized) {
+        HashStore.Iteration = 0;
 
-    memset(HashStore.Item, 0, HashStore.Size);
+        memset(HashStore.Item, 0, HashStore.Size);
+    }
 }
 
 void FreeHashTable(void)
 {
-    free(HashStore.Item);
+    if (HashTableInitialized) {
+        free(HashStore.Item);
+
+        HashTableInitialized = FALSE;
+    }
+}
+
+BOOL IsHashTableInitialized(void)
+{
+    return HashTableInitialized;
 }
 
 void InitHashBoards(void)

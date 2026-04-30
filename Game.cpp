@@ -644,7 +644,6 @@ void InputParametrs(void)
     InputHashSize = (InputHashSize >= 1 && InputHashSize <= MAX_HASH_TABLE_SIZE) ? InputHashSize : DEFAULT_HASH_TABLE_SIZE;
 
     InitHashTable(InputHashSize);
-    ClearHashTable();
 
     printf("Threads (min. 1 max. %d; 0 = %d): ", MaxThreads, DEFAULT_THREADS);
     scanf_s("%d", &InputThreads);

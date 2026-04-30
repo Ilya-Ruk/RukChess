@@ -50,9 +50,11 @@ extern U64 PieceHash[2][6][64]; // [Color][Piece][Square]
 extern U64 ColorHash;
 extern U64 PassantHash[64];     // [Square]
 
-BOOL InitHashTable(const int SizeInMb); // Xiphos
+void InitHashTable(const int SizeInMb); // Xiphos
 void ClearHashTable(void);
 void FreeHashTable(void);
+
+BOOL IsHashTableInitialized(void);
 
 void InitHashBoards(void);
 

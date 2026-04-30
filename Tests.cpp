@@ -462,7 +462,6 @@ void GeneratorTest1(void)
     // Cache not used
 
     InitHashTable(1);
-    ClearHashTable();
 
     // Threads not used
 
@@ -504,7 +503,6 @@ void GeneratorTest2(void)
     // Cache not used
 
     InitHashTable(1);
-    ClearHashTable();
 
     // Threads not used
 

@@ -92,7 +92,6 @@ void UCI(void)
             HashSize = (HashSize >= 1 && HashSize <= MAX_HASH_TABLE_SIZE) ? HashSize : DEFAULT_HASH_TABLE_SIZE;
 
             InitHashTable(HashSize);
-            ClearHashTable();
         }
         else if (strncmp(Part, "setoption name Threads value ", 29) == 0) {
             Part += 29;
@@ -373,6 +372,12 @@ void UCI(void)
                 }
 
                 TimeForMove = 0ULL;
+            }
+
+            if (!IsHashTableInitialized()) {
+                printf("info string Hash table not initialized!\n");
+
+                continue; // Next command
             }
 
             if (!IsNetworkLoaded()) {
