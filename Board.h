@@ -132,14 +132,6 @@ typedef struct {
 } MoveItem; // 12 bytes
 
 typedef struct {
-    _declspec(align(64)) I16 Accumulation[2][512]; // [Perspective][Hidden dimension]
-
-#ifdef USE_NNUE_UPDATE
-    BOOL AccumulationComputed;
-#endif // USE_NNUE_UPDATE
-} AccumulatorItem; // 2112 bytes
-
-typedef struct {
     int Type;
 
     int From;
@@ -163,11 +155,11 @@ typedef struct {
     U64 BB_BlackPieces;
     U64 BB_Pieces[2][6]; // [Color][Piece]
 #endif // DEBUG_MOVE
-
-    AccumulatorItem Accumulator;
-} HistoryItem; // 2176 bytes
+} HistoryItem; // 48 bytes
 
 typedef struct {
+    _declspec(align(64)) I16 Accumulator[2][512]; // [Perspective][Hidden dimension] // 2048 bytes
+
     int Pieces[64]; // (Color << 3) | Piece
     int CurrentColor;
     int CastleFlags;
@@ -181,7 +173,7 @@ typedef struct {
 
     U64 Hash;
 
-    HistoryItem MoveTable[MAX_GAME_MOVES]; // 2228224 bytes
+    HistoryItem MoveTable[MAX_GAME_MOVES]; // 49152 bytes
 
     U64 Nodes;
 
@@ -209,9 +201,7 @@ typedef struct {
 #ifdef COUNTER_MOVE
     int CounterMoveTable[2][6][64]; // [Color][Piece][Square] // 3072 bytes
 #endif // COUNTER_MOVE
-
-    AccumulatorItem Accumulator;
-} BoardItem; // 2829376 bytes
+} BoardItem; // 650176 bytes
 
 extern const char* BoardName[64];
 

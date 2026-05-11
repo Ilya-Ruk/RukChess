@@ -441,8 +441,8 @@ int SetFen(BoardItem* Board, const char* Fen)
     Board->BB_WhitePieces = 0ULL;
     Board->BB_BlackPieces = 0ULL;
 
-    for (int Color = 0; Color < 2; ++Color) {
-        for (int Piece = 0; Piece < 6; ++Piece) {
+    for (int Color = 0; Color < 2; ++Color) { // White/Black
+        for (int Piece = 0; Piece < 6; ++Piece) { // PNBRQK
             Board->BB_Pieces[Color][Piece] = 0ULL;
         }
     }
@@ -638,13 +638,11 @@ int SetFen(BoardItem* Board, const char* Fen)
         ++Part;
     }
 
+    InitAccumulator(Board);
+
     InitHash(Board);
 
     memset(Board->MoveTable, 0, sizeof(Board->MoveTable));
-
-#ifdef USE_NNUE_UPDATE
-    Board->Accumulator.AccumulationComputed = FALSE;
-#endif // USE_NNUE_UPDATE
 
     return (int)(Part - Fen);
 }

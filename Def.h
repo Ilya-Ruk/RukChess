@@ -62,7 +62,6 @@
 // NNUE
 
 #define USE_NNUE_AVX2
-#define USE_NNUE_UPDATE
 
 //#define PRINT_MIN_MAX_VALUES
 //#define PRINT_WEIGHT_INDEX
@@ -75,7 +74,7 @@
 // Program name, program version and copyright information
 
 #define PROGRAM_NAME                            "RukChess"
-#define PROGRAM_VERSION                         "4.2.0"
+#define PROGRAM_VERSION                         "4.3.0dev"
 
 #define YEAR                                    "2026"
 #define AUTHOR                                  "Ilya Rukavishnikov"

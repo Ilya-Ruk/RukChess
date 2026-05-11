@@ -71,8 +71,8 @@ BOOL IsHashTableInitialized(void)
 
 void InitHashBoards(void)
 {
-    for (int Color = 0; Color < 2; ++Color) {
-        for (int Piece = 0; Piece < 6; ++Piece) {
+    for (int Color = 0; Color < 2; ++Color) { // White/Black
+        for (int Piece = 0; Piece < 6; ++Piece) { // PNBRQK
             for (int Square = 0; Square < 64; ++Square) {
                 PieceHash[Color][Piece][Square] = Rand64();
             }

@@ -6,7 +6,8 @@
 2. Increased MAX_HEURISTIC_SCORE to 16384
 3. Updated BONUS formula
 4. Changed DEFAULT_HASH_TABLE_SIZE to 256
-5. Corrected the code
+5. Updating accumulator in move make/unmake function
+6. Corrected the code
 
 ## RukChess 4.2.0 (11.01.2026)
 
