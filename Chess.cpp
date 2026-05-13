@@ -29,18 +29,19 @@ int main(int argc, char** argv)
     // Print debug information
 
 //    printf("MoveItem = %zd\n", sizeof(MoveItem));
+//    printf("AccumulatorItem = %zd\n", sizeof(AccumulatorItem));
 //    printf("HistoryItem = %zd\n", sizeof(HistoryItem));
 //    printf("BoardItem = %zd\n", sizeof(BoardItem));
 
 //    BoardItem Board;
 
-//    printf("BoardItem.Accumulator = %zd\n", sizeof(Board.Accumulator));
 //    printf("BoardItem.MoveTable = %zd\n", sizeof(Board.MoveTable));
 //    printf("BoardItem.BestMovesRoot = %zd\n", sizeof(Board.BestMovesRoot));
 //    printf("BoardItem.HeuristicTable = %zd\n", sizeof(Board.HeuristicTable));
 //    printf("BoardItem.CounterMoveHistoryTable = %zd\n", sizeof(Board.CounterMoveHistoryTable));
 //    printf("BoardItem.KillerMoveTable = %zd\n", sizeof(Board.KillerMoveTable));
 //    printf("BoardItem.CounterMoveTable = %zd\n", sizeof(Board.CounterMoveTable));
+//    printf("BoardItem.Accumulator = %zd\n", sizeof(Board.Accumulator));
 
 //    printf("NodeItem = %zd\n", sizeof(NodeItem));
 //    printf("BookItem = %zd\n", sizeof(BookItem));

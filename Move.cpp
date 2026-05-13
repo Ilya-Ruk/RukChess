@@ -127,6 +127,8 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
             AccumulatorSub(Board, Info->EatPawnSquare, PIECE_CREATE(PAWN, BLACK));
         }
         else if (Move.Type & MOVE_CAPTURE) {
+            Board->Pieces[To] = NO_PIECE;
+
             Board->BB_BlackPieces &= ~BB_SQUARE(To);
             Board->BB_Pieces[BLACK][Info->PieceTypeTo] &= ~BB_SQUARE(To);
 
@@ -229,6 +231,8 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
             AccumulatorSub(Board, Info->EatPawnSquare, PIECE_CREATE(PAWN, WHITE));
         }
         else if (Move.Type & MOVE_CAPTURE) {
+            Board->Pieces[To] = NO_PIECE;
+
             Board->BB_WhitePieces &= ~BB_SQUARE(To);
             Board->BB_Pieces[WHITE][Info->PieceTypeTo] &= ~BB_SQUARE(To);
 
@@ -282,7 +286,7 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
 #ifdef DEBUG_NNUE
     I16 Accumulator[2][512];
 
-    memcpy(Accumulator, Board->Accumulator, sizeof(Board->Accumulator));
+    memcpy(Accumulator, Board->Accumulator, sizeof(Accumulator));
 
     InitAccumulator(Board);
 
@@ -370,7 +374,7 @@ void UnmakeMove(BoardItem* Board)
             AccumulatorAdd(Board, Info->EatPawnSquare, PIECE_CREATE(PAWN, BLACK));
         }
         else if (Info->Type & MOVE_CAPTURE) {
-            //Board->Pieces[Info->To] = NO_PIECE;
+            Board->Pieces[Info->To] = NO_PIECE;
 
             Board->BB_WhitePieces &= ~BB_SQUARE(Info->To);
 
@@ -465,7 +469,7 @@ void UnmakeMove(BoardItem* Board)
             AccumulatorAdd(Board, Info->EatPawnSquare, PIECE_CREATE(PAWN, WHITE));
         }
         else if (Info->Type & MOVE_CAPTURE) {
-            //Board->Pieces[Info->To] = NO_PIECE;
+            Board->Pieces[Info->To] = NO_PIECE;
 
             Board->BB_BlackPieces &= ~BB_SQUARE(Info->To);
 
@@ -515,7 +519,7 @@ void UnmakeMove(BoardItem* Board)
 #ifdef DEBUG_NNUE
     I16 Accumulator[2][512];
 
-    memcpy(Accumulator, Board->Accumulator, sizeof(Board->Accumulator));
+    memcpy(Accumulator, Board->Accumulator, sizeof(Accumulator));
 
     InitAccumulator(Board);
 

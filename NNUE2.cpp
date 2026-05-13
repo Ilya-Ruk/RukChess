@@ -66,7 +66,7 @@ void LoadNetwork(const char* NnueFileName)
 
     printf("Load network...\n");
 
-    NnueFileLoaded = FALSE;
+    NnueFileLoaded = FALSE; // The network may have been loaded earlier
 
     fopen_s(&File, NnueFileName, "rb");
 
@@ -231,12 +231,10 @@ int CalculateWeightIndex(const int Perspective, const int Square, const int Piec
 
     if (Perspective == STM) {
         PieceIndex = PIECE_TYPE(PieceWithColor) + 6 * PIECE_COLOR(PieceWithColor);
-
         WeightIndex = (PieceIndex << 6) + Square;
     }
     else { // XSTM
         PieceIndex = PIECE_TYPE(PieceWithColor) + 6 * CHANGE_COLOR(PIECE_COLOR(PieceWithColor));
-
         WeightIndex = (PieceIndex << 6) + (Square ^ 56);
     }
 
@@ -249,20 +247,26 @@ int CalculateWeightIndex(const int Perspective, const int Square, const int Piec
 
 void AccumulatorAdd(BoardItem* Board, int Square, int PieceWithColor)
 {
-    for (int Perspective = STM; Perspective <= XSTM; ++Perspective) {
-        int WeightIndex = CalculateWeightIndex(Perspective, Square, PieceWithColor);
+    int WeightIndex;
 
 #ifdef USE_NNUE_AVX2
-        __m256i* AccumulatorTile = (__m256i*)Board->Accumulator[Perspective];
+    __m256i* AccumulatorTile;
+    __m256i* Weights;
+#endif // USE_NNUE_AVX2
 
-        __m256i* Column = (__m256i*)&InputWeights[WeightIndex * HIDDEN_DIMENSION];
+    for (int Perspective = STM; Perspective <= XSTM; ++Perspective) {
+        WeightIndex = CalculateWeightIndex(Perspective, Square, PieceWithColor);
+
+#ifdef USE_NNUE_AVX2
+        AccumulatorTile = (__m256i*)&Board->Accumulator.Accumulator[Perspective];
+        Weights = (__m256i*)&InputWeights[WeightIndex * HIDDEN_DIMENSION];
 
         for (int Reg = 0; Reg < NUM_REGS; ++Reg) { // 32
-            AccumulatorTile[Reg] = _mm256_add_epi16(AccumulatorTile[Reg], Column[Reg]);
+            AccumulatorTile[Reg] = _mm256_add_epi16(AccumulatorTile[Reg], Weights[Reg]);
         }
 #else
         for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) { // 512
-            Board->Accumulator[Perspective][Index] += InputWeights[WeightIndex * HIDDEN_DIMENSION + Index];
+            Board->Accumulator.Accumulator[Perspective][Index] += InputWeights[WeightIndex * HIDDEN_DIMENSION + Index];
         }
 #endif // USE_NNUE_AVX2
     }
@@ -270,20 +274,26 @@ void AccumulatorAdd(BoardItem* Board, int Square, int PieceWithColor)
 
 void AccumulatorSub(BoardItem* Board, int Square, int PieceWithColor)
 {
-    for (int Perspective = STM; Perspective <= XSTM; ++Perspective) {
-        int WeightIndex = CalculateWeightIndex(Perspective, Square, PieceWithColor);
+    int WeightIndex;
 
 #ifdef USE_NNUE_AVX2
-        __m256i* AccumulatorTile = (__m256i*)Board->Accumulator[Perspective];
+    __m256i* AccumulatorTile;
+    __m256i* Weights;
+#endif // USE_NNUE_AVX2
 
-        __m256i* Column = (__m256i*)&InputWeights[WeightIndex * HIDDEN_DIMENSION];
+    for (int Perspective = STM; Perspective <= XSTM; ++Perspective) {
+        WeightIndex = CalculateWeightIndex(Perspective, Square, PieceWithColor);
+
+#ifdef USE_NNUE_AVX2
+        AccumulatorTile = (__m256i*)&Board->Accumulator.Accumulator[Perspective];
+        Weights = (__m256i*)&InputWeights[WeightIndex * HIDDEN_DIMENSION];
 
         for (int Reg = 0; Reg < NUM_REGS; ++Reg) { // 32
-            AccumulatorTile[Reg] = _mm256_sub_epi16(AccumulatorTile[Reg], Column[Reg]);
+            AccumulatorTile[Reg] = _mm256_sub_epi16(AccumulatorTile[Reg], Weights[Reg]);
         }
 #else
         for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) { // 512
-            Board->Accumulator[Perspective][Index] -= InputWeights[WeightIndex * HIDDEN_DIMENSION + Index];
+            Board->Accumulator.Accumulator[Perspective][Index] -= InputWeights[WeightIndex * HIDDEN_DIMENSION + Index];
         }
 #endif // USE_NNUE_AVX2
     }
@@ -291,15 +301,19 @@ void AccumulatorSub(BoardItem* Board, int Square, int PieceWithColor)
 
 void InitAccumulator(BoardItem* Board)
 {
-    memcpy(Board->Accumulator[STM], InputBiases, sizeof(InputBiases));
-    memcpy(Board->Accumulator[XSTM], InputBiases, sizeof(InputBiases));
+    U64 Pieces;
 
-    U64 Pieces = (Board->BB_WhitePieces | Board->BB_BlackPieces);
+    int Square;
+    int PieceWithColor;
+
+    memcpy(Board->Accumulator.Accumulator[STM], InputBiases, sizeof(Board->Accumulator.Accumulator[STM]));
+    memcpy(Board->Accumulator.Accumulator[XSTM], InputBiases, sizeof(Board->Accumulator.Accumulator[XSTM]));
+
+    Pieces = (Board->BB_WhitePieces | Board->BB_BlackPieces);
 
     while (Pieces) {
-        int Square = LSB(Pieces);
-
-        int PieceWithColor = Board->Pieces[Square];
+        Square = LSB(Pieces);
+        PieceWithColor = Board->Pieces[Square];
 
         AccumulatorAdd(Board, Square, PieceWithColor);
 
@@ -313,8 +327,8 @@ I32 OutputLayer(BoardItem* Board)
 
 #ifdef PRINT_ACCUMULATOR
     for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) { // 512
-        const I16 Acc0 = Board->Accumulator[Board->CurrentColor][Index];
-        const I16 Acc1 = Board->Accumulator[CHANGE_COLOR(Board->CurrentColor)][Index];
+        const I16 Acc0 = Board->Accumulator.Accumulator[Board->CurrentColor][Index];
+        const I16 Acc1 = Board->Accumulator.Accumulator[CHANGE_COLOR(Board->CurrentColor)][Index];
 
         printf("Index = %d Acc0 = %d Acc1 = %d\n", Index, Acc0, Acc1);
     }
@@ -326,8 +340,8 @@ I32 OutputLayer(BoardItem* Board)
     __m256i Sum0 = ConstZero;
     __m256i Sum1 = ConstZero;
 
-    __m256i* AccumulatorTile0 = (__m256i*)&Board->Accumulator[Board->CurrentColor];
-    __m256i* AccumulatorTile1 = (__m256i*)&Board->Accumulator[CHANGE_COLOR(Board->CurrentColor)];
+    __m256i* AccumulatorTile0 = (__m256i*)&Board->Accumulator.Accumulator[Board->CurrentColor];
+    __m256i* AccumulatorTile1 = (__m256i*)&Board->Accumulator.Accumulator[CHANGE_COLOR(Board->CurrentColor)];
 
     __m256i* Weights0 = (__m256i*)&OutputWeights;
     __m256i* Weights1 = (__m256i*)&OutputWeights[HIDDEN_DIMENSION];
@@ -348,8 +362,8 @@ I32 OutputLayer(BoardItem* Board)
     Result += _mm_cvtsi128_si32(R1);
 #else
     for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) { // 512
-        const I16 Acc0 = MAX(0, Board->Accumulator[Board->CurrentColor][Index]); // ReLU
-        const I16 Acc1 = MAX(0, Board->Accumulator[CHANGE_COLOR(Board->CurrentColor)][Index]); // ReLU
+        const I16 Acc0 = MAX(0, Board->Accumulator.Accumulator[Board->CurrentColor][Index]); // ReLU
+        const I16 Acc1 = MAX(0, Board->Accumulator.Accumulator[CHANGE_COLOR(Board->CurrentColor)][Index]); // ReLU
 
         Result += Acc0 * OutputWeights[Index]; // Offset 0
         Result += Acc1 * OutputWeights[HIDDEN_DIMENSION + Index]; // Offset 512

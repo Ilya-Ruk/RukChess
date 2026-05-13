@@ -132,6 +132,10 @@ typedef struct {
 } MoveItem; // 12 bytes
 
 typedef struct {
+    _declspec(align(64)) I16 Accumulator[2][512]; // [Perspective][Hidden dimension]
+} AccumulatorItem; // 2048 bytes
+
+typedef struct {
     int Type;
 
     int From;
@@ -158,8 +162,6 @@ typedef struct {
 } HistoryItem; // 48 bytes
 
 typedef struct {
-    _declspec(align(64)) I16 Accumulator[2][512]; // [Perspective][Hidden dimension] // 2048 bytes
-
     int Pieces[64]; // (Color << 3) | Piece
     int CurrentColor;
     int CastleFlags;
@@ -201,6 +203,8 @@ typedef struct {
 #ifdef COUNTER_MOVE
     int CounterMoveTable[2][6][64]; // [Color][Piece][Square] // 3072 bytes
 #endif // COUNTER_MOVE
+
+    AccumulatorItem Accumulator; // 2048 bytes
 } BoardItem; // 650176 bytes
 
 extern const char* BoardName[64];
