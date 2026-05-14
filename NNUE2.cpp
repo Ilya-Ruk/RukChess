@@ -258,7 +258,7 @@ void AccumulatorAdd(BoardItem* Board, int Square, int PieceWithColor)
         WeightIndex = CalculateWeightIndex(Perspective, Square, PieceWithColor);
 
 #ifdef USE_NNUE_AVX2
-        AccumulatorTile = (__m256i*)&Board->Accumulator.Accumulator[Perspective];
+        AccumulatorTile = (__m256i*)Board->Accumulator.Accumulator[Perspective];
         Weights = (__m256i*)&InputWeights[WeightIndex * HIDDEN_DIMENSION];
 
         for (int Reg = 0; Reg < NUM_REGS; ++Reg) { // 32
@@ -285,7 +285,7 @@ void AccumulatorSub(BoardItem* Board, int Square, int PieceWithColor)
         WeightIndex = CalculateWeightIndex(Perspective, Square, PieceWithColor);
 
 #ifdef USE_NNUE_AVX2
-        AccumulatorTile = (__m256i*)&Board->Accumulator.Accumulator[Perspective];
+        AccumulatorTile = (__m256i*)Board->Accumulator.Accumulator[Perspective];
         Weights = (__m256i*)&InputWeights[WeightIndex * HIDDEN_DIMENSION];
 
         for (int Reg = 0; Reg < NUM_REGS; ++Reg) { // 32
@@ -340,8 +340,8 @@ I32 OutputLayer(BoardItem* Board)
     __m256i Sum0 = ConstZero;
     __m256i Sum1 = ConstZero;
 
-    __m256i* AccumulatorTile0 = (__m256i*)&Board->Accumulator.Accumulator[Board->CurrentColor];
-    __m256i* AccumulatorTile1 = (__m256i*)&Board->Accumulator.Accumulator[CHANGE_COLOR(Board->CurrentColor)];
+    __m256i* AccumulatorTile0 = (__m256i*)Board->Accumulator.Accumulator[Board->CurrentColor];
+    __m256i* AccumulatorTile1 = (__m256i*)Board->Accumulator.Accumulator[CHANGE_COLOR(Board->CurrentColor)];
 
     __m256i* Weights0 = (__m256i*)&OutputWeights;
     __m256i* Weights1 = (__m256i*)&OutputWeights[HIDDEN_DIMENSION];
