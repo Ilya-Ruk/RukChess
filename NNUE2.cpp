@@ -7,12 +7,11 @@
 #include "BitBoard.h"
 #include "Board.h"
 #include "Def.h"
-#include "Game.h"
 #include "Types.h"
 #include "Utils.h"
 
 #define NNUE_FILE_MAGIC             ('B' | 'R' << 8 | 'K' << 16 | 'R' << 24)
-//#define NNUE_FILE_HASH            0X00007342FB032855
+//#define NNUE_FILE_HASH            0x00007342FB032855
 #define NNUE_FILE_SIZE              1579024
 
 #define INPUT_DIMENSION             768
@@ -254,7 +253,7 @@ void AccumulatorAdd(BoardItem* Board, int Square, int PieceWithColor)
     __m256i* Weights;
 #endif // USE_NNUE_AVX2
 
-    for (int Perspective = STM; Perspective <= XSTM; ++Perspective) {
+    for (int Perspective = 0; Perspective < 2; ++Perspective) { // STM/XSTM
         WeightIndex = CalculateWeightIndex(Perspective, Square, PieceWithColor);
 
 #ifdef USE_NNUE_AVX2
@@ -281,7 +280,7 @@ void AccumulatorSub(BoardItem* Board, int Square, int PieceWithColor)
     __m256i* Weights;
 #endif // USE_NNUE_AVX2
 
-    for (int Perspective = STM; Perspective <= XSTM; ++Perspective) {
+    for (int Perspective = 0; Perspective < 2; ++Perspective) { // STM/XSTM
         WeightIndex = CalculateWeightIndex(Perspective, Square, PieceWithColor);
 
 #ifdef USE_NNUE_AVX2
