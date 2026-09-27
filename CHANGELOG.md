@@ -7,7 +7,8 @@
 3. Updated BONUS formula
 4. Changed DEFAULT_HASH_TABLE_SIZE to 256
 5. Updating accumulator in move make/unmake function
-6. Corrected the code
+6. New neural net
+7. Corrected the code
 
 ## RukChess 4.2.0 (11.01.2026)
 

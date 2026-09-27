@@ -12,26 +12,28 @@
 
 #define NNUE_FILE_MAGIC             ('B' | 'R' << 8 | 'K' << 16 | 'R' << 24)
 //#define NNUE_FILE_HASH            0x00007342FB032855
-#define NNUE_FILE_SIZE              1579024
+#define NNUE_FILE_SIZE              394768
 
 #define INPUT_DIMENSION             768
-#define HIDDEN_DIMENSION            512
+#define HIDDEN_DIMENSION            128
 #define OUTPUT_DIMENSION            1
 
-#define QUANTIZATION_PRECISION_IN   64
-#define QUANTIZATION_PRECISION_OUT  512
+#define QUANTIZATION_PRECISION_IN   255
+#define QUANTIZATION_PRECISION_OUT  64
+
+#define SCALE                       200
 
 #define STM                         0
 #define XSTM                        1
 
 #ifdef USE_NNUE_AVX2
-#define NUM_REGS                    (HIDDEN_DIMENSION * sizeof(I16) / sizeof(__m256i)) // 32
+#define NUM_REGS                    (HIDDEN_DIMENSION * sizeof(I16) / sizeof(__m256i))
 #endif // USE_NNUE_AVX2
 
-_declspec(align(64)) I16 InputWeights[INPUT_DIMENSION * HIDDEN_DIMENSION];  // 768 x 512 = 393216
-_declspec(align(64)) I16 InputBiases[HIDDEN_DIMENSION];                     // 512
-_declspec(align(64)) I16 OutputWeights[HIDDEN_DIMENSION * 2];               // 512 x 2 = 1024
-I32 OutputBias;                                                             // 1
+_declspec(align(64)) I16 InputWeights[INPUT_DIMENSION * HIDDEN_DIMENSION];
+_declspec(align(64)) I16 InputBiases[HIDDEN_DIMENSION];
+_declspec(align(64)) I16 OutputWeights[HIDDEN_DIMENSION * 2];
+I32 OutputBias;
 
 BOOL NnueFileLoaded = FALSE;
 
@@ -110,7 +112,7 @@ void LoadNetwork(const char* NnueFileName)
     MaxValue = -FLT_MAX;
 #endif // PRINT_MIN_MAX_VALUES
 
-    for (int Index = 0; Index < INPUT_DIMENSION * HIDDEN_DIMENSION; ++Index) { // 768 x 512 = 393216
+    for (int Index = 0; Index < INPUT_DIMENSION * HIDDEN_DIMENSION; ++Index) {
         fread(&Value, sizeof(float), 1, File);
 
 #ifdef PRINT_MIN_MAX_VALUES
@@ -132,7 +134,7 @@ void LoadNetwork(const char* NnueFileName)
     MaxValue = -FLT_MAX;
 #endif // PRINT_MIN_MAX_VALUES
 
-    for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) { // 512
+    for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) {
         fread(&Value, sizeof(float), 1, File);
 
 #ifdef PRINT_MIN_MAX_VALUES
@@ -154,7 +156,7 @@ void LoadNetwork(const char* NnueFileName)
     MaxValue = -FLT_MAX;
 #endif // PRINT_MIN_MAX_VALUES
 
-    for (int Index = 0; Index < HIDDEN_DIMENSION * 2; ++Index) { // 512 x 2 = 1024
+    for (int Index = 0; Index < HIDDEN_DIMENSION * 2; ++Index) {
         fread(&Value, sizeof(float), 1, File);
 
 #ifdef PRINT_MIN_MAX_VALUES
@@ -260,11 +262,11 @@ void AccumulatorAdd(BoardItem* Board, int Square, int PieceWithColor)
         AccumulatorTile = (__m256i*)Board->Accumulator.Accumulator[Perspective];
         Weights = (__m256i*)&InputWeights[WeightIndex * HIDDEN_DIMENSION];
 
-        for (int Reg = 0; Reg < NUM_REGS; ++Reg) { // 32
+        for (int Reg = 0; Reg < NUM_REGS; ++Reg) {
             AccumulatorTile[Reg] = _mm256_add_epi16(AccumulatorTile[Reg], Weights[Reg]);
         }
 #else
-        for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) { // 512
+        for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) {
             Board->Accumulator.Accumulator[Perspective][Index] += InputWeights[WeightIndex * HIDDEN_DIMENSION + Index];
         }
 #endif // USE_NNUE_AVX2
@@ -287,11 +289,11 @@ void AccumulatorSub(BoardItem* Board, int Square, int PieceWithColor)
         AccumulatorTile = (__m256i*)Board->Accumulator.Accumulator[Perspective];
         Weights = (__m256i*)&InputWeights[WeightIndex * HIDDEN_DIMENSION];
 
-        for (int Reg = 0; Reg < NUM_REGS; ++Reg) { // 32
+        for (int Reg = 0; Reg < NUM_REGS; ++Reg) {
             AccumulatorTile[Reg] = _mm256_sub_epi16(AccumulatorTile[Reg], Weights[Reg]);
         }
 #else
-        for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) { // 512
+        for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) {
             Board->Accumulator.Accumulator[Perspective][Index] -= InputWeights[WeightIndex * HIDDEN_DIMENSION + Index];
         }
 #endif // USE_NNUE_AVX2
@@ -325,7 +327,7 @@ I32 OutputLayer(BoardItem* Board)
     I32 Result = OutputBias;
 
 #ifdef PRINT_ACCUMULATOR
-    for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) { // 512
+    for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) {
         const I16 Acc0 = Board->Accumulator.Accumulator[Board->CurrentColor][Index];
         const I16 Acc1 = Board->Accumulator.Accumulator[CHANGE_COLOR(Board->CurrentColor)][Index];
 
@@ -335,6 +337,7 @@ I32 OutputLayer(BoardItem* Board)
 
 #ifdef USE_NNUE_AVX2
     const __m256i ConstZero = _mm256_setzero_si256();
+    const __m256i ConstOne = _mm256_set1_epi16(QUANTIZATION_PRECISION_IN);
 
     __m256i Sum0 = ConstZero;
     __m256i Sum1 = ConstZero;
@@ -345,9 +348,9 @@ I32 OutputLayer(BoardItem* Board)
     __m256i* Weights0 = (__m256i*)&OutputWeights;
     __m256i* Weights1 = (__m256i*)&OutputWeights[HIDDEN_DIMENSION];
 
-    for (int Reg = 0; Reg < NUM_REGS; ++Reg) { // 32
-        const __m256i Acc0 = _mm256_max_epi16(ConstZero, AccumulatorTile0[Reg]); // ReLU
-        const __m256i Acc1 = _mm256_max_epi16(ConstZero, AccumulatorTile1[Reg]); // ReLU
+    for (int Reg = 0; Reg < NUM_REGS; ++Reg) {
+        const __m256i Acc0 = _mm256_max_epi16(ConstZero, _mm256_min_epi16(ConstOne, AccumulatorTile0[Reg])); // CReLU
+        const __m256i Acc1 = _mm256_max_epi16(ConstZero, _mm256_min_epi16(ConstOne, AccumulatorTile1[Reg])); // CReLU
 
         Sum0 = _mm256_add_epi32(Sum0, _mm256_madd_epi16(Acc0, Weights0[Reg]));
         Sum1 = _mm256_add_epi32(Sum1, _mm256_madd_epi16(Acc1, Weights1[Reg]));
@@ -360,16 +363,16 @@ I32 OutputLayer(BoardItem* Board)
 
     Result += _mm_cvtsi128_si32(R1);
 #else
-    for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) { // 512
-        const I16 Acc0 = MAX(0, Board->Accumulator.Accumulator[Board->CurrentColor][Index]); // ReLU
-        const I16 Acc1 = MAX(0, Board->Accumulator.Accumulator[CHANGE_COLOR(Board->CurrentColor)][Index]); // ReLU
+    for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) {
+        const I16 Acc0 = MAX(0, MIN(QUANTIZATION_PRECISION_IN, Board->Accumulator.Accumulator[Board->CurrentColor][Index])); // CReLU
+        const I16 Acc1 = MAX(0, MIN(QUANTIZATION_PRECISION_IN, Board->Accumulator.Accumulator[CHANGE_COLOR(Board->CurrentColor)][Index])); // CReLU
 
-        Result += Acc0 * OutputWeights[Index]; // Offset 0
-        Result += Acc1 * OutputWeights[HIDDEN_DIMENSION + Index]; // Offset 512
+        Result += Acc0 * OutputWeights[Index];
+        Result += Acc1 * OutputWeights[HIDDEN_DIMENSION + Index];
     }
 #endif // USE_NNUE_AVX2
 
-    return Result / (QUANTIZATION_PRECISION_IN * QUANTIZATION_PRECISION_OUT);
+    return (Result * SCALE) / (QUANTIZATION_PRECISION_IN * QUANTIZATION_PRECISION_OUT);
 }
 
 int Evaluate(BoardItem* Board)
