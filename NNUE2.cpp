@@ -12,10 +12,10 @@
 
 #define NNUE_FILE_MAGIC             ('B' | 'R' << 8 | 'K' << 16 | 'R' << 24)
 //#define NNUE_FILE_HASH            0x00007342FB032855
-#define NNUE_FILE_SIZE              394768
+#define NNUE_FILE_SIZE              789520
 
 #define INPUT_DIMENSION             768
-#define HIDDEN_DIMENSION            128
+#define HIDDEN_DIMENSION            256
 #define OUTPUT_DIMENSION            1
 
 #define QUANTIZATION_PRECISION_IN   255
