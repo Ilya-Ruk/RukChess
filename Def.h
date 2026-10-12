@@ -116,4 +116,15 @@
 
 #define MIN_SEARCH_DEPTH                        4
 
+// NNUE
+
+#define INPUT_DIMENSION                         768
+#define HIDDEN_DIMENSION                        256
+#define OUTPUT_DIMENSION                        1
+
+#define QUANTIZATION_PRECISION_IN               255
+#define QUANTIZATION_PRECISION_OUT              64
+
+#define SCALE                                   200
+
 #endif // !DEF_H

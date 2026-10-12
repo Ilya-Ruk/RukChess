@@ -12,16 +12,7 @@
 
 #define NNUE_FILE_MAGIC             ('B' | 'R' << 8 | 'K' << 16 | 'R' << 24)
 //#define NNUE_FILE_HASH            0x00007342FB032855
-#define NNUE_FILE_SIZE              789520
-
-#define INPUT_DIMENSION             768
-#define HIDDEN_DIMENSION            256
-#define OUTPUT_DIMENSION            1
-
-#define QUANTIZATION_PRECISION_IN   255
-#define QUANTIZATION_PRECISION_OUT  64
-
-#define SCALE                       200
+#define NNUE_FILE_SIZE              ((INPUT_DIMENSION * HIDDEN_DIMENSION + HIDDEN_DIMENSION + HIDDEN_DIMENSION * 2 + 1) * 4 + 12)
 
 #define STM                         0
 #define XSTM                        1
