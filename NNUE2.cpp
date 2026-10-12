@@ -343,6 +343,7 @@ I32 OutputLayer(BoardItem* Board)
 #ifdef USE_NNUE_AVX2
     const __m256i ConstZero = _mm256_setzero_si256();
     const __m256i ConstOne = _mm256_set1_epi16(1);
+    //const __m256i ConstMax = _mm256_set1_epi8(QUANTIZATION_PRECISION_IN);
 
     __m256i Sum0 = ConstZero;
     __m256i Sum1 = ConstZero;
@@ -359,6 +360,9 @@ I32 OutputLayer(BoardItem* Board)
 
         Acc0 = _mm256_permute4x64_epi64(Acc0, 0b11011000);
         Acc1 = _mm256_permute4x64_epi64(Acc1, 0b11011000);
+
+        //Acc0 = _mm256_max_epu8(ConstZero, _mm256_min_epu8(ConstMax, Acc0)); // CReLU
+        //Acc1 = _mm256_max_epu8(ConstZero, _mm256_min_epu8(ConstMax, Acc1)); // CReLU
 
         Sum0 = _mm256_add_epi32(Sum0, _mm256_madd_epi16(_mm256_maddubs_epi16(Acc0, Weights0[Reg]), ConstOne));
         Sum1 = _mm256_add_epi32(Sum1, _mm256_madd_epi16(_mm256_maddubs_epi16(Acc1, Weights1[Reg]), ConstOne));
