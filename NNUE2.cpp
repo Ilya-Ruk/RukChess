@@ -244,19 +244,12 @@ int CalculateWeightIndex(const int Perspective, const int Square, const int Piec
 
 void AccumulatorAdd(BoardItem* Board, int Square, int PieceWithColor)
 {
-    int WeightIndex;
-
-#ifdef USE_NNUE_AVX2
-    __m256i* AccumulatorTile;
-    __m256i* Weights;
-#endif // USE_NNUE_AVX2
-
     for (int Perspective = 0; Perspective < 2; ++Perspective) { // STM/XSTM
-        WeightIndex = CalculateWeightIndex(Perspective, Square, PieceWithColor);
+        int WeightIndex = CalculateWeightIndex(Perspective, Square, PieceWithColor);
 
 #ifdef USE_NNUE_AVX2
-        AccumulatorTile = (__m256i*)Board->Accumulator.Accumulator[Perspective];
-        Weights = (__m256i*)&InputWeights[WeightIndex * HIDDEN_DIMENSION];
+        __m256i* AccumulatorTile = (__m256i*)Board->Accumulator.Accumulator[Perspective];
+        __m256i* Weights = (__m256i*)&InputWeights[WeightIndex * HIDDEN_DIMENSION];
 
         for (int Reg = 0; Reg < NUM_REGS; ++Reg) {
             AccumulatorTile[Reg] = _mm256_add_epi16(AccumulatorTile[Reg], Weights[Reg]);
@@ -271,19 +264,12 @@ void AccumulatorAdd(BoardItem* Board, int Square, int PieceWithColor)
 
 void AccumulatorSub(BoardItem* Board, int Square, int PieceWithColor)
 {
-    int WeightIndex;
-
-#ifdef USE_NNUE_AVX2
-    __m256i* AccumulatorTile;
-    __m256i* Weights;
-#endif // USE_NNUE_AVX2
-
     for (int Perspective = 0; Perspective < 2; ++Perspective) { // STM/XSTM
-        WeightIndex = CalculateWeightIndex(Perspective, Square, PieceWithColor);
+        int WeightIndex = CalculateWeightIndex(Perspective, Square, PieceWithColor);
 
 #ifdef USE_NNUE_AVX2
-        AccumulatorTile = (__m256i*)Board->Accumulator.Accumulator[Perspective];
-        Weights = (__m256i*)&InputWeights[WeightIndex * HIDDEN_DIMENSION];
+        __m256i* AccumulatorTile = (__m256i*)Board->Accumulator.Accumulator[Perspective];
+        __m256i* Weights = (__m256i*)&InputWeights[WeightIndex * HIDDEN_DIMENSION];
 
         for (int Reg = 0; Reg < NUM_REGS; ++Reg) {
             AccumulatorTile[Reg] = _mm256_sub_epi16(AccumulatorTile[Reg], Weights[Reg]);
