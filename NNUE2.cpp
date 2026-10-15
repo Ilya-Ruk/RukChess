@@ -23,15 +23,10 @@
 
 _declspec(align(64)) I16 InputWeights[INPUT_DIMENSION * HIDDEN_DIMENSION];
 _declspec(align(64)) I16 InputBiases[HIDDEN_DIMENSION];
-_declspec(align(64)) I8 OutputWeights[HIDDEN_DIMENSION * 2];
+_declspec(align(64)) I16 OutputWeights[HIDDEN_DIMENSION * 2];
 I32 OutputBias;
 
 BOOL NnueFileLoaded = FALSE;
-
-I8 LoadInt8(const float Value, const int Precision)
-{
-    return (I8)roundf(Value * (float)Precision);
-}
 
 I16 LoadInt16(const float Value, const int Precision)
 {
@@ -160,7 +155,7 @@ void LoadNetwork(const char* NnueFileName)
         MaxValue = MAX(MaxValue, Value);
 #endif // PRINT_MIN_MAX_VALUES
 
-        OutputWeights[Index] = LoadInt8(Value, QUANTIZATION_PRECISION_OUT);
+        OutputWeights[Index] = LoadInt16(Value, QUANTIZATION_PRECISION_OUT);
     }
 
 #ifdef PRINT_MIN_MAX_VALUES
@@ -319,8 +314,7 @@ I32 OutputLayer(BoardItem* Board)
 
 #ifdef USE_NNUE_AVX2
     const __m256i ConstZero = _mm256_setzero_si256();
-    const __m256i ConstOne = _mm256_set1_epi16(1);
-    //const __m256i ConstMax = _mm256_set1_epi8(QUANTIZATION_PRECISION_IN);
+    const __m256i ConstOne = _mm256_set1_epi16(QUANTIZATION_PRECISION_IN);
 
     __m256i Sum0 = ConstZero;
     __m256i Sum1 = ConstZero;
@@ -331,18 +325,12 @@ I32 OutputLayer(BoardItem* Board)
     __m256i* Weights0 = (__m256i*)&OutputWeights;
     __m256i* Weights1 = (__m256i*)&OutputWeights[HIDDEN_DIMENSION];
 
-    for (int Reg = 0; Reg < NUM_REGS / 2; ++Reg) {
-        __m256i Acc0 = _mm256_packus_epi16(AccumulatorTile0[2 * Reg + 0], AccumulatorTile0[2 * Reg + 1]); // CReLU (int16 -> uint8)
-        __m256i Acc1 = _mm256_packus_epi16(AccumulatorTile1[2 * Reg + 0], AccumulatorTile1[2 * Reg + 1]); // CReLU (int16 -> uint8)
+    for (int Reg = 0; Reg < NUM_REGS; ++Reg) {
+        const __m256i Acc0 = _mm256_max_epi16(ConstZero, _mm256_min_epi16(ConstOne, AccumulatorTile0[Reg])); // CReLU
+        const __m256i Acc1 = _mm256_max_epi16(ConstZero, _mm256_min_epi16(ConstOne, AccumulatorTile1[Reg])); // CReLU
 
-        Acc0 = _mm256_permute4x64_epi64(Acc0, 0b11011000);
-        Acc1 = _mm256_permute4x64_epi64(Acc1, 0b11011000);
-
-        //Acc0 = _mm256_max_epu8(ConstZero, _mm256_min_epu8(ConstMax, Acc0)); // CReLU
-        //Acc1 = _mm256_max_epu8(ConstZero, _mm256_min_epu8(ConstMax, Acc1)); // CReLU
-
-        Sum0 = _mm256_add_epi32(Sum0, _mm256_madd_epi16(_mm256_maddubs_epi16(Acc0, Weights0[Reg]), ConstOne));
-        Sum1 = _mm256_add_epi32(Sum1, _mm256_madd_epi16(_mm256_maddubs_epi16(Acc1, Weights1[Reg]), ConstOne));
+        Sum0 = _mm256_add_epi32(Sum0, _mm256_madd_epi16(Acc0, Weights0[Reg]));
+        Sum1 = _mm256_add_epi32(Sum1, _mm256_madd_epi16(Acc1, Weights1[Reg]));
     }
 
     const __m256i R8 = _mm256_add_epi32(Sum0, Sum1);
