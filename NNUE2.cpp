@@ -314,7 +314,7 @@ I32 OutputLayer(BoardItem* Board)
 
 #ifdef USE_NNUE_AVX2
     const __m256i ConstZero = _mm256_setzero_si256();
-    const __m256i ConstOne = _mm256_set1_epi16(QUANTIZATION_PRECISION_IN);
+    const __m256i ConstMax = _mm256_set1_epi16(QUANTIZATION_PRECISION_IN);
 
     __m256i Sum0 = ConstZero;
     __m256i Sum1 = ConstZero;
@@ -326,8 +326,8 @@ I32 OutputLayer(BoardItem* Board)
     __m256i* Weights1 = (__m256i*)&OutputWeights[HIDDEN_DIMENSION];
 
     for (int Reg = 0; Reg < NUM_REGS; ++Reg) {
-        const __m256i Acc0 = _mm256_max_epi16(ConstZero, _mm256_min_epi16(ConstOne, AccumulatorTile0[Reg])); // CReLU
-        const __m256i Acc1 = _mm256_max_epi16(ConstZero, _mm256_min_epi16(ConstOne, AccumulatorTile1[Reg])); // CReLU
+        const __m256i Acc0 = _mm256_max_epi16(ConstZero, _mm256_min_epi16(ConstMax, AccumulatorTile0[Reg])); // CReLU
+        const __m256i Acc1 = _mm256_max_epi16(ConstZero, _mm256_min_epi16(ConstMax, AccumulatorTile1[Reg])); // CReLU
 
         Sum0 = _mm256_add_epi32(Sum0, _mm256_madd_epi16(Acc0, Weights0[Reg]));
         Sum1 = _mm256_add_epi32(Sum1, _mm256_madd_epi16(Acc1, Weights1[Reg]));
