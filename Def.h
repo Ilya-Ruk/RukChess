@@ -125,6 +125,6 @@
 #define QUANTIZATION_PRECISION_IN               255
 #define QUANTIZATION_PRECISION_OUT              64
 
-#define SCALE                                   200
+#define SCALE                                   272
 
 #endif // !DEF_H
