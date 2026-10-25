@@ -137,18 +137,12 @@ void Pgn2Fen(void)
 
             if (strncmp(Part, "[Result \"1-0\"]", 14) == 0) { // Result 1-0
                 Result = 1.0;
-
-//                printf("Result = %.1f\n", Result);
             }
             else if (strncmp(Part, "[Result \"1/2-1/2\"]", 18) == 0) { // Result 1/2-1/2
                 Result = 0.5;
-
-//                printf("Result = %.1f\n", Result);
             }
             else if (strncmp(Part, "[Result \"0-1\"]", 14) == 0) { // Result 0-1
                 Result = 0.0;
-
-//                printf("Result = %.1f\n", Result);
             }
             else if (strncmp(Part, "[FEN \"", 6) == 0) { // FEN
                 Part += 6;
@@ -160,8 +154,6 @@ void Pgn2Fen(void)
                 }
 
                 *Fen = '\0'; // Nul
-
-//                printf("FEN = %s\n", FenString);
 
                 SetFen(&CurrentBoard, FenString);
             }
@@ -214,8 +206,6 @@ void Pgn2Fen(void)
 
                         continue; // Next character in string
                     }
-
-//                    printf("Move = %s\n", MoveString);
 
                     GenMoveCount = 0;
                     GenerateAllMoves(&CurrentBoard, NULL, MoveList, &GenMoveCount);

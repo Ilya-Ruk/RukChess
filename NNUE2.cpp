@@ -72,8 +72,6 @@ void LoadNetwork(const char* NnueFileName)
 
     fread(&FileMagic, 4, 1, File);
 
-//    printf("FileMagic = %d\n", FileMagic);
-
     if (FileMagic != NNUE_FILE_MAGIC) { // File format error
         printf("File '%s' format error!\n", NnueFileName);
 
@@ -85,8 +83,6 @@ void LoadNetwork(const char* NnueFileName)
     // File hash
 
     fread(&FileHash, sizeof(U64), 1, File);
-
-//    printf("FileHash = 0x%016llX\n", FileHash);
 /*
     if (FileHash != NNUE_FILE_HASH) { // File format error
         printf("File '%s' format error!\n", NnueFileName);
@@ -176,8 +172,6 @@ void LoadNetwork(const char* NnueFileName)
 
     FilePos = ftell(File);
 
-//    printf("File position = %llu\n", FilePos);
-
     if (FilePos != NNUE_FILE_SIZE) { // File format error
         printf("File '%s' format error!\n", NnueFileName);
 
@@ -193,8 +187,6 @@ void LoadNetwork(const char* NnueFileName)
     // Get the current position of the file pointer
 
     FilePos = ftell(File);
-
-//    printf("File position = %llu\n", FilePos);
 
     if (FilePos != NNUE_FILE_SIZE) { // File format error
         printf("File '%s' format error!\n", NnueFileName);
