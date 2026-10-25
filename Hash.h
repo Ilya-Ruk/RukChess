@@ -23,19 +23,19 @@ typedef struct {
     I8 Depth;
 
     U8 Flag : 4, Iteration : 4;
-} HashDataS; // 8 bytes
+} HashDataS;
 
 typedef union {
     U64 RawData;
 
     HashDataS Data;
-} HashDataU; // 8 bytes
+} HashDataU;
 
 typedef struct {
     U64 KeyValue;
 
     HashDataU Value;
-} HashItem; // 16 bytes
+} HashItem;
 
 typedef struct {
     U64 Size;

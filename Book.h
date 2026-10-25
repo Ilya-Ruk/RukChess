@@ -21,7 +21,7 @@ typedef struct Node {
     int Total;
 
     struct Node* Children[MAX_CHILDREN];
-} NodeItem; // 288 bytes
+} NodeItem;
 
 typedef struct {
     U64 Hash;
@@ -30,7 +30,7 @@ typedef struct {
     int To;
 
     int Total;
-} BookItem; // 24 bytes
+} BookItem;
 
 typedef struct {
     int Count;

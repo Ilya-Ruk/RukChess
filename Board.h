@@ -183,11 +183,11 @@ typedef struct {
     int Type;
     int Move; // (PromotePieceType << 12) | (From << 6) | To
     int SortValue;
-} MoveItem; // 12 bytes
+} MoveItem;
 
 typedef struct {
     _declspec(align(64)) I16 Accumulator[2][HIDDEN_DIMENSION]; // [Perspective][Hidden dimension]
-} AccumulatorItem; // 2048 bytes
+} AccumulatorItem;
 
 typedef struct {
     int Type;
@@ -213,7 +213,7 @@ typedef struct {
     U64 BB_BlackPieces;
     U64 BB_Pieces[2][6]; // [Color][Piece]
 #endif // DEBUG_MOVE
-} HistoryItem; // 48 bytes
+} HistoryItem;
 
 typedef struct {
     int Pieces[64]; // (Color << 3) | Piece
@@ -229,7 +229,7 @@ typedef struct {
 
     U64 Hash;
 
-    HistoryItem MoveTable[MAX_GAME_MOVES]; // 49152 bytes
+    HistoryItem MoveTable[MAX_GAME_MOVES];
 
     U64 Nodes;
 
@@ -242,24 +242,24 @@ typedef struct {
 
     int SelDepth;
 
-    MoveItem BestMovesRoot[MAX_PLY]; // 1536 bytes
+    MoveItem BestMovesRoot[MAX_PLY];
 
-    int HeuristicTable[2][6][64]; // [Color][Piece][Square] // 3072 bytes
+    int HeuristicTable[2][6][64]; // [Color][Piece][Square]
 
 #ifdef COUNTER_MOVE_HISTORY
-    int CounterMoveHistoryTable[6][64][6 * 64]; // [Piece][Square][Piece * Square] // 589824 bytes
+    int CounterMoveHistoryTable[6][64][6 * 64]; // [Piece][Square][Piece * Square]
 #endif // COUNTER_MOVE_HISTORY
 
 #ifdef KILLER_MOVE
-    int KillerMoveTable[MAX_PLY + 1][2]; // [Max. ply + 1][Two killer moves] // 1032 bytes
+    int KillerMoveTable[MAX_PLY + 1][2]; // [Max. ply + 1][Two killer moves]
 #endif // KILLER_MOVE
 
 #ifdef COUNTER_MOVE
-    int CounterMoveTable[2][6][64]; // [Color][Piece][Square] // 3072 bytes
+    int CounterMoveTable[2][6][64]; // [Color][Piece][Square]
 #endif // COUNTER_MOVE
 
-    AccumulatorItem Accumulator; // 2048 bytes
-} BoardItem; // 650176 bytes
+    AccumulatorItem Accumulator;
+} BoardItem;
 
 extern const char* BoardName[64];
 
