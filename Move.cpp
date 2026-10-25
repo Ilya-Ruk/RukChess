@@ -18,8 +18,8 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
     int From = MOVE_FROM(Move.Move);
     int To = MOVE_TO(Move.Move);
 
-    assert(From >= 0 && From <= 63);
-    assert(To >= 0 && To <= 63);
+    assert(From >= SQ_A8 && From <= SQ_H1);
+    assert(To >= SQ_A8 && To <= SQ_H1);
 
     Info->Type = Move.Type;
 
@@ -39,7 +39,7 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
 
     Info->PassantSquare = Board->PassantSquare;
 
-    assert((Info->PassantSquare >= 16 && Info->PassantSquare <= 23) || (Info->PassantSquare >= 40 && Info->PassantSquare <= 47) || Info->PassantSquare == -1);
+    assert((Info->PassantSquare >= SQ_A6 && Info->PassantSquare <= SQ_H6) || (Info->PassantSquare >= SQ_A3 && Info->PassantSquare <= SQ_H3) || Info->PassantSquare == -1);
 
     Info->CastleFlags = Board->CastleFlags;
     Info->FiftyMove = Board->FiftyMove;
@@ -115,7 +115,7 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
         if (Move.Type & MOVE_PAWN_PASSANT) {
             Info->EatPawnSquare = To + 8;
 
-            assert(Info->EatPawnSquare >= 24 && Info->EatPawnSquare <= 31);
+            assert(Info->EatPawnSquare >= SQ_A5 && Info->EatPawnSquare <= SQ_H5);
 
             Board->Pieces[Info->EatPawnSquare] = NO_PIECE;
 
@@ -219,7 +219,7 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
         if (Move.Type & MOVE_PAWN_PASSANT) {
             Info->EatPawnSquare = To - 8;
 
-            assert(Info->EatPawnSquare >= 32 && Info->EatPawnSquare <= 39);
+            assert(Info->EatPawnSquare >= SQ_A4 && Info->EatPawnSquare <= SQ_H4);
 
             Board->Pieces[Info->EatPawnSquare] = NO_PIECE;
 

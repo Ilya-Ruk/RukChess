@@ -68,7 +68,7 @@ int LateMoveReductionTable[64][64]; // [LMR depth][Move number]
 
 BOOL IsSquareAttacked(const BoardItem* Board, const int Square, const int Color)
 {
-    assert(Square >= 0 && Square <= 63);
+    assert(Square >= SQ_A8 && Square <= SQ_H1);
     assert(Color == WHITE || Color == BLACK);
 
     U64 Attackers = 0ULL;
