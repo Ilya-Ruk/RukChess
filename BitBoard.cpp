@@ -74,7 +74,7 @@ int LSB(const U64 Source)
 
     return (int)Index;
 }
-
+/*
 int MSB(const U64 Source)
 {
     unsigned long Index;
@@ -83,7 +83,7 @@ int MSB(const U64 Source)
 
     return (int)Index;
 }
-
+*/
 U64 PDEP(const U64 Source, const U64 Mask)
 {
     return _pdep_u64(Source, Mask);

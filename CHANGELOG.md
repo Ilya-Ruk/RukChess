@@ -7,8 +7,8 @@
 3. Updated BONUS formula
 4. Changed DEFAULT_HASH_TABLE_SIZE to 256
 5. Updating accumulator in move make/unmake function
-6. New neural net
-7. New output layer AVX2 code
+6. New neural net ((768x256)x2->1, CReLU, Qin=255, Qout=64, Scale=272)
+7. New book file (434173 positions)
 8. Corrected the code
 
 ## RukChess 4.2.0 (11.01.2026)

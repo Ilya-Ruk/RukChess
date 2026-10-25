@@ -51,13 +51,10 @@ void AddMove(const BoardItem* Board, int** CMH_Pointer, MoveItem* MoveList, int*
         MoveList[*GenMoveCount].Type = MoveType;
         MoveList[*GenMoveCount].Move = MOVE_CREATE(From, To, 0);
 
-        if (MoveType & MOVE_CAPTURE) {
-            if (MoveType & MOVE_PAWN_PASSANT) {
-                MoveList[*GenMoveCount].SortValue = SORT_CAPTURE_MOVE_BONUS + ((PAWN + 1) << 3) - (PAWN + 1);
-            }
-            else {
-                MoveList[*GenMoveCount].SortValue = SORT_CAPTURE_MOVE_BONUS + ((PIECE_TYPE(Board->Pieces[To]) + 1) << 3) - (PIECE_TYPE(Board->Pieces[From]) + 1);
-            }
+        if (MoveType & MOVE_PAWN_PASSANT) {
+            MoveList[*GenMoveCount].SortValue = SORT_CAPTURE_MOVE_BONUS + ((PAWN + 1) << 3) - (PAWN + 1);
+        } else if (MoveType & MOVE_CAPTURE) {
+            MoveList[*GenMoveCount].SortValue = SORT_CAPTURE_MOVE_BONUS + ((PIECE_TYPE(Board->Pieces[To]) + 1) << 3) - (PIECE_TYPE(Board->Pieces[From]) + 1);
         }
         else {
             MoveList[*GenMoveCount].SortValue = Board->HeuristicTable[Board->CurrentColor][PIECE_TYPE(Board->Pieces[From])][To];

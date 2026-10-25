@@ -71,9 +71,9 @@ BOOL IsSquareAttacked(const BoardItem* Board, const int Square, const int Color)
     assert(Square >= 0 && Square <= 63);
     assert(Color == WHITE || Color == BLACK);
 
-    int EnemyColor = CHANGE_COLOR(Color);
-
     U64 Attackers = 0ULL;
+
+    int EnemyColor = CHANGE_COLOR(Color);
 
     // Pawns
     Attackers |= PawnAttacks(BB_SQUARE(Square), Color) & Board->BB_Pieces[EnemyColor][PAWN];
@@ -402,7 +402,7 @@ void PrintBoard(BoardItem* Board)
 
     printf("Static evaluate = %.2f\n", (double)Evaluate(Board) / 100.0);
 }
-
+/*
 void PrintBitMask(const U64 Mask)
 {
     for (int Square = 0; Square < 64; ++Square) {
@@ -420,7 +420,7 @@ void PrintBitMask(const U64 Mask)
 
     printf("\n");
 }
-
+*/
 int SetFen(BoardItem* Board, const char* Fen)
 {
     const char* Part = Fen;
