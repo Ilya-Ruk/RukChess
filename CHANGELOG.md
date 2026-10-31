@@ -11,7 +11,8 @@
 7. New neural net ((768x256)x2->1, CReLU, Qin=255, Qout=64, Scale=272)
 8. New book file (434173 positions)
 9. Added nodes in UCI go command
-10. Corrected the code
+10. Project updated to Microsoft VS 2026
+11. Corrected the code
 
 ## RukChess 4.2.0 (11.01.2026)
 
