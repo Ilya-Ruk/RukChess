@@ -402,25 +402,7 @@ void PrintBoard(BoardItem* Board)
 
     printf("Static evaluate = %.2f\n", (double)Evaluate(Board) / 100.0);
 }
-/*
-void PrintBitMask(const U64 Mask)
-{
-    for (int Square = 0; Square < 64; ++Square) {
-        if (Square > 0 && (Square % 8) == 0) {
-            printf("\n");
-        }
 
-        if (Mask & BB_SQUARE(Square)) {
-            printf("x");
-        }
-        else {
-            printf("-");
-        }
-    }
-
-    printf("\n");
-}
-*/
 int SetFen(BoardItem* Board, const char* Fen)
 {
     const char* Part = Fen;

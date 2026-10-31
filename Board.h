@@ -300,8 +300,6 @@ BOOL IsInsufficientMaterial(const BoardItem* Board);
 
 void PrintBoard(BoardItem* Board);
 
-//void PrintBitMask(const U64 Mask);
-
 int SetFen(BoardItem* Board, const char* Fen);
 void GetFen(const BoardItem* Board, char* Fen);
 
