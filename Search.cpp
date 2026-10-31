@@ -457,16 +457,13 @@ NextMove:
 #ifdef PRINT_CURRENT_MOVE
         if (omp_get_thread_num() == 0) { // Master thread
             if (Ply == 0 && PrintMode == PRINT_MODE_UCI && (Clock() - TimeStart) >= 3000ULL) {
-#pragma omp critical
-                {
-                    printf("info depth %d currmovenumber %d currmove %s%s", Depth, MoveNumber + 1, BoardName[MOVE_FROM(MoveList[MoveNumber].Move)], BoardName[MOVE_TO(MoveList[MoveNumber].Move)]);
+                printf("info depth %d currmovenumber %d currmove %s%s", Depth, MoveNumber + 1, BoardName[MOVE_FROM(MoveList[MoveNumber].Move)], BoardName[MOVE_TO(MoveList[MoveNumber].Move)]);
 
-                    if (MoveList[MoveNumber].Type & MOVE_PAWN_PROMOTE) {
-                        printf("%c", PiecesCharBlack[MOVE_PROMOTE_PIECE_TYPE(MoveList[MoveNumber].Move)]);
-                    }
-
-                    printf("\n");
+                if (MoveList[MoveNumber].Type & MOVE_PAWN_PROMOTE) {
+                    printf("%c", PiecesCharBlack[MOVE_PROMOTE_PIECE_TYPE(MoveList[MoveNumber].Move)]);
                 }
+
+                printf("\n");
             }
         }
 #endif // PRINT_CURRENT_MOVE

@@ -365,12 +365,6 @@ BOOL ComputerMove(void)
         ThreadScore = 0;
 
         for (int Depth = 1; Depth <= MaxDepth; ++Depth) {
-/*
-#pragma omp critical
-            {
-                printf("-- Start: Depth = %d Thread number = %d\n", Depth, ThreadId);
-            }
-*/
 #ifdef ASPIRATION_WINDOW
             if (Depth >= ASPIRATION_WINDOW_START_DEPTH) {
                 Delta = ASPIRATION_WINDOW_INIT_DELTA;
@@ -406,12 +400,7 @@ BOOL ComputerMove(void)
 #ifdef ASPIRATION_WINDOW
             }
 #endif // ASPIRATION_WINDOW
-/*
-#pragma omp critical
-            {
-                printf("-- End: Depth = %d Thread number = %d\n", Depth, ThreadId);
-            }
-*/
+
             if (StopSearch) {
                 break; // for (depth)
             }
@@ -419,10 +408,7 @@ BOOL ComputerMove(void)
             if (ThreadId == 0) { // Master thread
                 CompletedDepth = Depth;
 
-#pragma omp critical
-                {
-                    PrintBestMoves(CompletedDepth, ThreadSearchData->BestMoves, ThreadScore);
-                }
+                PrintBestMoves(CompletedDepth, ThreadSearchData->BestMoves, ThreadScore);
 
                 TargetTimeLocal = TargetTime[TimeStep];
 
