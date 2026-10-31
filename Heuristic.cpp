@@ -8,9 +8,9 @@
 #include "Def.h"
 #include "Utils.h"
 
-void UpdateHeuristic(BoardItem* Board, int** CMH_Pointer, const int Move, const int Bonus)
+void UpdateHeuristic(BoardItem* Board, SearchDataItem* SearchData, int** CMH_Pointer, const int Move, const int Bonus)
 {
-    Board->HeuristicTable[Board->CurrentColor][PIECE_TYPE(Board->Pieces[MOVE_FROM(Move)])][MOVE_TO(Move)] += Bonus - Board->HeuristicTable[Board->CurrentColor][PIECE_TYPE(Board->Pieces[MOVE_FROM(Move)])][MOVE_TO(Move)] * ABS(Bonus) / MAX_HEURISTIC_SCORE;
+    SearchData->HeuristicTable[Board->CurrentColor][PIECE_TYPE(Board->Pieces[MOVE_FROM(Move)])][MOVE_TO(Move)] += Bonus - SearchData->HeuristicTable[Board->CurrentColor][PIECE_TYPE(Board->Pieces[MOVE_FROM(Move)])][MOVE_TO(Move)] * ABS(Bonus) / MAX_HEURISTIC_SCORE;
 
 #ifdef COUNTER_MOVE_HISTORY
     if (CMH_Pointer) {
@@ -25,17 +25,17 @@ void UpdateHeuristic(BoardItem* Board, int** CMH_Pointer, const int Move, const 
 #endif // COUNTER_MOVE_HISTORY
 }
 
-void ClearHeuristic(BoardItem* Board)
+void ClearHeuristic(SearchDataItem* SearchData)
 {
-    memset(Board->HeuristicTable, 0, sizeof(Board->HeuristicTable));
+    memset(SearchData->HeuristicTable, 0, sizeof(SearchData->HeuristicTable));
 
 #ifdef COUNTER_MOVE_HISTORY
-    memset(Board->CounterMoveHistoryTable, 0, sizeof(Board->CounterMoveHistoryTable));
+    memset(SearchData->CounterMoveHistoryTable, 0, sizeof(SearchData->CounterMoveHistoryTable));
 #endif // COUNTER_MOVE_HISTORY
 }
 
 #ifdef COUNTER_MOVE_HISTORY
-void SetCounterMoveHistoryPointer(BoardItem* Board, int** CMH_Pointer, const int Ply)
+void SetCounterMoveHistoryPointer(BoardItem* Board, SearchDataItem* SearchData, int** CMH_Pointer, const int Ply)
 {
     HistoryItem* Info;
 
@@ -55,7 +55,7 @@ void SetCounterMoveHistoryPointer(BoardItem* Board, int** CMH_Pointer, const int
         return;
     }
 
-    CMH_Pointer[0] = Board->CounterMoveHistoryTable[Info->PieceTypeFrom][Info->To];
+    CMH_Pointer[0] = SearchData->CounterMoveHistoryTable[Info->PieceTypeFrom][Info->To];
 
     if (Ply == 1) {
         CMH_Pointer[1] = NULL;
@@ -71,35 +71,35 @@ void SetCounterMoveHistoryPointer(BoardItem* Board, int** CMH_Pointer, const int
         return;
     }
 
-    CMH_Pointer[1] = Board->CounterMoveHistoryTable[Info->PieceTypeFrom][Info->To];
+    CMH_Pointer[1] = SearchData->CounterMoveHistoryTable[Info->PieceTypeFrom][Info->To];
 }
 #endif // COUNTER_MOVE_HISTORY
 
 #ifdef KILLER_MOVE
 
-void UpdateKillerMove(BoardItem* Board, const int Move, const int Ply)
+void UpdateKillerMove(SearchDataItem* SearchData, const int Move, const int Ply)
 {
     int TempMove;
 
-    if (Board->KillerMoveTable[Ply][0] != Move) {
-        TempMove = Board->KillerMoveTable[Ply][0];
+    if (SearchData->KillerMoveTable[Ply][0] != Move) {
+        TempMove = SearchData->KillerMoveTable[Ply][0];
 
-        Board->KillerMoveTable[Ply][0] = Move;
+        SearchData->KillerMoveTable[Ply][0] = Move;
 
-        Board->KillerMoveTable[Ply][1] = TempMove;
+        SearchData->KillerMoveTable[Ply][1] = TempMove;
     }
 }
 
-void ClearKillerMove(BoardItem* Board)
+void ClearKillerMove(SearchDataItem* SearchData)
 {
-    memset(Board->KillerMoveTable, 0, sizeof(Board->KillerMoveTable));
+    memset(SearchData->KillerMoveTable, 0, sizeof(SearchData->KillerMoveTable));
 }
 
 #endif // KILLER_MOVE
 
 #ifdef COUNTER_MOVE
 
-void UpdateCounterMove(BoardItem* Board, const int Move, const int Ply)
+void UpdateCounterMove(BoardItem* Board, SearchDataItem* SearchData, const int Move, const int Ply)
 {
     if (Ply == 0) {
         return;
@@ -111,12 +111,12 @@ void UpdateCounterMove(BoardItem* Board, const int Move, const int Ply)
         return;
     }
 
-    Board->CounterMoveTable[CHANGE_COLOR(Board->CurrentColor)][Info->PieceTypeFrom][Info->To] = Move;
+    SearchData->CounterMoveTable[CHANGE_COLOR(Board->CurrentColor)][Info->PieceTypeFrom][Info->To] = Move;
 }
 
-void ClearCounterMove(BoardItem* Board)
+void ClearCounterMove(SearchDataItem* SearchData)
 {
-    memset(Board->CounterMoveTable, 0, sizeof(Board->CounterMoveTable));
+    memset(SearchData->CounterMoveTable, 0, sizeof(SearchData->CounterMoveTable));
 }
 
 #endif // COUNTER_MOVE

@@ -189,7 +189,7 @@ void GenerateBook(void)
 
     Error = FALSE;
 
-    SetFen(&CurrentBoard, StartFen);
+    SetFen(&ThreadBoardList[0], StartFen);
 
     Stage = STAGE_NONE;
 
@@ -215,7 +215,7 @@ void GenerateBook(void)
 
                 Error = FALSE;
 
-                SetFen(&CurrentBoard, StartFen);
+                SetFen(&ThreadBoardList[0], StartFen);
 
                 Stage = STAGE_NONE;
             }
@@ -268,7 +268,7 @@ void GenerateBook(void)
 
 //                printf("FEN = %s\n", FenString);
 
-                SetFen(&CurrentBoard, FenString);
+                SetFen(&ThreadBoardList[0], FenString);
             }
             else if (strncmp(Part, "[WhiteElo \"", 11) == 0) { // WhiteElo
                 Part += 11;
@@ -353,20 +353,20 @@ void GenerateBook(void)
 //                    printf("Ply = %d Result = %d Move = %s\n", Ply, Result, MoveString);
 
                     GenMoveCount = 0;
-                    GenerateAllMoves(&CurrentBoard, NULL, MoveList, &GenMoveCount);
+                    GenerateAllMoves(&ThreadBoardList[0], NULL, NULL, MoveList, &GenMoveCount);
 
                     MoveFound = FALSE;
 
                     for (int MoveNumber = 0; MoveNumber < GenMoveCount; ++MoveNumber) {
-                        NotateMove(&CurrentBoard, MoveList[MoveNumber], NotateMoveStr);
+                        NotateMove(&ThreadBoardList[0], MoveList[MoveNumber], NotateMoveStr);
 
                         if (strcmp(MoveString, NotateMoveStr) == 0) {
-                            MakeMove(&CurrentBoard, MoveList[MoveNumber]);
+                            MakeMove(&ThreadBoardList[0], MoveList[MoveNumber]);
 
-                            if (IsInCheck(&CurrentBoard, CHANGE_COLOR(CurrentBoard.CurrentColor))) { // Illegal move
-                                UnmakeMove(&CurrentBoard);
+                            if (IsInCheck(&ThreadBoardList[0], CHANGE_COLOR(ThreadBoardList[0].CurrentColor))) { // Illegal move
+                                UnmakeMove(&ThreadBoardList[0]);
 
-                                PrintBoard(&CurrentBoard);
+                                PrintBoard(&ThreadBoardList[0]);
 
                                 printf("\n");
 
@@ -434,7 +434,7 @@ void GenerateBook(void)
                     if (!MoveFound) { // Move not found
                         Error = TRUE;
 
-                        PrintBoard(&CurrentBoard);
+                        PrintBoard(&ThreadBoardList[0]);
 
                         printf("\n");
 
@@ -445,7 +445,7 @@ void GenerateBook(void)
                         printf("Gen. moves:");
 
                         for (int MoveNumber = 0; MoveNumber < GenMoveCount; ++MoveNumber) {
-                            NotateMove(&CurrentBoard, MoveList[MoveNumber], NotateMoveStr);
+                            NotateMove(&ThreadBoardList[0], MoveList[MoveNumber], NotateMoveStr);
 
                             printf(" %s%s", BoardName[MOVE_FROM(MoveList[MoveNumber].Move)], BoardName[MOVE_TO(MoveList[MoveNumber].Move)]);
 
@@ -479,9 +479,9 @@ void GenerateBook(void)
 
     // Prepare new game
 
-    SetFen(&CurrentBoard, StartFen);
+    SetFen(&ThreadBoardList[0], StartFen);
 
-    PrintNode(&CurrentBoard, RootNode, FileOut);
+    PrintNode(&ThreadBoardList[0], RootNode, FileOut);
 
     fclose(FileOut);
     fclose(FileIn);
@@ -669,7 +669,7 @@ void FreeBook(void)
     }
 }
 
-BOOL GetBookMove(const BoardItem* Board, MoveItem* BestMoves)
+BOOL GetBookMove(const BoardItem* Board, MoveItem* BestMove)
 {
     int FirstIndex;
     int BookCount;
@@ -730,7 +730,7 @@ BOOL GetBookMove(const BoardItem* Board, MoveItem* BestMoves)
 
         if (Selected < Offset) {
             GenMoveCount = 0;
-            GenerateAllMoves(Board, NULL, MoveList, &GenMoveCount);
+            GenerateAllMoves(Board, NULL, NULL, MoveList, &GenMoveCount);
 
             for (int MoveNumber = 0; MoveNumber < GenMoveCount; ++MoveNumber) {
                 if (
@@ -739,8 +739,7 @@ BOOL GetBookMove(const BoardItem* Board, MoveItem* BestMoves)
                 ) { // Valid book move
 //                    printf("0x%016llx %s %s %d\n", BookItemPointer->Hash, BoardName[BookItemPointer->From], BoardName[BookItemPointer->To], BookItemPointer->Total);
 
-                    BestMoves[0] = MoveList[MoveNumber]; // Best move
-                    BestMoves[1] = (MoveItem){ 0, 0, 0 }; // End of move list
+                    *BestMove = MoveList[MoveNumber]; // Best move
 
                     return TRUE;
                 }

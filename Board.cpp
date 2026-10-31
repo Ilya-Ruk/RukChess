@@ -55,8 +55,8 @@ const char MoveSubsequentChar[] = "abcdefgh012345678x=NBRQ-O+#";
 
 const char StartFen[] = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-BoardItem CurrentBoard;
 BoardItem ThreadBoardList[MAX_THREADS];
+SearchDataItem ThreadSearchDataList[MAX_THREADS];
 
 #ifdef LATE_MOVE_PRUNING
 int LateMovePruningTable[7]; // [LMP depth]
@@ -108,7 +108,7 @@ BOOL HasLegalMoves(BoardItem* Board)
     MoveItem MoveList[MAX_GEN_MOVES];
 
     GenMoveCount = 0;
-    GenerateAllMoves(Board, NULL, MoveList, &GenMoveCount);
+    GenerateAllMoves(Board, NULL, NULL, MoveList, &GenMoveCount);
 
     for (int MoveNumber = 0; MoveNumber < GenMoveCount; ++MoveNumber) {
         MakeMove(Board, MoveList[MoveNumber]);
@@ -156,7 +156,7 @@ void NotateMove(BoardItem* Board, const MoveItem Move, char* Result)
     }
 
     GenMoveCount = 0;
-    GenerateAllMoves(Board, NULL, MoveList, &GenMoveCount);
+    GenerateAllMoves(Board, NULL, NULL, MoveList, &GenMoveCount);
 
     for (int MoveNumber = 0; MoveNumber < GenMoveCount; ++MoveNumber) {
         if (MOVE_TO(MoveList[MoveNumber].Move) != To) {
@@ -638,11 +638,11 @@ int SetFen(BoardItem* Board, const char* Fen)
         ++Part;
     }
 
-    InitAccumulator(Board);
-
     InitHash(Board);
 
     memset(Board->MoveTable, 0, sizeof(Board->MoveTable));
+
+    InitAccumulator(Board);
 
     return (int)(Part - Fen);
 }
@@ -762,7 +762,7 @@ U64 CountLegalMoves(BoardItem* Board, const int Depth)
     }
 
     GenMoveCount = 0;
-    GenerateAllMoves(Board, NULL, MoveList, &GenMoveCount);
+    GenerateAllMoves(Board, NULL, NULL, MoveList, &GenMoveCount);
 
     for (int MoveNumber = 0; MoveNumber < GenMoveCount; ++MoveNumber) {
         MakeMove(Board, MoveList[MoveNumber]);

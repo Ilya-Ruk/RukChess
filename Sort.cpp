@@ -23,9 +23,9 @@ void SetHashMoveSortValue(MoveItem* GenMoveList, const int GenMoveCount, const i
 
 #ifdef KILLER_MOVE
 
-void SetKillerMove1SortValue(const BoardItem* Board, const int Ply, MoveItem* GenMoveList, const int GenMoveCount, const int HashMove)
+void SetKillerMove1SortValue(const SearchDataItem* SearchData, const int Ply, MoveItem* GenMoveList, const int GenMoveCount, const int HashMove)
 {
-    int KillerMove1 = Board->KillerMoveTable[Ply][0];
+    int KillerMove1 = SearchData->KillerMoveTable[Ply][0];
 
     if (KillerMove1 && KillerMove1 != HashMove) {
         for (int Index = 0; Index < GenMoveCount; ++Index) {
@@ -40,10 +40,10 @@ void SetKillerMove1SortValue(const BoardItem* Board, const int Ply, MoveItem* Ge
     }
 }
 
-void SetKillerMove2SortValue(const BoardItem* Board, const int Ply, MoveItem* GenMoveList, const int GenMoveCount, const int HashMove)
+void SetKillerMove2SortValue(const SearchDataItem* SearchData, const int Ply, MoveItem* GenMoveList, const int GenMoveCount, const int HashMove)
 {
-    int KillerMove1 = Board->KillerMoveTable[Ply][0];
-    int KillerMove2 = Board->KillerMoveTable[Ply][1];
+    int KillerMove1 = SearchData->KillerMoveTable[Ply][0];
+    int KillerMove2 = SearchData->KillerMoveTable[Ply][1];
 
     if (KillerMove2 && KillerMove2 != HashMove && KillerMove2 != KillerMove1) {
         for (int Index = 0; Index < GenMoveCount; ++Index) {
@@ -61,7 +61,7 @@ void SetKillerMove2SortValue(const BoardItem* Board, const int Ply, MoveItem* Ge
 #endif // KILLER_MOVE
 
 #ifdef COUNTER_MOVE
-void SetCounterMoveSortValue(const BoardItem* Board, const int Ply, MoveItem* GenMoveList, const int GenMoveCount, const int HashMove)
+void SetCounterMoveSortValue(const BoardItem* Board, const SearchDataItem* SearchData, const int Ply, MoveItem* GenMoveList, const int GenMoveCount, const int HashMove)
 {
     if (Ply == 0) {
         return;
@@ -73,11 +73,11 @@ void SetCounterMoveSortValue(const BoardItem* Board, const int Ply, MoveItem* Ge
         return;
     }
 
-    int CounterMove = Board->CounterMoveTable[CHANGE_COLOR(Board->CurrentColor)][Info->PieceTypeFrom][Info->To];
+    int CounterMove = SearchData->CounterMoveTable[CHANGE_COLOR(Board->CurrentColor)][Info->PieceTypeFrom][Info->To];
 
 #ifdef KILLER_MOVE
-    int KillerMove1 = Board->KillerMoveTable[Ply][0];
-    int KillerMove2 = Board->KillerMoveTable[Ply][1];
+    int KillerMove1 = SearchData->KillerMoveTable[Ply][0];
+    int KillerMove2 = SearchData->KillerMoveTable[Ply][1];
 #endif // KILLER_MOVE
 
 #ifdef KILLER_MOVE

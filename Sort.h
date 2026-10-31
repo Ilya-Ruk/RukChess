@@ -21,12 +21,12 @@
 void SetHashMoveSortValue(MoveItem* GenMoveList, const int GenMoveCount, const int HashMove);
 
 #ifdef KILLER_MOVE
-void SetKillerMove1SortValue(const BoardItem* Board, const int Ply, MoveItem* GenMoveList, const int GenMoveCount, const int HashMove);
-void SetKillerMove2SortValue(const BoardItem* Board, const int Ply, MoveItem* GenMoveList, const int GenMoveCount, const int HashMove);
+void SetKillerMove1SortValue(const SearchDataItem* SearchData, const int Ply, MoveItem* GenMoveList, const int GenMoveCount, const int HashMove);
+void SetKillerMove2SortValue(const SearchDataItem* SearchData, const int Ply, MoveItem* GenMoveList, const int GenMoveCount, const int HashMove);
 #endif // KILLER_MOVE
 
 #ifdef COUNTER_MOVE
-void SetCounterMoveSortValue(const BoardItem* Board, const int Ply, MoveItem* GenMoveList, const int GenMoveCount, const int HashMove);
+void SetCounterMoveSortValue(const BoardItem* Board, const SearchDataItem* SearchData, const int Ply, MoveItem* GenMoveList, const int GenMoveCount, const int HashMove);
 #endif // COUNTER_MOVE
 
 void PrepareNextMove(const int StartIndex, MoveItem* GenMoveList, const int GenMoveCount);

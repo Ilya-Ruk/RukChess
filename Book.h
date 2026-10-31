@@ -43,6 +43,6 @@ void GenerateBook(void);
 void LoadBook(const char* BookFileName);
 void FreeBook(void);
 
-BOOL GetBookMove(const BoardItem* Board, MoveItem* BestMoves);
+BOOL GetBookMove(const BoardItem* Board, MoveItem* BestMove);
 
 #endif // !BOOK_H

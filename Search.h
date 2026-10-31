@@ -9,6 +9,6 @@
 #include "Def.h"
 #include "Types.h"
 
-int Search(BoardItem* Board, int Alpha, int Beta, int Depth, const int Ply, MoveItem* BestMoves, const BOOL IsPrincipal, const BOOL InCheck, const BOOL UsePruning, const int SkipMove);
+int Search(BoardItem* Board, SearchDataItem* SearchData, int Alpha, int Beta, int Depth, const int Ply, MoveItem* BestMoves, const BOOL IsPrincipal, const BOOL InCheck, const BOOL UsePruning, const int SkipMove);
 
 #endif // !SEARCH_H

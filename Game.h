@@ -15,6 +15,7 @@
 
 extern int MaxThreads;
 extern int MaxDepth;
+extern U64 MaxNodes;
 extern U64 MaxTime;
 
 extern U64 ReduceTime;
@@ -34,7 +35,7 @@ extern volatile BOOL StopSearch;
 
 extern int PrintMode;
 
-void PrintBestMoves(const BoardItem* Board, const int Depth, const MoveItem* BestMoves, const int BestScore);
+void PrintBestMoves(const int Depth, const MoveItem* BestMoves, const int BestScore);
 void SaveBestMoves(MoveItem* BestMoves, const MoveItem BestMove, const MoveItem* TempBestMoves);
 
 BOOL ComputerMove(void);

@@ -16,7 +16,7 @@
 #include "Types.h"
 #include "Utils.h"
 
-int QuiescenceSearch(BoardItem* Board, int Alpha, int Beta, const int Depth, const int Ply, const BOOL IsPrincipal, const BOOL InCheck)
+int QuiescenceSearch(BoardItem* Board, SearchDataItem* SearchData, int Alpha, int Beta, const int Depth, const int Ply, const BOOL IsPrincipal, const BOOL InCheck)
 {
     assert(Alpha >= -INF);
     assert(Beta <= INF);
@@ -56,7 +56,8 @@ int QuiescenceSearch(BoardItem* Board, int Alpha, int Beta, const int Depth, con
     if (omp_get_thread_num() == 0) { // Master thread
         if (
             CompletedDepth >= MIN_SEARCH_DEPTH
-            && (Board->Nodes & 4095) == 0
+            && (SearchData->Nodes & 4095) == 0
+            && TimeStop > 0ULL
             && Clock() >= TimeStop
         ) {
             StopSearch = TRUE;
@@ -134,7 +135,7 @@ int QuiescenceSearch(BoardItem* Board, int Alpha, int Beta, const int Depth, con
         BestScore = StaticScore = -INF + Ply;
 
         GenMoveCount = 0;
-        GenerateAllMoves(Board, NULL, MoveList, &GenMoveCount);
+        GenerateAllMoves(Board, SearchData, NULL, MoveList, &GenMoveCount);
     }
     else {
 #endif // QUIESCENCE_USE_CHECK
@@ -166,7 +167,7 @@ int QuiescenceSearch(BoardItem* Board, int Alpha, int Beta, const int Depth, con
         }
 
         GenMoveCount = 0;
-        GenerateCaptureMoves(Board, NULL, MoveList, &GenMoveCount);
+        GenerateCaptureMoves(Board, SearchData, NULL, MoveList, &GenMoveCount);
 #ifdef QUIESCENCE_USE_CHECK
     }
 #endif // QUIESCENCE_USE_CHECK
@@ -200,11 +201,11 @@ int QuiescenceSearch(BoardItem* Board, int Alpha, int Beta, const int Depth, con
         ++LegalMoveCount;
 #endif // QUIESCENCE_USE_CHECK
 
-        ++Board->Nodes;
+        ++SearchData->Nodes;
 
         GiveCheck = IsInCheck(Board, Board->CurrentColor);
 
-        Score = -QuiescenceSearch(Board, -Beta, -Alpha, Depth - 1, Ply + 1, IsPrincipal, GiveCheck);
+        Score = -QuiescenceSearch(Board, SearchData, -Beta, -Alpha, Depth - 1, Ply + 1, IsPrincipal, GiveCheck);
 
         UnmakeMove(Board);
 

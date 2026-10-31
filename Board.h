@@ -201,7 +201,7 @@ typedef struct {
     int PromotePieceType;
 
     int PassantSquare;
-    int EatPawnSquare;
+    int EatPawnSquare; // TODO: rename to CapturePawnSquare
 
     int CastleFlags;
     int FiftyMove;
@@ -231,6 +231,10 @@ typedef struct {
 
     HistoryItem MoveTable[MAX_GAME_MOVES];
 
+    AccumulatorItem Accumulator;
+} BoardItem;
+
+typedef struct {
     U64 Nodes;
 
 #ifdef USE_STATISTIC
@@ -242,7 +246,7 @@ typedef struct {
 
     int SelDepth;
 
-    MoveItem BestMovesRoot[MAX_PLY];
+    MoveItem BestMoves[MAX_PLY];
 
     int HeuristicTable[2][6][64]; // [Color][Piece][Square]
 
@@ -257,9 +261,7 @@ typedef struct {
 #ifdef COUNTER_MOVE
     int CounterMoveTable[2][6][64]; // [Color][Piece][Square]
 #endif // COUNTER_MOVE
-
-    AccumulatorItem Accumulator;
-} BoardItem;
+} SearchDataItem;
 
 extern const char* BoardName[64];
 
@@ -273,8 +275,8 @@ extern const char MoveSubsequentChar[];
 
 extern const char StartFen[];
 
-extern BoardItem CurrentBoard;
 extern BoardItem ThreadBoardList[MAX_THREADS];
+extern SearchDataItem ThreadSearchDataList[MAX_THREADS];
 
 #ifdef LATE_MOVE_PRUNING
 extern int LateMovePruningTable[7]; // [LMP depth]

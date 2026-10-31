@@ -36,12 +36,17 @@ int main(int argc, char** argv)
 //    BoardItem Board;
 
 //    printf("BoardItem.MoveTable = %zd\n", sizeof(Board.MoveTable));
-//    printf("BoardItem.BestMovesRoot = %zd\n", sizeof(Board.BestMovesRoot));
-//    printf("BoardItem.HeuristicTable = %zd\n", sizeof(Board.HeuristicTable));
-//    printf("BoardItem.CounterMoveHistoryTable = %zd\n", sizeof(Board.CounterMoveHistoryTable));
-//    printf("BoardItem.KillerMoveTable = %zd\n", sizeof(Board.KillerMoveTable));
-//    printf("BoardItem.CounterMoveTable = %zd\n", sizeof(Board.CounterMoveTable));
 //    printf("BoardItem.Accumulator = %zd\n", sizeof(Board.Accumulator));
+
+//    printf("SearchDataItem = %zd\n", sizeof(SearchDataItem));
+
+//    SearchDataItem SearchData;
+
+//    printf("SearchDataItem.BestMoves = %zd\n", sizeof(SearchData.BestMoves));
+//    printf("SearchDataItem.HeuristicTable = %zd\n", sizeof(SearchData.HeuristicTable));
+//    printf("SearchDataItem.CounterMoveHistoryTable = %zd\n", sizeof(SearchData.CounterMoveHistoryTable));
+//    printf("SearchDataItem.KillerMoveTable = %zd\n", sizeof(SearchData.KillerMoveTable));
+//    printf("SearchDataItem.CounterMoveTable = %zd\n", sizeof(SearchData.CounterMoveTable));
 
 //    printf("NodeItem = %zd\n", sizeof(NodeItem));
 //    printf("BookItem = %zd\n", sizeof(BookItem));
@@ -208,32 +213,32 @@ int main(int argc, char** argv)
 
         switch (Choice) {
             case 1:
-                SetFen(&CurrentBoard, StartFen);
+                SetFen(&ThreadBoardList[0], StartFen);
                 Game(WHITE, BLACK);
                 break;
 
             case 2:
-                SetFen(&CurrentBoard, StartFen);
+                SetFen(&ThreadBoardList[0], StartFen);
                 Game(BLACK, WHITE);
                 break;
 
             case 3:
-                SetFen(&CurrentBoard, StartFen);
+                SetFen(&ThreadBoardList[0], StartFen);
                 GameAuto();
                 break;
 
             case 4:
-                LoadGame(&CurrentBoard);
+                LoadGame(&ThreadBoardList[0]);
                 Game(WHITE, BLACK);
                 break;
 
             case 5:
-                LoadGame(&CurrentBoard);
+                LoadGame(&ThreadBoardList[0]);
                 Game(BLACK, WHITE);
                 break;
 
             case 6:
-                LoadGame(&CurrentBoard);
+                LoadGame(&ThreadBoardList[0]);
                 GameAuto();
                 break;
 
@@ -242,7 +247,7 @@ int main(int argc, char** argv)
                 break;
 
             case 8:
-                LoadGame(&CurrentBoard);
+                LoadGame(&ThreadBoardList[0]);
                 GeneratorTest2();
                 break;
 

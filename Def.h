@@ -101,8 +101,6 @@
 
 // Time management (Xiphos)
 
-#define MAX_TIME                                86400   // Maximum time per move, seconds
-
 #define DEFAULT_REDUCE_TIME                     25      // Milliseconds
 #define MAX_REDUCE_TIME                         1000    // Milliseconds
 

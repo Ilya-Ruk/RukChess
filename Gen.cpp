@@ -12,7 +12,7 @@
 #include "Sort.h"
 #include "Types.h"
 
-void AddMove(const BoardItem* Board, int** CMH_Pointer, MoveItem* MoveList, int* GenMoveCount, const int From, const int To, const int MoveType)
+void AddMove(const BoardItem* Board, SearchDataItem* SearchData, int** CMH_Pointer, MoveItem* MoveList, int* GenMoveCount, const int From, const int To, const int MoveType)
 {
     if ((MoveType & MOVE_PAWN) && (RANK(To) == 0 || RANK(To) == 7)) { // Pawn promote
         // Knight
@@ -57,7 +57,9 @@ void AddMove(const BoardItem* Board, int** CMH_Pointer, MoveItem* MoveList, int*
             MoveList[*GenMoveCount].SortValue = SORT_CAPTURE_MOVE_BONUS + ((PIECE_TYPE(Board->Pieces[To]) + 1) << 3) - (PIECE_TYPE(Board->Pieces[From]) + 1);
         }
         else {
-            MoveList[*GenMoveCount].SortValue = Board->HeuristicTable[Board->CurrentColor][PIECE_TYPE(Board->Pieces[From])][To];
+            if (SearchData) {
+                MoveList[*GenMoveCount].SortValue = SearchData->HeuristicTable[Board->CurrentColor][PIECE_TYPE(Board->Pieces[From])][To];
+            }
 
 #ifdef COUNTER_MOVE_HISTORY
             if (CMH_Pointer) {
@@ -76,7 +78,7 @@ void AddMove(const BoardItem* Board, int** CMH_Pointer, MoveItem* MoveList, int*
     }
 }
 
-void GenerateAllMoves(const BoardItem* Board, int** CMH_Pointer, MoveItem* MoveList, int* GenMoveCount)
+void GenerateAllMoves(const BoardItem* Board, SearchDataItem* SearchData, int** CMH_Pointer, MoveItem* MoveList, int* GenMoveCount)
 {
     U64 Pieces;
     U64 Attacks;
@@ -96,11 +98,11 @@ void GenerateAllMoves(const BoardItem* Board, int** CMH_Pointer, MoveItem* MoveL
             To = LSB(Attacks);
 
             if (((BB_SQUARE(To) << 7) & ~BB_FILE_H) & Board->BB_Pieces[WHITE][PAWN]) {
-                AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, To + 7, To, (MOVE_PAWN | MOVE_CAPTURE));
+                AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, To + 7, To, (MOVE_PAWN | MOVE_CAPTURE));
             }
 
             if (((BB_SQUARE(To) << 9) & ~BB_FILE_A) & Board->BB_Pieces[WHITE][PAWN]) {
-                AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, To + 9, To, (MOVE_PAWN | MOVE_CAPTURE));
+                AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, To + 9, To, (MOVE_PAWN | MOVE_CAPTURE));
             }
 
             Attacks &= Attacks - 1;
@@ -113,11 +115,11 @@ void GenerateAllMoves(const BoardItem* Board, int** CMH_Pointer, MoveItem* MoveL
             To = LSB(Attacks);
 
             if (((BB_SQUARE(To) >> 7) & ~BB_FILE_A)& Board->BB_Pieces[BLACK][PAWN]) {
-                AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, To - 7, To, (MOVE_PAWN | MOVE_CAPTURE));
+                AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, To - 7, To, (MOVE_PAWN | MOVE_CAPTURE));
             }
 
             if (((BB_SQUARE(To) >> 9) & ~BB_FILE_H)& Board->BB_Pieces[BLACK][PAWN]) {
-                AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, To - 9, To, (MOVE_PAWN | MOVE_CAPTURE));
+                AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, To - 9, To, (MOVE_PAWN | MOVE_CAPTURE));
             }
 
             Attacks &= Attacks - 1;
@@ -131,20 +133,20 @@ void GenerateAllMoves(const BoardItem* Board, int** CMH_Pointer, MoveItem* MoveL
 
         if (Board->CurrentColor == WHITE) {
             if (((BB_SQUARE(To) << 7) & ~BB_FILE_H) & Board->BB_Pieces[WHITE][PAWN]) {
-                AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, To + 7, To, (MOVE_PAWN_PASSANT | MOVE_CAPTURE));
+                AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, To + 7, To, (MOVE_PAWN_PASSANT | MOVE_CAPTURE));
             }
 
             if (((BB_SQUARE(To) << 9) & ~BB_FILE_A) & Board->BB_Pieces[WHITE][PAWN]) {
-                AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, To + 9, To, (MOVE_PAWN_PASSANT | MOVE_CAPTURE));
+                AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, To + 9, To, (MOVE_PAWN_PASSANT | MOVE_CAPTURE));
             }
         }
         else { // BLACK
             if (((BB_SQUARE(To) >> 7) & ~BB_FILE_A)& Board->BB_Pieces[BLACK][PAWN]) {
-                AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, To - 7, To, (MOVE_PAWN_PASSANT | MOVE_CAPTURE));
+                AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, To - 7, To, (MOVE_PAWN_PASSANT | MOVE_CAPTURE));
             }
 
             if (((BB_SQUARE(To) >> 9) & ~BB_FILE_H)& Board->BB_Pieces[BLACK][PAWN]) {
-                AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, To - 9, To, (MOVE_PAWN_PASSANT | MOVE_CAPTURE));
+                AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, To - 9, To, (MOVE_PAWN_PASSANT | MOVE_CAPTURE));
             }
         }
     }
@@ -157,7 +159,7 @@ void GenerateAllMoves(const BoardItem* Board, int** CMH_Pointer, MoveItem* MoveL
         while (QuietMoves) {
             To = LSB(QuietMoves);
 
-            AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, To + 8, To, MOVE_PAWN);
+            AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, To + 8, To, MOVE_PAWN);
 
             QuietMoves &= QuietMoves - 1;
         }
@@ -168,7 +170,7 @@ void GenerateAllMoves(const BoardItem* Board, int** CMH_Pointer, MoveItem* MoveL
         while (QuietMoves) {
             To = LSB(QuietMoves);
 
-            AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, To - 8, To, MOVE_PAWN);
+            AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, To - 8, To, MOVE_PAWN);
 
             QuietMoves &= QuietMoves - 1;
         }
@@ -182,7 +184,7 @@ void GenerateAllMoves(const BoardItem* Board, int** CMH_Pointer, MoveItem* MoveL
         while (QuietMoves) {
             To = LSB(QuietMoves);
 
-            AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, To + 16, To, MOVE_PAWN_2);
+            AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, To + 16, To, MOVE_PAWN_2);
 
             QuietMoves &= QuietMoves - 1;
         }
@@ -193,7 +195,7 @@ void GenerateAllMoves(const BoardItem* Board, int** CMH_Pointer, MoveItem* MoveL
         while (QuietMoves) {
             To = LSB(QuietMoves);
 
-            AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, To - 16, To, MOVE_PAWN_2);
+            AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, To - 16, To, MOVE_PAWN_2);
 
             QuietMoves &= QuietMoves - 1;
         }
@@ -218,7 +220,7 @@ void GenerateAllMoves(const BoardItem* Board, int** CMH_Pointer, MoveItem* MoveL
         while (CaptureMoves) {
             To = LSB(CaptureMoves);
 
-            AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, From, To, MOVE_CAPTURE);
+            AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, From, To, MOVE_CAPTURE);
 
             CaptureMoves &= CaptureMoves - 1;
         }
@@ -228,7 +230,7 @@ void GenerateAllMoves(const BoardItem* Board, int** CMH_Pointer, MoveItem* MoveL
         while (QuietMoves) {
             To = LSB(QuietMoves);
 
-            AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, From, To, MOVE_QUIET);
+            AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, From, To, MOVE_QUIET);
 
             QuietMoves &= QuietMoves - 1;
         }
@@ -256,7 +258,7 @@ void GenerateAllMoves(const BoardItem* Board, int** CMH_Pointer, MoveItem* MoveL
         while (CaptureMoves) {
             To = LSB(CaptureMoves);
 
-            AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, From, To, MOVE_CAPTURE);
+            AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, From, To, MOVE_CAPTURE);
 
             CaptureMoves &= CaptureMoves - 1;
         }
@@ -266,7 +268,7 @@ void GenerateAllMoves(const BoardItem* Board, int** CMH_Pointer, MoveItem* MoveL
         while (QuietMoves) {
             To = LSB(QuietMoves);
 
-            AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, From, To, MOVE_QUIET);
+            AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, From, To, MOVE_QUIET);
 
             QuietMoves &= QuietMoves - 1;
         }
@@ -294,7 +296,7 @@ void GenerateAllMoves(const BoardItem* Board, int** CMH_Pointer, MoveItem* MoveL
         while (CaptureMoves) {
             To = LSB(CaptureMoves);
 
-            AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, From, To, MOVE_CAPTURE);
+            AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, From, To, MOVE_CAPTURE);
 
             CaptureMoves &= CaptureMoves - 1;
         }
@@ -304,7 +306,7 @@ void GenerateAllMoves(const BoardItem* Board, int** CMH_Pointer, MoveItem* MoveL
         while (QuietMoves) {
             To = LSB(QuietMoves);
 
-            AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, From, To, MOVE_QUIET);
+            AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, From, To, MOVE_QUIET);
 
             QuietMoves &= QuietMoves - 1;
         }
@@ -328,7 +330,7 @@ void GenerateAllMoves(const BoardItem* Board, int** CMH_Pointer, MoveItem* MoveL
     while (CaptureMoves) {
         To = LSB(CaptureMoves);
 
-        AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, From, To, MOVE_CAPTURE);
+        AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, From, To, MOVE_CAPTURE);
 
         CaptureMoves &= CaptureMoves - 1;
     }
@@ -338,7 +340,7 @@ void GenerateAllMoves(const BoardItem* Board, int** CMH_Pointer, MoveItem* MoveL
     while (QuietMoves) {
         To = LSB(QuietMoves);
 
-        AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, From, To, MOVE_QUIET);
+        AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, From, To, MOVE_QUIET);
 
         QuietMoves &= QuietMoves - 1;
     }
@@ -351,7 +353,7 @@ void GenerateAllMoves(const BoardItem* Board, int** CMH_Pointer, MoveItem* MoveL
             && Board->Pieces[SQ_F1] == NO_PIECE && Board->Pieces[SQ_G1] == NO_PIECE
             && !IsSquareAttacked(Board, SQ_E1, Board->CurrentColor) && !IsSquareAttacked(Board, SQ_F1, Board->CurrentColor) && !IsSquareAttacked(Board, SQ_G1, Board->CurrentColor)
         ) { // White O-O
-            AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, SQ_E1, SQ_G1, MOVE_CASTLE_KING);
+            AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, SQ_E1, SQ_G1, MOVE_CASTLE_KING);
         }
 
         if (
@@ -359,7 +361,7 @@ void GenerateAllMoves(const BoardItem* Board, int** CMH_Pointer, MoveItem* MoveL
             && Board->Pieces[SQ_D1] == NO_PIECE && Board->Pieces[SQ_C1] == NO_PIECE && Board->Pieces[SQ_B1] == NO_PIECE
             && !IsSquareAttacked(Board, SQ_E1, Board->CurrentColor) && !IsSquareAttacked(Board, SQ_D1, Board->CurrentColor) && !IsSquareAttacked(Board, SQ_C1, Board->CurrentColor)
         ) { // White O-O-O
-            AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, SQ_E1, SQ_C1, MOVE_CASTLE_QUEEN);
+            AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, SQ_E1, SQ_C1, MOVE_CASTLE_QUEEN);
         }
     }
     else { // BLACK
@@ -368,7 +370,7 @@ void GenerateAllMoves(const BoardItem* Board, int** CMH_Pointer, MoveItem* MoveL
             && Board->Pieces[SQ_F8] == NO_PIECE && Board->Pieces[SQ_G8] == NO_PIECE
             && !IsSquareAttacked(Board, SQ_E8, Board->CurrentColor) && !IsSquareAttacked(Board, SQ_F8, Board->CurrentColor) && !IsSquareAttacked(Board, SQ_G8, Board->CurrentColor)
         ) { // Black O-O
-            AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, SQ_E8, SQ_G8, MOVE_CASTLE_KING);
+            AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, SQ_E8, SQ_G8, MOVE_CASTLE_KING);
         }
 
         if (
@@ -376,12 +378,12 @@ void GenerateAllMoves(const BoardItem* Board, int** CMH_Pointer, MoveItem* MoveL
             && Board->Pieces[SQ_D8] == NO_PIECE && Board->Pieces[SQ_C8] == NO_PIECE && Board->Pieces[SQ_B8] == NO_PIECE
             && !IsSquareAttacked(Board, SQ_E8, Board->CurrentColor) && !IsSquareAttacked(Board, SQ_D8, Board->CurrentColor) && !IsSquareAttacked(Board, SQ_C8, Board->CurrentColor)
         ) { // Black O-O-O
-            AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, SQ_E8, SQ_C8, MOVE_CASTLE_QUEEN);
+            AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, SQ_E8, SQ_C8, MOVE_CASTLE_QUEEN);
         }
     }
 }
 
-void GenerateCaptureMoves(const BoardItem* Board, int** CMH_Pointer, MoveItem* MoveList, int* GenMoveCount)
+void GenerateCaptureMoves(const BoardItem* Board, SearchDataItem* SearchData, int** CMH_Pointer, MoveItem* MoveList, int* GenMoveCount)
 {
     U64 Pieces;
     U64 Attacks;
@@ -401,11 +403,11 @@ void GenerateCaptureMoves(const BoardItem* Board, int** CMH_Pointer, MoveItem* M
             To = LSB(Attacks);
 
             if (((BB_SQUARE(To) << 7) & ~BB_FILE_H) & Board->BB_Pieces[WHITE][PAWN]) {
-                AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, To + 7, To, (MOVE_PAWN | MOVE_CAPTURE));
+                AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, To + 7, To, (MOVE_PAWN | MOVE_CAPTURE));
             }
 
             if (((BB_SQUARE(To) << 9) & ~BB_FILE_A) & Board->BB_Pieces[WHITE][PAWN]) {
-                AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, To + 9, To, (MOVE_PAWN | MOVE_CAPTURE));
+                AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, To + 9, To, (MOVE_PAWN | MOVE_CAPTURE));
             }
 
             Attacks &= Attacks - 1;
@@ -418,11 +420,11 @@ void GenerateCaptureMoves(const BoardItem* Board, int** CMH_Pointer, MoveItem* M
             To = LSB(Attacks);
 
             if (((BB_SQUARE(To) >> 7) & ~BB_FILE_A)& Board->BB_Pieces[BLACK][PAWN]) {
-                AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, To - 7, To, (MOVE_PAWN | MOVE_CAPTURE));
+                AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, To - 7, To, (MOVE_PAWN | MOVE_CAPTURE));
             }
 
             if (((BB_SQUARE(To) >> 9) & ~BB_FILE_H)& Board->BB_Pieces[BLACK][PAWN]) {
-                AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, To - 9, To, (MOVE_PAWN | MOVE_CAPTURE));
+                AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, To - 9, To, (MOVE_PAWN | MOVE_CAPTURE));
             }
 
             Attacks &= Attacks - 1;
@@ -436,20 +438,20 @@ void GenerateCaptureMoves(const BoardItem* Board, int** CMH_Pointer, MoveItem* M
 
         if (Board->CurrentColor == WHITE) {
             if (((BB_SQUARE(To) << 7) & ~BB_FILE_H) & Board->BB_Pieces[WHITE][PAWN]) {
-                AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, To + 7, To, (MOVE_PAWN_PASSANT | MOVE_CAPTURE));
+                AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, To + 7, To, (MOVE_PAWN_PASSANT | MOVE_CAPTURE));
             }
 
             if (((BB_SQUARE(To) << 9) & ~BB_FILE_A) & Board->BB_Pieces[WHITE][PAWN]) {
-                AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, To + 9, To, (MOVE_PAWN_PASSANT | MOVE_CAPTURE));
+                AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, To + 9, To, (MOVE_PAWN_PASSANT | MOVE_CAPTURE));
             }
         }
         else { // BLACK
             if (((BB_SQUARE(To) >> 7) & ~BB_FILE_A)& Board->BB_Pieces[BLACK][PAWN]) {
-                AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, To - 7, To, (MOVE_PAWN_PASSANT | MOVE_CAPTURE));
+                AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, To - 7, To, (MOVE_PAWN_PASSANT | MOVE_CAPTURE));
             }
 
             if (((BB_SQUARE(To) >> 9) & ~BB_FILE_H)& Board->BB_Pieces[BLACK][PAWN]) {
-                AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, To - 9, To, (MOVE_PAWN_PASSANT | MOVE_CAPTURE));
+                AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, To - 9, To, (MOVE_PAWN_PASSANT | MOVE_CAPTURE));
             }
         }
     }
@@ -462,7 +464,7 @@ void GenerateCaptureMoves(const BoardItem* Board, int** CMH_Pointer, MoveItem* M
         while (QuietMoves) {
             To = LSB(QuietMoves);
 
-            AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, To + 8, To, MOVE_PAWN);
+            AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, To + 8, To, MOVE_PAWN);
 
             QuietMoves &= QuietMoves - 1;
         }
@@ -473,7 +475,7 @@ void GenerateCaptureMoves(const BoardItem* Board, int** CMH_Pointer, MoveItem* M
         while (QuietMoves) {
             To = LSB(QuietMoves);
 
-            AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, To - 8, To, MOVE_PAWN);
+            AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, To - 8, To, MOVE_PAWN);
 
             QuietMoves &= QuietMoves - 1;
         }
@@ -498,7 +500,7 @@ void GenerateCaptureMoves(const BoardItem* Board, int** CMH_Pointer, MoveItem* M
         while (CaptureMoves) {
             To = LSB(CaptureMoves);
 
-            AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, From, To, MOVE_CAPTURE);
+            AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, From, To, MOVE_CAPTURE);
 
             CaptureMoves &= CaptureMoves - 1;
         }
@@ -526,7 +528,7 @@ void GenerateCaptureMoves(const BoardItem* Board, int** CMH_Pointer, MoveItem* M
         while (CaptureMoves) {
             To = LSB(CaptureMoves);
 
-            AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, From, To, MOVE_CAPTURE);
+            AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, From, To, MOVE_CAPTURE);
 
             CaptureMoves &= CaptureMoves - 1;
         }
@@ -554,7 +556,7 @@ void GenerateCaptureMoves(const BoardItem* Board, int** CMH_Pointer, MoveItem* M
         while (CaptureMoves) {
             To = LSB(CaptureMoves);
 
-            AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, From, To, MOVE_CAPTURE);
+            AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, From, To, MOVE_CAPTURE);
 
             CaptureMoves &= CaptureMoves - 1;
         }
@@ -578,19 +580,19 @@ void GenerateCaptureMoves(const BoardItem* Board, int** CMH_Pointer, MoveItem* M
     while (CaptureMoves) {
         To = LSB(CaptureMoves);
 
-        AddMove(Board, CMH_Pointer, MoveList, GenMoveCount, From, To, MOVE_CAPTURE);
+        AddMove(Board, SearchData, CMH_Pointer, MoveList, GenMoveCount, From, To, MOVE_CAPTURE);
 
         CaptureMoves &= CaptureMoves - 1;
     }
 }
 
-void GenerateAllLegalMoves(BoardItem* Board, int** CMH_Pointer, MoveItem* LegalMoveList, int* LegalMoveCount)
+void GenerateAllLegalMoves(BoardItem* Board, SearchDataItem* SearchData, int** CMH_Pointer, MoveItem* LegalMoveList, int* LegalMoveCount)
 {
     int GenMoveCount;
     MoveItem MoveList[MAX_GEN_MOVES];
 
     GenMoveCount = 0;
-    GenerateAllMoves(Board, CMH_Pointer, MoveList, &GenMoveCount);
+    GenerateAllMoves(Board, SearchData, CMH_Pointer, MoveList, &GenMoveCount);
 
     for (int MoveNumber = 0; MoveNumber < GenMoveCount; ++MoveNumber) {
         MakeMove(Board, MoveList[MoveNumber]);
