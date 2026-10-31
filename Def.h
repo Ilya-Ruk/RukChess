@@ -60,6 +60,8 @@
 
 // NNUE
 
+//#define USE_CRELU
+
 #define USE_NNUE_AVX2
 
 //#define PRINT_MIN_MAX_VALUES
@@ -97,7 +99,7 @@
 #define MAX_THREADS                             64
 
 #define DEFAULT_BOOK_FILE_NAME                  "book.txt"              // 25.10.2026
-#define DEFAULT_NNUE_FILE_NAME                  "net-397fa126087d.nnue" // 11.10.2026
+#define DEFAULT_NNUE_FILE_NAME                  "net-7342fb032855.nnue" // 26.05.2025
 
 // Time management (Xiphos)
 
@@ -117,12 +119,12 @@
 // NNUE
 
 #define INPUT_DIMENSION                         768
-#define HIDDEN_DIMENSION                        256
+#define HIDDEN_DIMENSION                        512
 #define OUTPUT_DIMENSION                        1
 
-#define QUANTIZATION_PRECISION_IN               255
-#define QUANTIZATION_PRECISION_OUT              64
+#define QUANTIZATION_PRECISION_IN               64
+#define QUANTIZATION_PRECISION_OUT              512
 
-#define SCALE                                   272
+#define SCALE                                   1
 
 #endif // !DEF_H

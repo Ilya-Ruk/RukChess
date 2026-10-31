@@ -306,7 +306,10 @@ I32 OutputLayer(BoardItem* Board)
 
 #ifdef USE_NNUE_AVX2
     const __m256i ConstZero = _mm256_setzero_si256();
+
+#ifdef USE_CRELU
     const __m256i ConstMax = _mm256_set1_epi16(QUANTIZATION_PRECISION_IN);
+#endif // USE_CRELU
 
     __m256i Sum0 = ConstZero;
     __m256i Sum1 = ConstZero;
@@ -318,8 +321,13 @@ I32 OutputLayer(BoardItem* Board)
     __m256i* Weights1 = (__m256i*)&OutputWeights[HIDDEN_DIMENSION];
 
     for (int Reg = 0; Reg < NUM_REGS; ++Reg) {
+#ifdef USE_CRELU
         const __m256i Acc0 = _mm256_max_epi16(ConstZero, _mm256_min_epi16(ConstMax, AccumulatorTile0[Reg])); // CReLU
         const __m256i Acc1 = _mm256_max_epi16(ConstZero, _mm256_min_epi16(ConstMax, AccumulatorTile1[Reg])); // CReLU
+#else
+        const __m256i Acc0 = _mm256_max_epi16(ConstZero, AccumulatorTile0[Reg]); // ReLU
+        const __m256i Acc1 = _mm256_max_epi16(ConstZero, AccumulatorTile1[Reg]); // ReLU
+#endif // USE_CRELU
 
         Sum0 = _mm256_add_epi32(Sum0, _mm256_madd_epi16(Acc0, Weights0[Reg]));
         Sum1 = _mm256_add_epi32(Sum1, _mm256_madd_epi16(Acc1, Weights1[Reg]));
@@ -333,8 +341,13 @@ I32 OutputLayer(BoardItem* Board)
     Result += _mm_cvtsi128_si32(R1);
 #else
     for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) {
+#ifdef USE_CRELU
         const I16 Acc0 = MAX(0, MIN(QUANTIZATION_PRECISION_IN, Board->Accumulator.Accumulator[Board->CurrentColor][Index])); // CReLU
         const I16 Acc1 = MAX(0, MIN(QUANTIZATION_PRECISION_IN, Board->Accumulator.Accumulator[CHANGE_COLOR(Board->CurrentColor)][Index])); // CReLU
+#else
+        const I16 Acc0 = MAX(0, Board->Accumulator.Accumulator[Board->CurrentColor][Index]); // ReLU
+        const I16 Acc1 = MAX(0, Board->Accumulator.Accumulator[CHANGE_COLOR(Board->CurrentColor)][Index]); // ReLU
+#endif // USE_CRELU
 
         Result += Acc0 * OutputWeights[Index];
         Result += Acc1 * OutputWeights[HIDDEN_DIMENSION + Index];
