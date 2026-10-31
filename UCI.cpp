@@ -372,8 +372,6 @@ void UCI(void)
                 else {
                     MaxTime = 1ULL;
                 }
-
-                TimeForMove = 0ULL;
             }
 
             if (!IsHashTableInitialized()) {
