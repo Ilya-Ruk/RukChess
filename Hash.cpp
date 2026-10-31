@@ -126,8 +126,8 @@ void InitHash(BoardItem* Board)
 
     // En passant
 
-    if (Board->PassantSquare != -1) {
-        Hash ^= PassantHash[Board->PassantSquare];
+    if (Board->EnPassantSquare != -1) {
+        Hash ^= PassantHash[Board->EnPassantSquare];
     }
 
     Board->Hash = Hash;

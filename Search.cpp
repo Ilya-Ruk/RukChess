@@ -195,7 +195,7 @@ int Search(BoardItem* Board, SearchDataItem* SearchData, int Alpha, int Beta, in
                             && (
                                 PIECE_TYPE(Board->Pieces[MOVE_FROM(HashMove)]) != PAWN
                                 || (
-                                    MOVE_TO(HashMove) != Board->PassantSquare
+                                    MOVE_TO(HashMove) != Board->EnPassantSquare
                                     && RANK(MOVE_TO(HashMove)) != 0
                                     && RANK(MOVE_TO(HashMove)) != 7
                                 )

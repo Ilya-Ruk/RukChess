@@ -37,9 +37,9 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
 
     assert((Info->PromotePieceType >= KNIGHT && Info->PromotePieceType <= QUEEN) || Info->PromotePieceType == 0);
 
-    Info->PassantSquare = Board->PassantSquare;
+    Info->EnPassantSquare = Board->EnPassantSquare;
 
-    assert((Info->PassantSquare >= SQ_A6 && Info->PassantSquare <= SQ_H6) || (Info->PassantSquare >= SQ_A3 && Info->PassantSquare <= SQ_H3) || Info->PassantSquare == -1);
+    assert((Info->EnPassantSquare >= SQ_A6 && Info->EnPassantSquare <= SQ_H6) || (Info->EnPassantSquare >= SQ_A3 && Info->EnPassantSquare <= SQ_H3) || Info->EnPassantSquare == -1);
 
     Info->CastleFlags = Board->CastleFlags;
     Info->FiftyMove = Board->FiftyMove;
@@ -57,17 +57,17 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
     }
 #endif // DEBUG_MOVE
 
-    if (Info->PassantSquare != -1) {
-        Board->PassantSquare = -1;
+    if (Info->EnPassantSquare != -1) {
+        Board->EnPassantSquare = -1;
 
-        Board->Hash ^= PassantHash[Info->PassantSquare];
+        Board->Hash ^= PassantHash[Info->EnPassantSquare];
     }
 
     if (Board->CurrentColor == WHITE) {
         if (Move.Type & MOVE_PAWN_2) {
-            Board->PassantSquare = From - 8;
+            Board->EnPassantSquare = From - 8;
 
-            Board->Hash ^= PassantHash[Board->PassantSquare];
+            Board->Hash ^= PassantHash[Board->EnPassantSquare];
         }
 
         if (Move.Type & MOVE_CASTLE_KING) { // White O-O
@@ -112,19 +112,19 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
 
         Board->CastleFlags &= CastleMask[From] & CastleMask[To];
 
-        if (Move.Type & MOVE_PAWN_PASSANT) {
-            Info->EatPawnSquare = To + 8;
+        if (Move.Type & MOVE_PAWN_EN_PASSANT) {
+            Info->CapturePawnSquare = To + 8;
 
-            assert(Info->EatPawnSquare >= SQ_A5 && Info->EatPawnSquare <= SQ_H5);
+            assert(Info->CapturePawnSquare >= SQ_A5 && Info->CapturePawnSquare <= SQ_H5);
 
-            Board->Pieces[Info->EatPawnSquare] = NO_PIECE;
+            Board->Pieces[Info->CapturePawnSquare] = NO_PIECE;
 
-            Board->BB_BlackPieces &= ~BB_SQUARE(Info->EatPawnSquare);
-            Board->BB_Pieces[BLACK][PAWN] &= ~BB_SQUARE(Info->EatPawnSquare);
+            Board->BB_BlackPieces &= ~BB_SQUARE(Info->CapturePawnSquare);
+            Board->BB_Pieces[BLACK][PAWN] &= ~BB_SQUARE(Info->CapturePawnSquare);
 
-            Board->Hash ^= PieceHash[BLACK][PAWN][Info->EatPawnSquare];
+            Board->Hash ^= PieceHash[BLACK][PAWN][Info->CapturePawnSquare];
 
-            AccumulatorSub(Board, Info->EatPawnSquare, PIECE_CREATE(PAWN, BLACK));
+            AccumulatorSub(Board, Info->CapturePawnSquare, PIECE_CREATE(PAWN, BLACK));
         }
         else if (Move.Type & MOVE_CAPTURE) {
             Board->Pieces[To] = NO_PIECE;
@@ -169,9 +169,9 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
     }
     else { // BLACK
         if (Move.Type & MOVE_PAWN_2) {
-            Board->PassantSquare = From + 8;
+            Board->EnPassantSquare = From + 8;
 
-            Board->Hash ^= PassantHash[Board->PassantSquare];
+            Board->Hash ^= PassantHash[Board->EnPassantSquare];
         }
 
         if (Move.Type & MOVE_CASTLE_KING) { // Black O-O
@@ -216,19 +216,19 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
 
         Board->CastleFlags &= CastleMask[From] & CastleMask[To];
 
-        if (Move.Type & MOVE_PAWN_PASSANT) {
-            Info->EatPawnSquare = To - 8;
+        if (Move.Type & MOVE_PAWN_EN_PASSANT) {
+            Info->CapturePawnSquare = To - 8;
 
-            assert(Info->EatPawnSquare >= SQ_A4 && Info->EatPawnSquare <= SQ_H4);
+            assert(Info->CapturePawnSquare >= SQ_A4 && Info->CapturePawnSquare <= SQ_H4);
 
-            Board->Pieces[Info->EatPawnSquare] = NO_PIECE;
+            Board->Pieces[Info->CapturePawnSquare] = NO_PIECE;
 
-            Board->BB_WhitePieces &= ~BB_SQUARE(Info->EatPawnSquare);
-            Board->BB_Pieces[WHITE][PAWN] &= ~BB_SQUARE(Info->EatPawnSquare);
+            Board->BB_WhitePieces &= ~BB_SQUARE(Info->CapturePawnSquare);
+            Board->BB_Pieces[WHITE][PAWN] &= ~BB_SQUARE(Info->CapturePawnSquare);
 
-            Board->Hash ^= PieceHash[WHITE][PAWN][Info->EatPawnSquare];
+            Board->Hash ^= PieceHash[WHITE][PAWN][Info->CapturePawnSquare];
 
-            AccumulatorSub(Board, Info->EatPawnSquare, PIECE_CREATE(PAWN, WHITE));
+            AccumulatorSub(Board, Info->CapturePawnSquare, PIECE_CREATE(PAWN, WHITE));
         }
         else if (Move.Type & MOVE_CAPTURE) {
             Board->Pieces[To] = NO_PIECE;
@@ -358,7 +358,7 @@ void UnmakeMove(BoardItem* Board)
             AccumulatorAdd(Board, SQ_A1, PIECE_CREATE(ROOK, WHITE));
         }
 
-        if (Info->Type & MOVE_PAWN_PASSANT) {
+        if (Info->Type & MOVE_PAWN_EN_PASSANT) {
             Board->Pieces[Info->To] = NO_PIECE;
 
             Board->BB_WhitePieces &= ~BB_SQUARE(Info->To);
@@ -366,12 +366,12 @@ void UnmakeMove(BoardItem* Board)
 
             AccumulatorSub(Board, Info->To, PIECE_CREATE(PAWN, WHITE));
 
-            Board->Pieces[Info->EatPawnSquare] = PIECE_CREATE(PAWN, BLACK);
+            Board->Pieces[Info->CapturePawnSquare] = PIECE_CREATE(PAWN, BLACK);
 
-            Board->BB_BlackPieces |= BB_SQUARE(Info->EatPawnSquare);
-            Board->BB_Pieces[BLACK][PAWN] |= BB_SQUARE(Info->EatPawnSquare);
+            Board->BB_BlackPieces |= BB_SQUARE(Info->CapturePawnSquare);
+            Board->BB_Pieces[BLACK][PAWN] |= BB_SQUARE(Info->CapturePawnSquare);
 
-            AccumulatorAdd(Board, Info->EatPawnSquare, PIECE_CREATE(PAWN, BLACK));
+            AccumulatorAdd(Board, Info->CapturePawnSquare, PIECE_CREATE(PAWN, BLACK));
         }
         else if (Info->Type & MOVE_CAPTURE) {
             Board->Pieces[Info->To] = NO_PIECE;
@@ -453,7 +453,7 @@ void UnmakeMove(BoardItem* Board)
             AccumulatorAdd(Board, SQ_A8, PIECE_CREATE(ROOK, BLACK));
         }
 
-        if (Info->Type & MOVE_PAWN_PASSANT) {
+        if (Info->Type & MOVE_PAWN_EN_PASSANT) {
             Board->Pieces[Info->To] = NO_PIECE;
 
             Board->BB_BlackPieces &= ~BB_SQUARE(Info->To);
@@ -461,12 +461,12 @@ void UnmakeMove(BoardItem* Board)
 
             AccumulatorSub(Board, Info->To, PIECE_CREATE(PAWN, BLACK));
 
-            Board->Pieces[Info->EatPawnSquare] = PIECE_CREATE(PAWN, WHITE);
+            Board->Pieces[Info->CapturePawnSquare] = PIECE_CREATE(PAWN, WHITE);
 
-            Board->BB_WhitePieces |= BB_SQUARE(Info->EatPawnSquare);
-            Board->BB_Pieces[WHITE][PAWN] |= BB_SQUARE(Info->EatPawnSquare);
+            Board->BB_WhitePieces |= BB_SQUARE(Info->CapturePawnSquare);
+            Board->BB_Pieces[WHITE][PAWN] |= BB_SQUARE(Info->CapturePawnSquare);
 
-            AccumulatorAdd(Board, Info->EatPawnSquare, PIECE_CREATE(PAWN, WHITE));
+            AccumulatorAdd(Board, Info->CapturePawnSquare, PIECE_CREATE(PAWN, WHITE));
         }
         else if (Info->Type & MOVE_CAPTURE) {
             Board->Pieces[Info->To] = NO_PIECE;
@@ -509,7 +509,7 @@ void UnmakeMove(BoardItem* Board)
         }
     }
 
-    Board->PassantSquare = Info->PassantSquare;
+    Board->EnPassantSquare = Info->EnPassantSquare;
 
     Board->CastleFlags = Info->CastleFlags;
     Board->FiftyMove = Info->FiftyMove;
@@ -561,16 +561,16 @@ void MakeNullMove(BoardItem* Board)
 
     Info->Type = MOVE_NULL;
 
-    Info->PassantSquare = Board->PassantSquare;
+    Info->EnPassantSquare = Board->EnPassantSquare;
 
     Info->FiftyMove = Board->FiftyMove;
 
     Info->Hash = Board->Hash;
 
-    if (Info->PassantSquare != -1) {
-        Board->PassantSquare = -1;
+    if (Info->EnPassantSquare != -1) {
+        Board->EnPassantSquare = -1;
 
-        Board->Hash ^= PassantHash[Info->PassantSquare];
+        Board->Hash ^= PassantHash[Info->EnPassantSquare];
     }
 
     ++Board->FiftyMove;
@@ -596,7 +596,7 @@ void UnmakeNullMove(BoardItem* Board)
 
     Board->CurrentColor ^= 1;
 
-    Board->PassantSquare = Info->PassantSquare;
+    Board->EnPassantSquare = Info->EnPassantSquare;
 
     Board->FiftyMove = Info->FiftyMove;
 

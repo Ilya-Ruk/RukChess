@@ -603,7 +603,7 @@ int SetFen(BoardItem* Board, const char* Fen)
     ++Part; // Space
 
     if (*Part == '-') {
-        Board->PassantSquare = -1;
+        Board->EnPassantSquare = -1;
 
         ++Part;
     }
@@ -611,7 +611,7 @@ int SetFen(BoardItem* Board, const char* Fen)
         File = Part[0] - 'a';
         Rank = 7 - (Part[1] - '1');
 
-        Board->PassantSquare = SQUARE_CREATE(File, Rank);
+        Board->EnPassantSquare = SQUARE_CREATE(File, Rank);
 
         Part += 2;
     }
@@ -728,11 +728,11 @@ void GetFen(const BoardItem* Board, char* Fen)
 
     *Fen++ = ' ';
 
-    if (Board->PassantSquare == -1) {
+    if (Board->EnPassantSquare == -1) {
         *Fen++ = '-';
     }
     else {
-        Fen += sprintf_s(Fen, MAX_FEN_LENGTH, "%s", BoardName[Board->PassantSquare]);
+        Fen += sprintf_s(Fen, MAX_FEN_LENGTH, "%s", BoardName[Board->EnPassantSquare]);
     }
 
     // Save fifty move

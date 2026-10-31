@@ -645,7 +645,7 @@ void LoadBook(const char* BookFileName)
         BookItemPointer->Total = Total;
     } // while
 
-    qsort(BookStore.Item, BookStore.Count, sizeof(BookItem), HashCompare); // TODO: move to GenerateBook
+    qsort(BookStore.Item, BookStore.Count, sizeof(BookItem), HashCompare);
 /*
     for (int Index = 0; Index < BookStore.Count; ++Index) {
         BookItemPointer = &BookStore.Item[Index];

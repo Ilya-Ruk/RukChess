@@ -64,7 +64,7 @@ int SEE(const BoardItem* Board, const int MoveType, const int Move)
     printf("-- SEE: Move = %s%s\n", BoardName[From], BoardName[To]);
 #endif // DEBUG_SEE
 
-    if (MoveType & MOVE_PAWN_PASSANT) {
+    if (MoveType & MOVE_PAWN_EN_PASSANT) {
         Gain[0] = PiecesScoreSEE[PAWN];
 
         if (Color == WHITE) {

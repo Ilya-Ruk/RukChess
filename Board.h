@@ -88,7 +88,7 @@
 
 #define MOVE_PAWN               1   // Pawn move (capture or pushed move)
 #define MOVE_PAWN_2             2   // Pawn move (pused move 2)
-#define MOVE_PAWN_PASSANT       4   // Pawn move (en passant)
+#define MOVE_PAWN_EN_PASSANT    4   // Pawn move (en passant)
 #define MOVE_PAWN_PROMOTE       8   // Pawn move (promote)
 
 #define MOVE_CAPTURE            16  // Capture move
@@ -200,8 +200,8 @@ typedef struct {
 
     int PromotePieceType;
 
-    int PassantSquare;
-    int EatPawnSquare; // TODO: rename to CapturePawnSquare
+    int EnPassantSquare;
+    int CapturePawnSquare;
 
     int CastleFlags;
     int FiftyMove;
@@ -219,7 +219,7 @@ typedef struct {
     int Pieces[64]; // (Color << 3) | Piece
     int CurrentColor;
     int CastleFlags;
-    int PassantSquare;
+    int EnPassantSquare;
     int FiftyMove;
     int HalfMoveNumber;
 
