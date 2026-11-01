@@ -275,8 +275,8 @@ extern const char MoveSubsequentChar[];
 
 extern const char StartFen[];
 
-extern BoardItem ThreadBoardList[MAX_THREADS];
-extern SearchDataItem ThreadSearchDataList[MAX_THREADS];
+extern BoardItem BoardList[MAX_THREADS];
+extern SearchDataItem SearchDataList[MAX_THREADS];
 
 #ifdef LATE_MOVE_PRUNING
 extern int LateMovePruningTable[7]; // [LMP depth]

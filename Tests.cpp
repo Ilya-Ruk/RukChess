@@ -473,14 +473,14 @@ void GeneratorTest1(void)
         printf("Test %d\n", TestNumber + 1);
         printf("FEN = %s\n", GeneratorTests[TestNumber].Fen);
 
-        SetFen(&ThreadBoardList[0], GeneratorTests[TestNumber].Fen);
+        SetFen(&BoardList[0], GeneratorTests[TestNumber].Fen);
 
-        PrintBoard(&ThreadBoardList[0]);
+        PrintBoard(&BoardList[0]);
 
         printf("\n");
 
         for (int Depth = 1; Depth <= GeneratorTests[TestNumber].Depth; ++Depth) {
-            ResultNodes = CountLegalMoves(&ThreadBoardList[0], Depth);
+            ResultNodes = CountLegalMoves(&BoardList[0], Depth);
 
             if (GeneratorTests[TestNumber].Nodes[Depth - 1] == ResultNodes) {
                 ResultString = "PASSED";
@@ -515,12 +515,12 @@ void GeneratorTest2(void)
 
     MaxDepth = (InputDepth >= 1 && InputDepth <= MAX_PLY) ? InputDepth : MAX_PLY;
 
-    PrintBoard(&ThreadBoardList[0]);
+    PrintBoard(&BoardList[0]);
 
     printf("\n");
 
     for (int Depth = 1; Depth <= MaxDepth; ++Depth) {
-        ResultNodes = CountLegalMoves(&ThreadBoardList[0], Depth);
+        ResultNodes = CountLegalMoves(&BoardList[0], Depth);
 
         printf("Depth = %2d Result nodes = %10llu\n", Depth, ResultNodes);
     }
@@ -554,18 +554,18 @@ void Tests(const char* Tests[], const int TestCount)
 
         // Prepare new game
 
-        SetFen(&ThreadBoardList[0], Fen);
+        SetFen(&BoardList[0], Fen);
 
         ClearHashTable();
 
-        PrintBoard(&ThreadBoardList[0]);
+        PrintBoard(&BoardList[0]);
 
         ComputerMove();
 
         printf("\n");
 
-        if (ThreadSearchDataList[0].BestMoves[0].Move) {
-            NotateMove(&ThreadBoardList[0], ThreadSearchDataList[0].BestMoves[0], NotateMoveStr);
+        if (SearchDataList[0].BestMoves[0].Move) {
+            NotateMove(&BoardList[0], SearchDataList[0].BestMoves[0], NotateMoveStr);
 
             if (strstr(BestMoves, NotateMoveStr) != NULL) {
                 ResultString = "PASSED";
@@ -629,11 +629,11 @@ void SearchPerformanceTest(void)
 
         // Prepare new game
 
-        SetFen(&ThreadBoardList[0], StartFen);
+        SetFen(&BoardList[0], StartFen);
 
         ClearHashTable();
 
-        PrintBoard(&ThreadBoardList[0]);
+        PrintBoard(&BoardList[0]);
 
         for (int Move = 0; Move < MaxMoves * 2; ++Move) {
             if (!ComputerMove()) {
@@ -643,7 +643,7 @@ void SearchPerformanceTest(void)
             U64 Nodes = 0ULL;
 
             for (int Thread = 0; Thread < omp_get_max_threads(); ++Thread) {
-                Nodes += ThreadSearchDataList[Thread].Nodes;
+                Nodes += SearchDataList[Thread].Nodes;
             }
 
             TotalTestNodes += Nodes;
@@ -690,11 +690,11 @@ void EvaluateTests(const char* Tests[], const int TestCount)
         for (int TestNumber = 0; TestNumber < TestCount; ++TestNumber) {
             Fen = Tests[TestNumber * 2];
 
-            SetFen(&ThreadBoardList[0], Fen);
+            SetFen(&BoardList[0], Fen);
 
             QueryPerformanceCounter(&EvaluateTimeStart);
 
-            Evaluate(&ThreadBoardList[0]);
+            Evaluate(&BoardList[0]);
 
             QueryPerformanceCounter(&EvaluateTimeStop);
 

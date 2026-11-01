@@ -55,8 +55,8 @@ const char MoveSubsequentChar[] = "abcdefgh012345678x=NBRQ-O+#";
 
 const char StartFen[] = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-BoardItem ThreadBoardList[MAX_THREADS];
-SearchDataItem ThreadSearchDataList[MAX_THREADS];
+BoardItem BoardList[MAX_THREADS];
+SearchDataItem SearchDataList[MAX_THREADS];
 
 #ifdef LATE_MOVE_PRUNING
 int LateMovePruningTable[7]; // [LMP depth]

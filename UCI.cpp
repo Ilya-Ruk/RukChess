@@ -68,7 +68,7 @@ void UCI(void)
     printf("option name NnueFile type string default %s\n", DEFAULT_NNUE_FILE_NAME);
     printf("option name ReduceTime type spin default %d min %d max %d\n", DEFAULT_REDUCE_TIME, 1, MAX_REDUCE_TIME);
 
-    SetFen(&ThreadBoardList[0], StartFen);
+    SetFen(&BoardList[0], StartFen);
 
     printf("uciok\n");
 
@@ -81,7 +81,7 @@ void UCI(void)
             printf("readyok\n");
         }
         else if (strncmp(Part, "ucinewgame", 10) == 0) {
-            SetFen(&ThreadBoardList[0], StartFen);
+            SetFen(&BoardList[0], StartFen);
 
             ClearHashTable();
         }
@@ -139,12 +139,12 @@ void UCI(void)
             if (strncmp(Part, "startpos", 8) == 0) {
                 Part += 8;
 
-                SetFen(&ThreadBoardList[0], StartFen);
+                SetFen(&BoardList[0], StartFen);
             }
             else if (strncmp(Part, "fen ", 4) == 0) {
                 Part += 4;
 
-                Part += SetFen(&ThreadBoardList[0], Part);
+                Part += SetFen(&BoardList[0], Part);
             }
 
             if (*Part == ' ') {
@@ -199,18 +199,18 @@ void UCI(void)
                     MoveInCheck = FALSE;
 
                     GenMoveCount = 0;
-                    GenerateAllMoves(&ThreadBoardList[0], NULL, NULL, MoveList, &GenMoveCount);
+                    GenerateAllMoves(&BoardList[0], NULL, NULL, MoveList, &GenMoveCount);
 
                     for (int MoveNumber = 0; MoveNumber < GenMoveCount; ++MoveNumber) {
                         if (MoveList[MoveNumber].Move == Move) {
                             MoveFound = TRUE;
 
-                            MakeMove(&ThreadBoardList[0], MoveList[MoveNumber]);
+                            MakeMove(&BoardList[0], MoveList[MoveNumber]);
 
-                            MoveInCheck = IsInCheck(&ThreadBoardList[0], CHANGE_COLOR(ThreadBoardList[0].CurrentColor));
+                            MoveInCheck = IsInCheck(&BoardList[0], CHANGE_COLOR(BoardList[0].CurrentColor));
 
                             if (MoveInCheck) { // Illegal move
-                                UnmakeMove(&ThreadBoardList[0]);
+                                UnmakeMove(&BoardList[0]);
                             }
 
                             break; // for
@@ -328,7 +328,7 @@ void UCI(void)
             }
 
             if (MaxTime == 0ULL) {
-                if (ThreadBoardList[0].CurrentColor == WHITE && WTime > 0ULL) {
+                if (BoardList[0].CurrentColor == WHITE && WTime > 0ULL) {
                     if (WTime > ReduceTime) {
                         MaxTime = WTime - ReduceTime;
                     }
@@ -346,7 +346,7 @@ void UCI(void)
 
                     MaxTime = MIN(((MaxTime / (U64)MIN(MovesToGo, MAX_TIME_MOVES_TO_GO)) + WInc), MaxTime);
                 }
-                else if (ThreadBoardList[0].CurrentColor == BLACK && BTime > 0ULL) {
+                else if (BoardList[0].CurrentColor == BLACK && BTime > 0ULL) {
                     if (BTime > ReduceTime) {
                         MaxTime = BTime - ReduceTime;
                     }

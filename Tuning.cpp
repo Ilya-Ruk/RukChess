@@ -94,7 +94,7 @@ void Pgn2Fen(void)
     Move = MoveString;
     *Move = '\0'; // Nul
 
-    SetFen(&ThreadBoardList[0], StartFen);
+    SetFen(&BoardList[0], StartFen);
 
     Stage = STAGE_NONE;
 
@@ -118,7 +118,7 @@ void Pgn2Fen(void)
                 Move = MoveString;
                 *Move = '\0'; // Nul
 
-                SetFen(&ThreadBoardList[0], StartFen);
+                SetFen(&BoardList[0], StartFen);
 
                 Stage = STAGE_NONE;
             }
@@ -155,14 +155,14 @@ void Pgn2Fen(void)
 
                 *Fen = '\0'; // Nul
 
-                SetFen(&ThreadBoardList[0], FenString);
+                SetFen(&BoardList[0], FenString);
             }
 
             continue; // Next string
         } // if
 
         if (Stage == STAGE_TAG) {
-            GetFen(&ThreadBoardList[0], FenOut); // First FEN in game (StartFen or FenString from FEN-tag)
+            GetFen(&BoardList[0], FenOut); // First FEN in game (StartFen or FenString from FEN-tag)
 
             fprintf(FileOut, "%s|%.1f\n", FenOut, Result);
 
@@ -208,20 +208,20 @@ void Pgn2Fen(void)
                     }
 
                     GenMoveCount = 0;
-                    GenerateAllMoves(&ThreadBoardList[0], NULL, NULL, MoveList, &GenMoveCount);
+                    GenerateAllMoves(&BoardList[0], NULL, NULL, MoveList, &GenMoveCount);
 
                     MoveFound = FALSE;
 
                     for (int MoveNumber = 0; MoveNumber < GenMoveCount; ++MoveNumber) {
-                        NotateMove(&ThreadBoardList[0], MoveList[MoveNumber], NotateMoveStr);
+                        NotateMove(&BoardList[0], MoveList[MoveNumber], NotateMoveStr);
 
                         if (strcmp(MoveString, NotateMoveStr) == 0) {
-                            MakeMove(&ThreadBoardList[0], MoveList[MoveNumber]);
+                            MakeMove(&BoardList[0], MoveList[MoveNumber]);
 
-                            if (IsInCheck(&ThreadBoardList[0], CHANGE_COLOR(ThreadBoardList[0].CurrentColor))) { // Illegal move
-                                UnmakeMove(&ThreadBoardList[0]);
+                            if (IsInCheck(&BoardList[0], CHANGE_COLOR(BoardList[0].CurrentColor))) { // Illegal move
+                                UnmakeMove(&BoardList[0]);
 
-                                PrintBoard(&ThreadBoardList[0]);
+                                PrintBoard(&BoardList[0]);
 
                                 printf("\n");
 
@@ -237,14 +237,14 @@ void Pgn2Fen(void)
                     }
 
                     if (MoveFound) {
-                        GetFen(&ThreadBoardList[0], FenOut);
+                        GetFen(&BoardList[0], FenOut);
 
                         fprintf(FileOut, "%s|%.1f\n", FenOut, Result);
                     }
                     else { // Move not found
                         Error = TRUE;
 
-                        PrintBoard(&ThreadBoardList[0]);
+                        PrintBoard(&BoardList[0]);
 
                         printf("\n");
 
@@ -255,7 +255,7 @@ void Pgn2Fen(void)
                         printf("Gen. moves:");
 
                         for (int MoveNumber = 0; MoveNumber < GenMoveCount; ++MoveNumber) {
-                            NotateMove(&ThreadBoardList[0], MoveList[MoveNumber], NotateMoveStr);
+                            NotateMove(&BoardList[0], MoveList[MoveNumber], NotateMoveStr);
 
                             printf(" %s%s", BoardName[MOVE_FROM(MoveList[MoveNumber].Move)], BoardName[MOVE_TO(MoveList[MoveNumber].Move)]);
 

@@ -46,9 +46,9 @@ void PrintBestMoves(const int Depth, const MoveItem* BestMoves, const int BestSc
     int SelDepth = 0;
 
     for (int Thread = 0; Thread < omp_get_max_threads(); ++Thread) {
-        Nodes += ThreadSearchDataList[Thread].Nodes;
+        Nodes += SearchDataList[Thread].Nodes;
 
-        SelDepth = MAX(SelDepth, ThreadSearchDataList[Thread].SelDepth);
+        SelDepth = MAX(SelDepth, SearchDataList[Thread].SelDepth);
     }
 
     TotalTime = CurrentTime - TimeStart;
@@ -124,13 +124,13 @@ BOOL PrintResult(const BOOL InCheck, const MoveItem BestMove, const MoveItem Pon
 #endif // USE_STATISTIC
 
     for (int Thread = 0; Thread < omp_get_max_threads(); ++Thread) {
-        Nodes += ThreadSearchDataList[Thread].Nodes;
+        Nodes += SearchDataList[Thread].Nodes;
 
 #ifdef USE_STATISTIC
-        HashCount += ThreadSearchDataList[Thread].HashCount;
-        EvaluateCount += ThreadSearchDataList[Thread].EvaluateCount;
-        CutoffCount += ThreadSearchDataList[Thread].CutoffCount;
-        QuiescenceCount += ThreadSearchDataList[Thread].QuiescenceCount;
+        HashCount += SearchDataList[Thread].HashCount;
+        EvaluateCount += SearchDataList[Thread].EvaluateCount;
+        CutoffCount += SearchDataList[Thread].CutoffCount;
+        QuiescenceCount += SearchDataList[Thread].QuiescenceCount;
 #endif // USE_STATISTIC
     }
 
@@ -175,7 +175,7 @@ BOOL PrintResult(const BOOL InCheck, const MoveItem BestMove, const MoveItem Pon
             if (InCheck) { // Checkmate
                 printf("\n");
 
-                if (ThreadBoardList[0].CurrentColor == WHITE) {
+                if (BoardList[0].CurrentColor == WHITE) {
                     printf("0-1 {Black mates}!\n");
                 }
                 else { // BLACK
@@ -191,19 +191,19 @@ BOOL PrintResult(const BOOL InCheck, const MoveItem BestMove, const MoveItem Pon
             return FALSE;
         }
 
-        NotateMove(&ThreadBoardList[0], BestMove, NotateMoveStr);
+        NotateMove(&BoardList[0], BestMove, NotateMoveStr);
 
-        MakeMove(&ThreadBoardList[0], BestMove);
+        MakeMove(&BoardList[0], BestMove);
 
-        PrintBoard(&ThreadBoardList[0]);
+        PrintBoard(&BoardList[0]);
 
         printf("\n");
 
-        if (ThreadBoardList[0].CurrentColor == WHITE) {
-            printf("%d: ... %s%s", ThreadBoardList[0].HalfMoveNumber / 2, BoardName[MOVE_FROM(BestMove.Move)], BoardName[MOVE_TO(BestMove.Move)]);
+        if (BoardList[0].CurrentColor == WHITE) {
+            printf("%d: ... %s%s", BoardList[0].HalfMoveNumber / 2, BoardName[MOVE_FROM(BestMove.Move)], BoardName[MOVE_TO(BestMove.Move)]);
         }
         else { // BLACK
-            printf("%d: %s%s", ThreadBoardList[0].HalfMoveNumber / 2 + 1, BoardName[MOVE_FROM(BestMove.Move)], BoardName[MOVE_TO(BestMove.Move)]);
+            printf("%d: %s%s", BoardList[0].HalfMoveNumber / 2 + 1, BoardName[MOVE_FROM(BestMove.Move)], BoardName[MOVE_TO(BestMove.Move)]);
         }
 
         if (BestMove.Type & MOVE_PAWN_PROMOTE) {
@@ -231,7 +231,7 @@ BOOL PrintResult(const BOOL InCheck, const MoveItem BestMove, const MoveItem Pon
         if (BestScore <= -INF + 1 || BestScore >= INF - 1) { // Checkmate
             printf("\n");
 
-            if (ThreadBoardList[0].CurrentColor == WHITE) {
+            if (BoardList[0].CurrentColor == WHITE) {
                 printf("0-1 {Black mates}!\n");
             }
             else { // BLACK
@@ -241,7 +241,7 @@ BOOL PrintResult(const BOOL InCheck, const MoveItem BestMove, const MoveItem Pon
             return FALSE;
         }
 
-        if (IsInsufficientMaterial(&ThreadBoardList[0])) {
+        if (IsInsufficientMaterial(&BoardList[0])) {
             printf("\n");
 
             printf("1/2-1/2 {Draw by insufficient mating material}!\n");
@@ -249,7 +249,7 @@ BOOL PrintResult(const BOOL InCheck, const MoveItem BestMove, const MoveItem Pon
             return FALSE;
         }
 
-        if (ThreadBoardList[0].FiftyMove >= 100) {
+        if (BoardList[0].FiftyMove >= 100) {
             printf("\n");
 
             printf("1/2-1/2 {Draw by fifty moves rule}!\n");
@@ -257,7 +257,7 @@ BOOL PrintResult(const BOOL InCheck, const MoveItem BestMove, const MoveItem Pon
             return FALSE;
         }
 
-        if (PositionRepeat2(&ThreadBoardList[0]) == 2) {
+        if (PositionRepeat2(&BoardList[0]) == 2) {
             printf("\n");
 
             printf("1/2-1/2 {Draw by 3-fold repetition}!\n");
@@ -312,16 +312,16 @@ BOOL ComputerMove(void)
 
     StopSearch = FALSE;
 
-    InCheck = IsInCheck(&ThreadBoardList[0], ThreadBoardList[0].CurrentColor);
+    InCheck = IsInCheck(&BoardList[0], BoardList[0].CurrentColor);
 
     AddHashStoreIteration();
 
-    if (GetBookMove(&ThreadBoardList[0], &BestMove)) {
+    if (GetBookMove(&BoardList[0], &BestMove)) {
         goto Done;
     }
 
     for (int Thread = 1; Thread < omp_get_max_threads(); ++Thread) {
-        ThreadBoardList[Thread] = ThreadBoardList[0];
+        BoardList[Thread] = BoardList[0];
     }
 
 #ifdef ASPIRATION_WINDOW
@@ -336,8 +336,8 @@ BOOL ComputerMove(void)
         BindThread(ThreadId);
 #endif // BIND_THREAD_V1 || BIND_THREAD_V2
 
-        ThreadBoard = &ThreadBoardList[ThreadId];
-        ThreadSearchData = &ThreadSearchDataList[ThreadId];
+        ThreadBoard = &BoardList[ThreadId];
+        ThreadSearchData = &SearchDataList[ThreadId];
 
         ThreadSearchData->Nodes = 0ULL;
 
@@ -435,7 +435,7 @@ BOOL ComputerMove(void)
                 U64 Nodes = 0ULL;
 
                 for (int Thread = 0; Thread < omp_get_max_threads(); ++Thread) {
-                    Nodes += ThreadSearchDataList[Thread].Nodes;
+                    Nodes += SearchDataList[Thread].Nodes;
                 }
 
                 if (Nodes >= MaxNodes) {
@@ -449,8 +449,8 @@ BOOL ComputerMove(void)
         }
     } // pragma omp parallel
 
-    BestMove = ThreadSearchDataList[0].BestMoves[0];
-    PonderMove = ThreadSearchDataList[0].BestMoves[1];
+    BestMove = SearchDataList[0].BestMoves[0];
+    PonderMove = SearchDataList[0].BestMoves[1];
 
 Done:
 
@@ -485,10 +485,10 @@ BOOL HumanMove(void)
     int GenMoveCount;
     MoveItem MoveList[MAX_GEN_MOVES];
 
-    BOOL InCheck = IsInCheck(&ThreadBoardList[0], ThreadBoardList[0].CurrentColor);
+    BOOL InCheck = IsInCheck(&BoardList[0], BoardList[0].CurrentColor);
 
     GenMoveCount = 0;
-    GenerateAllMoves(&ThreadBoardList[0], NULL, NULL, MoveList, &GenMoveCount);
+    GenerateAllMoves(&BoardList[0], NULL, NULL, MoveList, &GenMoveCount);
 
     while (TRUE) {
         ReadStr[0] = '\0'; // Nul
@@ -500,25 +500,25 @@ BOOL HumanMove(void)
 
         if (
             strcmp(ReadStr, "undo") == 0
-            && ThreadBoardList[0].HalfMoveNumber >= 2
-            && ThreadBoardList[0].MoveTable[ThreadBoardList[0].HalfMoveNumber - 1].Hash
-            && ThreadBoardList[0].MoveTable[ThreadBoardList[0].HalfMoveNumber - 2].Hash
+            && BoardList[0].HalfMoveNumber >= 2
+            && BoardList[0].MoveTable[BoardList[0].HalfMoveNumber - 1].Hash
+            && BoardList[0].MoveTable[BoardList[0].HalfMoveNumber - 2].Hash
         ) {
-            UnmakeMove(&ThreadBoardList[0]);
-            UnmakeMove(&ThreadBoardList[0]);
+            UnmakeMove(&BoardList[0]);
+            UnmakeMove(&BoardList[0]);
 
-            PrintBoard(&ThreadBoardList[0]);
+            PrintBoard(&BoardList[0]);
 
-            InCheck = IsInCheck(&ThreadBoardList[0], ThreadBoardList[0].CurrentColor);
+            InCheck = IsInCheck(&BoardList[0], BoardList[0].CurrentColor);
 
             GenMoveCount = 0;
-            GenerateAllMoves(&ThreadBoardList[0], NULL, NULL, MoveList, &GenMoveCount);
+            GenerateAllMoves(&BoardList[0], NULL, NULL, MoveList, &GenMoveCount);
 
             continue; // Next string
         }
 
         if (strcmp(ReadStr, "save") == 0) {
-            SaveGame(&ThreadBoardList[0]);
+            SaveGame(&BoardList[0]);
 
             continue; // Next string
         }
@@ -558,25 +558,25 @@ BOOL HumanMove(void)
 
             for (int MoveNumber = 0; MoveNumber < GenMoveCount; ++MoveNumber) {
                 if (MoveList[MoveNumber].Move == Move) {
-                    NotateMove(&ThreadBoardList[0], MoveList[MoveNumber], NotateMoveStr);
+                    NotateMove(&BoardList[0], MoveList[MoveNumber], NotateMoveStr);
 
-                    MakeMove(&ThreadBoardList[0], MoveList[MoveNumber]);
+                    MakeMove(&BoardList[0], MoveList[MoveNumber]);
 
-                    if (IsInCheck(&ThreadBoardList[0], CHANGE_COLOR(ThreadBoardList[0].CurrentColor))) { // Illegal move
-                        UnmakeMove(&ThreadBoardList[0]);
+                    if (IsInCheck(&BoardList[0], CHANGE_COLOR(BoardList[0].CurrentColor))) { // Illegal move
+                        UnmakeMove(&BoardList[0]);
 
                         break; // for
                     }
 
-                    PrintBoard(&ThreadBoardList[0]);
+                    PrintBoard(&BoardList[0]);
 
                     printf("\n");
 
-                    if (ThreadBoardList[0].CurrentColor == WHITE) {
-                        printf("%d: ... %s%s", ThreadBoardList[0].HalfMoveNumber / 2, BoardName[MOVE_FROM(MoveList[MoveNumber].Move)], BoardName[MOVE_TO(MoveList[MoveNumber].Move)]);
+                    if (BoardList[0].CurrentColor == WHITE) {
+                        printf("%d: ... %s%s", BoardList[0].HalfMoveNumber / 2, BoardName[MOVE_FROM(MoveList[MoveNumber].Move)], BoardName[MOVE_TO(MoveList[MoveNumber].Move)]);
                     }
                     else { // BLACK
-                        printf("%d: %s%s", ThreadBoardList[0].HalfMoveNumber / 2 + 1, BoardName[MOVE_FROM(MoveList[MoveNumber].Move)], BoardName[MOVE_TO(MoveList[MoveNumber].Move)]);
+                        printf("%d: %s%s", BoardList[0].HalfMoveNumber / 2 + 1, BoardName[MOVE_FROM(MoveList[MoveNumber].Move)], BoardName[MOVE_TO(MoveList[MoveNumber].Move)]);
                     }
 
                     if (MoveList[MoveNumber].Type & MOVE_PAWN_PROMOTE) {
@@ -585,7 +585,7 @@ BOOL HumanMove(void)
 
                     printf(" (%s)\n", NotateMoveStr);
 
-                    if (IsInsufficientMaterial(&ThreadBoardList[0])) {
+                    if (IsInsufficientMaterial(&BoardList[0])) {
                         printf("\n");
 
                         printf("1/2-1/2 {Draw by insufficient mating material}!\n");
@@ -593,7 +593,7 @@ BOOL HumanMove(void)
                         return FALSE;
                     }
 
-                    if (ThreadBoardList[0].FiftyMove >= 100) {
+                    if (BoardList[0].FiftyMove >= 100) {
                         printf("\n");
 
                         printf("1/2-1/2 {Draw by fifty moves rule}!\n");
@@ -601,7 +601,7 @@ BOOL HumanMove(void)
                         return FALSE;
                     }
 
-                    if (PositionRepeat2(&ThreadBoardList[0]) == 2) {
+                    if (PositionRepeat2(&BoardList[0]) == 2) {
                         printf("\n");
 
                         printf("1/2-1/2 {Draw by 3-fold repetition}!\n");
@@ -674,16 +674,16 @@ void Game(const int HumanColor, const int ComputerColor)
 {
     InputParametrs();
 
-    PrintBoard(&ThreadBoardList[0]);
+    PrintBoard(&BoardList[0]);
 
     while (TRUE) {
-        if (ThreadBoardList[0].CurrentColor == HumanColor) {
+        if (BoardList[0].CurrentColor == HumanColor) {
             if (!HumanMove()) {
                 return;
             }
         }
 
-        if (ThreadBoardList[0].CurrentColor == ComputerColor) {
+        if (BoardList[0].CurrentColor == ComputerColor) {
             if (!ComputerMove()) {
                 return;
             }
@@ -695,7 +695,7 @@ void GameAuto(void)
 {
     InputParametrs();
 
-    PrintBoard(&ThreadBoardList[0]);
+    PrintBoard(&BoardList[0]);
 
     while (TRUE) {
         if (!ComputerMove()) {

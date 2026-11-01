@@ -213,32 +213,32 @@ int main(int argc, char** argv)
 
         switch (Choice) {
             case 1:
-                SetFen(&ThreadBoardList[0], StartFen);
+                SetFen(&BoardList[0], StartFen);
                 Game(WHITE, BLACK);
                 break;
 
             case 2:
-                SetFen(&ThreadBoardList[0], StartFen);
+                SetFen(&BoardList[0], StartFen);
                 Game(BLACK, WHITE);
                 break;
 
             case 3:
-                SetFen(&ThreadBoardList[0], StartFen);
+                SetFen(&BoardList[0], StartFen);
                 GameAuto();
                 break;
 
             case 4:
-                LoadGame(&ThreadBoardList[0]);
+                LoadGame(&BoardList[0]);
                 Game(WHITE, BLACK);
                 break;
 
             case 5:
-                LoadGame(&ThreadBoardList[0]);
+                LoadGame(&BoardList[0]);
                 Game(BLACK, WHITE);
                 break;
 
             case 6:
-                LoadGame(&ThreadBoardList[0]);
+                LoadGame(&BoardList[0]);
                 GameAuto();
                 break;
 
@@ -247,7 +247,7 @@ int main(int argc, char** argv)
                 break;
 
             case 8:
-                LoadGame(&ThreadBoardList[0]);
+                LoadGame(&BoardList[0]);
                 GeneratorTest2();
                 break;
 

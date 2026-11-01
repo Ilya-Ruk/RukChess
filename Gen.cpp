@@ -60,6 +60,9 @@ void AddMove(const BoardItem* Board, SearchDataItem* SearchData, int** CMH_Point
             if (SearchData) {
                 MoveList[*GenMoveCount].SortValue = SearchData->HeuristicTable[Board->CurrentColor][PIECE_TYPE(Board->Pieces[From])][To];
             }
+            else {
+                MoveList[*GenMoveCount].SortValue = 0;
+            }
 
 #ifdef COUNTER_MOVE_HISTORY
             if (CMH_Pointer) {

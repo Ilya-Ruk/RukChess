@@ -189,7 +189,7 @@ void GenerateBook(void)
 
     Error = FALSE;
 
-    SetFen(&ThreadBoardList[0], StartFen);
+    SetFen(&BoardList[0], StartFen);
 
     Stage = STAGE_NONE;
 
@@ -215,7 +215,7 @@ void GenerateBook(void)
 
                 Error = FALSE;
 
-                SetFen(&ThreadBoardList[0], StartFen);
+                SetFen(&BoardList[0], StartFen);
 
                 Stage = STAGE_NONE;
             }
@@ -268,7 +268,7 @@ void GenerateBook(void)
 
 //                printf("FEN = %s\n", FenString);
 
-                SetFen(&ThreadBoardList[0], FenString);
+                SetFen(&BoardList[0], FenString);
             }
             else if (strncmp(Part, "[WhiteElo \"", 11) == 0) { // WhiteElo
                 Part += 11;
@@ -353,20 +353,20 @@ void GenerateBook(void)
 //                    printf("Ply = %d Result = %d Move = %s\n", Ply, Result, MoveString);
 
                     GenMoveCount = 0;
-                    GenerateAllMoves(&ThreadBoardList[0], NULL, NULL, MoveList, &GenMoveCount);
+                    GenerateAllMoves(&BoardList[0], NULL, NULL, MoveList, &GenMoveCount);
 
                     MoveFound = FALSE;
 
                     for (int MoveNumber = 0; MoveNumber < GenMoveCount; ++MoveNumber) {
-                        NotateMove(&ThreadBoardList[0], MoveList[MoveNumber], NotateMoveStr);
+                        NotateMove(&BoardList[0], MoveList[MoveNumber], NotateMoveStr);
 
                         if (strcmp(MoveString, NotateMoveStr) == 0) {
-                            MakeMove(&ThreadBoardList[0], MoveList[MoveNumber]);
+                            MakeMove(&BoardList[0], MoveList[MoveNumber]);
 
-                            if (IsInCheck(&ThreadBoardList[0], CHANGE_COLOR(ThreadBoardList[0].CurrentColor))) { // Illegal move
-                                UnmakeMove(&ThreadBoardList[0]);
+                            if (IsInCheck(&BoardList[0], CHANGE_COLOR(BoardList[0].CurrentColor))) { // Illegal move
+                                UnmakeMove(&BoardList[0]);
 
-                                PrintBoard(&ThreadBoardList[0]);
+                                PrintBoard(&BoardList[0]);
 
                                 printf("\n");
 
@@ -434,7 +434,7 @@ void GenerateBook(void)
                     if (!MoveFound) { // Move not found
                         Error = TRUE;
 
-                        PrintBoard(&ThreadBoardList[0]);
+                        PrintBoard(&BoardList[0]);
 
                         printf("\n");
 
@@ -445,7 +445,7 @@ void GenerateBook(void)
                         printf("Gen. moves:");
 
                         for (int MoveNumber = 0; MoveNumber < GenMoveCount; ++MoveNumber) {
-                            NotateMove(&ThreadBoardList[0], MoveList[MoveNumber], NotateMoveStr);
+                            NotateMove(&BoardList[0], MoveList[MoveNumber], NotateMoveStr);
 
                             printf(" %s%s", BoardName[MOVE_FROM(MoveList[MoveNumber].Move)], BoardName[MOVE_TO(MoveList[MoveNumber].Move)]);
 
@@ -479,9 +479,9 @@ void GenerateBook(void)
 
     // Prepare new game
 
-    SetFen(&ThreadBoardList[0], StartFen);
+    SetFen(&BoardList[0], StartFen);
 
-    PrintNode(&ThreadBoardList[0], RootNode, FileOut);
+    PrintNode(&BoardList[0], RootNode, FileOut);
 
     fclose(FileOut);
     fclose(FileIn);
