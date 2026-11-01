@@ -48,7 +48,7 @@ typedef struct {
 
 extern U64 PieceHash[2][6][64]; // [Color][Piece][Square]
 extern U64 ColorHash;
-extern U64 PassantHash[64];     // [Square]
+extern U64 EnPassantHash[64];   // [Square]
 
 void InitHashTable(const int SizeInMb); // Xiphos
 void ClearHashTable(void);

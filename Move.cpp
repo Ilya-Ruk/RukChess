@@ -60,14 +60,14 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
     if (Info->EnPassantSquare != -1) {
         Board->EnPassantSquare = -1;
 
-        Board->Hash ^= PassantHash[Info->EnPassantSquare];
+        Board->Hash ^= EnPassantHash[Info->EnPassantSquare];
     }
 
     if (Board->CurrentColor == WHITE) {
         if (Move.Type & MOVE_PAWN_2) {
             Board->EnPassantSquare = From - 8;
 
-            Board->Hash ^= PassantHash[Board->EnPassantSquare];
+            Board->Hash ^= EnPassantHash[Board->EnPassantSquare];
         }
 
         if (Move.Type & MOVE_CASTLE_KING) { // White O-O
@@ -171,7 +171,7 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
         if (Move.Type & MOVE_PAWN_2) {
             Board->EnPassantSquare = From + 8;
 
-            Board->Hash ^= PassantHash[Board->EnPassantSquare];
+            Board->Hash ^= EnPassantHash[Board->EnPassantSquare];
         }
 
         if (Move.Type & MOVE_CASTLE_KING) { // Black O-O
@@ -570,7 +570,7 @@ void MakeNullMove(BoardItem* Board)
     if (Info->EnPassantSquare != -1) {
         Board->EnPassantSquare = -1;
 
-        Board->Hash ^= PassantHash[Info->EnPassantSquare];
+        Board->Hash ^= EnPassantHash[Info->EnPassantSquare];
     }
 
     ++Board->FiftyMove;

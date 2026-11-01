@@ -15,7 +15,7 @@ BOOL HashTableInitialized = FALSE;
 
 U64 PieceHash[2][6][64];    // [Color][Piece][Square]
 U64 ColorHash;
-U64 PassantHash[64];        // [Square]
+U64 EnPassantHash[64];      // [Square]
 
 void InitHashTable(const int SizeInMb) // Xiphos
 {
@@ -82,7 +82,7 @@ void InitHashBoards(void)
     ColorHash = Rand64();
 
     for (int Square = 0; Square < 64; ++Square) {
-        PassantHash[Square] = Rand64();
+        EnPassantHash[Square] = Rand64();
     }
 }
 
@@ -127,7 +127,7 @@ void InitHash(BoardItem* Board)
     // En passant
 
     if (Board->EnPassantSquare != -1) {
-        Hash ^= PassantHash[Board->EnPassantSquare];
+        Hash ^= EnPassantHash[Board->EnPassantSquare];
     }
 
     Board->Hash = Hash;
