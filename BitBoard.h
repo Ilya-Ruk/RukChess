@@ -111,7 +111,6 @@
 int POPCNT(const U64 Source);
 
 int LSB(const U64 Source);
-//int MSB(const U64 Source);
 
 void InitBitBoards(void);
 

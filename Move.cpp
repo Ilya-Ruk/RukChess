@@ -70,7 +70,7 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
             Board->Hash ^= EnPassantHash[Board->EnPassantSquare];
         }
 
-        if (Move.Type & MOVE_CASTLE_KING) { // White O-O
+        if (Move.Type & MOVE_CASTLE_KING) {
             Board->Pieces[SQ_H1] = NO_PIECE;
 
             Board->BB_WhitePieces &= ~BB_SQUARE(SQ_H1);
@@ -90,7 +90,7 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
             AccumulatorAdd(Board, SQ_F1, PIECE_CREATE(ROOK, WHITE));
         }
 
-        if (Move.Type & MOVE_CASTLE_QUEEN) { // White O-O-O
+        if (Move.Type & MOVE_CASTLE_QUEEN) {
             Board->Pieces[SQ_A1] = NO_PIECE;
 
             Board->BB_WhitePieces &= ~BB_SQUARE(SQ_A1);
@@ -174,7 +174,7 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
             Board->Hash ^= EnPassantHash[Board->EnPassantSquare];
         }
 
-        if (Move.Type & MOVE_CASTLE_KING) { // Black O-O
+        if (Move.Type & MOVE_CASTLE_KING) {
             Board->Pieces[SQ_H8] = NO_PIECE;
 
             Board->BB_BlackPieces &= ~BB_SQUARE(SQ_H8);
@@ -194,7 +194,7 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
             AccumulatorAdd(Board, SQ_F8, PIECE_CREATE(ROOK, BLACK));
         }
 
-        if (Move.Type & MOVE_CASTLE_QUEEN) { // Black O-O-O
+        if (Move.Type & MOVE_CASTLE_QUEEN) {
             Board->Pieces[SQ_A8] = NO_PIECE;
 
             Board->BB_BlackPieces &= ~BB_SQUARE(SQ_A8);
@@ -326,7 +326,7 @@ void UnmakeMove(BoardItem* Board)
 
         AccumulatorAdd(Board, Info->From, PIECE_CREATE(Info->PieceTypeFrom, WHITE));
 
-        if (Info->Type & MOVE_CASTLE_KING) { // White O-O
+        if (Info->Type & MOVE_CASTLE_KING) {
             Board->Pieces[SQ_F1] = NO_PIECE;
 
             Board->BB_WhitePieces &= ~BB_SQUARE(SQ_F1);
@@ -342,7 +342,7 @@ void UnmakeMove(BoardItem* Board)
             AccumulatorAdd(Board, SQ_H1, PIECE_CREATE(ROOK, WHITE));
         }
 
-        if (Info->Type & MOVE_CASTLE_QUEEN) { // White O-O-O
+        if (Info->Type & MOVE_CASTLE_QUEEN) {
             Board->Pieces[SQ_D1] = NO_PIECE;
 
             Board->BB_WhitePieces &= ~BB_SQUARE(SQ_D1);
@@ -421,7 +421,7 @@ void UnmakeMove(BoardItem* Board)
 
         AccumulatorAdd(Board, Info->From, PIECE_CREATE(Info->PieceTypeFrom, BLACK));
 
-        if (Info->Type & MOVE_CASTLE_KING) { // Black O-O
+        if (Info->Type & MOVE_CASTLE_KING) {
             Board->Pieces[SQ_F8] = NO_PIECE;
 
             Board->BB_BlackPieces &= ~BB_SQUARE(SQ_F8);
@@ -437,7 +437,7 @@ void UnmakeMove(BoardItem* Board)
             AccumulatorAdd(Board, SQ_H8, PIECE_CREATE(ROOK, BLACK));
         }
 
-        if (Info->Type & MOVE_CASTLE_QUEEN) { // Black O-O-O
+        if (Info->Type & MOVE_CASTLE_QUEEN) {
             Board->Pieces[SQ_D8] = NO_PIECE;
 
             Board->BB_BlackPieces &= ~BB_SQUARE(SQ_D8);

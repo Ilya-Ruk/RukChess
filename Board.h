@@ -107,77 +107,16 @@
 
 // Squares index
 
-#define SQ_A8                   0
-#define SQ_B8                   1
-#define SQ_C8                   2
-#define SQ_D8                   3
-#define SQ_E8                   4
-#define SQ_F8                   5
-#define SQ_G8                   6
-#define SQ_H8                   7
-
-#define SQ_A7                   8
-#define SQ_B7                   9
-#define SQ_C7                   10
-#define SQ_D7                   11
-#define SQ_E7                   12
-#define SQ_F7                   13
-#define SQ_G7                   14
-#define SQ_H7                   15
-
-#define SQ_A6                   16
-#define SQ_B6                   17
-#define SQ_C6                   18
-#define SQ_D6                   19
-#define SQ_E6                   20
-#define SQ_F6                   21
-#define SQ_G6                   22
-#define SQ_H6                   23
-
-#define SQ_A5                   24
-#define SQ_B5                   25
-#define SQ_C5                   26
-#define SQ_D5                   27
-#define SQ_E5                   28
-#define SQ_F5                   29
-#define SQ_G5                   30
-#define SQ_H5                   31
-
-#define SQ_A4                   32
-#define SQ_B4                   33
-#define SQ_C4                   34
-#define SQ_D4                   35
-#define SQ_E4                   36
-#define SQ_F4                   37
-#define SQ_G4                   38
-#define SQ_H4                   39
-
-#define SQ_A3                   40
-#define SQ_B3                   41
-#define SQ_C3                   42
-#define SQ_D3                   43
-#define SQ_E3                   44
-#define SQ_F3                   45
-#define SQ_G3                   46
-#define SQ_H3                   47
-
-#define SQ_A2                   48
-#define SQ_B2                   49
-#define SQ_C2                   50
-#define SQ_D2                   51
-#define SQ_E2                   52
-#define SQ_F2                   53
-#define SQ_G2                   54
-#define SQ_H2                   55
-
-#define SQ_A1                   56
-#define SQ_B1                   57
-#define SQ_C1                   58
-#define SQ_D1                   59
-#define SQ_E1                   60
-#define SQ_F1                   61
-#define SQ_G1                   62
-#define SQ_H1                   63
+enum {
+    SQ_A8, SQ_B8, SQ_C8, SQ_D8, SQ_E8, SQ_F8, SQ_G8, SQ_H8,
+    SQ_A7, SQ_B7, SQ_C7, SQ_D7, SQ_E7, SQ_F7, SQ_G7, SQ_H7,
+    SQ_A6, SQ_B6, SQ_C6, SQ_D6, SQ_E6, SQ_F6, SQ_G6, SQ_H6,
+    SQ_A5, SQ_B5, SQ_C5, SQ_D5, SQ_E5, SQ_F5, SQ_G5, SQ_H5,
+    SQ_A4, SQ_B4, SQ_C4, SQ_D4, SQ_E4, SQ_F4, SQ_G4, SQ_H4,
+    SQ_A3, SQ_B3, SQ_C3, SQ_D3, SQ_E3, SQ_F3, SQ_G3, SQ_H3,
+    SQ_A2, SQ_B2, SQ_C2, SQ_D2, SQ_E2, SQ_F2, SQ_G2, SQ_H2,
+    SQ_A1, SQ_B1, SQ_C1, SQ_D1, SQ_E1, SQ_F1, SQ_G1, SQ_H1
+};
 
 typedef struct {
     int Type;
