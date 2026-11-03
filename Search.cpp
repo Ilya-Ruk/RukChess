@@ -116,7 +116,7 @@ int Search(BoardItem* Board, SearchDataItem* SearchData, int Alpha, int Beta, in
             && (SearchData->Nodes & 4095) == 0
             && TimeStop > 0ULL
             && Clock() >= TimeStop
-        ) {
+        ) { // Max. time is up
             StopSearch = TRUE;
 
             return 0;

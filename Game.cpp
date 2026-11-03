@@ -418,7 +418,7 @@ BOOL ComputerMove(void)
 
                 BestScore = ThreadScore;
 
-                if (TargetTimeLocal > 0ULL && CompletedDepth >= MIN_SEARCH_DEPTH && (Clock() - TimeStart) >= TargetTimeLocal) { // Time is up
+                if (TargetTimeLocal > 0ULL && CompletedDepth >= MIN_SEARCH_DEPTH && (Clock() - TimeStart) >= TargetTimeLocal) { // Target time is up
                     break; // for (depth)
                 }
             }
