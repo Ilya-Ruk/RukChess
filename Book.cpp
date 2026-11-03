@@ -20,7 +20,6 @@
 #define STAGE_COMMENT   5
 
 #define MAX_BOOK_PLY    24 // 12 moves
-#define MIN_BOOK_ELO    0
 #define MIN_BOOK_GAMES  30
 
 BookStoreItem BookStore;
@@ -79,8 +78,6 @@ void PrintNode(BoardItem* Board, const NodeItem* Node, FILE* FileOut)
         ChildNode = Node->Children[Index];
 
         if (ChildNode) {
-//            printf("0x%016llx %s %s %d\n", Board->Hash, BoardName[MOVE_FROM(ChildNode->Move.Move)], BoardName[MOVE_TO(ChildNode->Move.Move)], ChildNode->Total);
-
             fprintf(FileOut, "0x%016llx %d %d %d\n", Board->Hash, MOVE_FROM(ChildNode->Move.Move), MOVE_TO(ChildNode->Move.Move), ChildNode->Total);
 
             MakeMove(Board, ChildNode->Move);
@@ -100,9 +97,6 @@ void GenerateBook(void)
     int GameNumber;
 
     int Result;
-
-    int Elo;
-    int MinElo;
 
     char MoveString[16];
     char* Move;
@@ -129,8 +123,6 @@ void GenerateBook(void)
     BOOL MoveFound;
 
     char NotateMoveStr[16];
-
-//    printf("NodeItem = %zd\n", sizeof(NodeItem));
 
     printf("\n");
 
@@ -178,8 +170,6 @@ void GenerateBook(void)
 
     Result = 0; // Draw default
 
-    MinElo = INT_MAX;
-
     Move = MoveString;
     *Move = '\0'; // Nul
 
@@ -203,8 +193,6 @@ void GenerateBook(void)
                 ++GameNumber;
 
                 Result = 0; // Draw default
-
-                MinElo = INT_MAX;
 
                 Move = MoveString;
                 *Move = '\0'; // Nul
@@ -242,18 +230,12 @@ void GenerateBook(void)
 
             if (strncmp(Part, "[Result \"1-0\"]", 14) == 0) { // Result 1-0
                 Result = 1; // White win
-
-//                printf("Result = %d\n", Result);
             }
             else if (strncmp(Part, "[Result \"1/2-1/2\"]", 18) == 0) { // Result 1/2-1/2
                 Result = 0; // Draw
-
-//                printf("Result = %d\n", Result);
             }
             else if (strncmp(Part, "[Result \"0-1\"]", 14) == 0) { // Result 0-1
                 Result = -1; // Black win
-
-//                printf("Result = %d\n", Result);
             }
             else if (strncmp(Part, "[FEN \"", 6) == 0) { // FEN
                 Part += 6;
@@ -266,55 +248,33 @@ void GenerateBook(void)
 
                 *Fen = '\0'; // Nul
 
-//                printf("FEN = %s\n", FenString);
-
                 SetFen(&BoardList[0], FenString);
-            }
-            else if (strncmp(Part, "[WhiteElo \"", 11) == 0) { // WhiteElo
-                Part += 11;
-
-                Elo = atoi(Part);
-
-                MinElo = MIN(MinElo, Elo);
-
-//                printf("WhiteElo = %d MinElo = %d\n", Elo, MinElo);
-            }
-            else if (strncmp(Part, "[BlackElo \"", 11) == 0) { // BlackElo
-                Part += 11;
-
-                Elo = atoi(Part);
-
-                MinElo = MIN(MinElo, Elo);
-
-//                printf("BlackElo = %d MinElo = %d\n", Elo, MinElo);
             }
 
             continue; // Next string
         } // if
 
         if (Stage == STAGE_TAG) {
-            if (MinElo >= MIN_BOOK_ELO) {
-                if (Result == 1) { // White win
-                    ++RootNode->White;
+            if (Result == 1) { // White win
+                ++RootNode->White;
 
-                    ++RootNode->Total;
-                }
-                else if (Result == 0) { // Draw
-                    ++RootNode->Draw;
+                ++RootNode->Total;
+            }
+            else if (Result == 0) { // Draw
+                ++RootNode->Draw;
 
-                    ++RootNode->Total;
-                }
-                else if (Result == -1) { // Black win
-                    ++RootNode->Black;
+                ++RootNode->Total;
+            }
+            else if (Result == -1) { // Black win
+                ++RootNode->Black;
 
-                    ++RootNode->Total;
-                }
+                ++RootNode->Total;
             }
 
             Stage = STAGE_NOTATION;
         }
 
-        if (Error || Ply >= MAX_BOOK_PLY || MinElo < MIN_BOOK_ELO) {
+        if (Error || Ply >= MAX_BOOK_PLY) {
             continue; // Next string
         }
 
@@ -344,13 +304,11 @@ void GenerateBook(void)
 
                     Stage = STAGE_NOTATION;
 
-                    if (Error || Ply >= MAX_BOOK_PLY || MinElo < MIN_BOOK_ELO) {
+                    if (Error || Ply >= MAX_BOOK_PLY) {
                         ++Part;
 
                         continue; // Next character in string
                     }
-
-//                    printf("Ply = %d Result = %d Move = %s\n", Ply, Result, MoveString);
 
                     GenMoveCount = 0;
                     GenerateAllMoves(&BoardList[0], NULL, NULL, MoveList, &GenMoveCount);
@@ -646,13 +604,7 @@ void LoadBook(const char* BookFileName)
     } // while
 
     qsort(BookStore.Item, BookStore.Count, sizeof(BookItem), HashCompare);
-/*
-    for (int Index = 0; Index < BookStore.Count; ++Index) {
-        BookItemPointer = &BookStore.Item[Index];
 
-        printf("0x%016llx %s %s %d\n", BookItemPointer->Hash, BoardName[BookItemPointer->From], BoardName[BookItemPointer->To], BookItemPointer->Total);
-    }
-*/
     fclose(File);
 
     BookFileLoaded = TRUE;
@@ -708,8 +660,6 @@ BOOL GetBookMove(const BoardItem* Board, MoveItem* BestMove)
         }
     }
 
-//    printf("BookCount = %d\n", BookCount);
-
     if (BookCount == 0) { // No moves in book
         return FALSE;
     }
@@ -718,8 +668,6 @@ BOOL GetBookMove(const BoardItem* Board, MoveItem* BestMove)
 
     RandomValue = Rand64();
     Selected = (int)(RandomValue & 0x7FFFFFFF) % Total;
-
-//    printf("Total = %d Selected = %d\n", Total, Selected);
 
     Offset = 0;
 
@@ -737,9 +685,7 @@ BOOL GetBookMove(const BoardItem* Board, MoveItem* BestMove)
                     MOVE_FROM(MoveList[MoveNumber].Move) == BookItemPointer->From
                     && MOVE_TO(MoveList[MoveNumber].Move) == BookItemPointer->To
                 ) { // Valid book move
-//                    printf("0x%016llx %s %s %d\n", BookItemPointer->Hash, BoardName[BookItemPointer->From], BoardName[BookItemPointer->To], BookItemPointer->Total);
-
-                    *BestMove = MoveList[MoveNumber]; // Best move
+                    *BestMove = MoveList[MoveNumber];
 
                     return TRUE;
                 }

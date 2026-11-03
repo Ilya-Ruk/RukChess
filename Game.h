@@ -13,10 +13,10 @@
 #define PRINT_MODE_UCI      1
 #define PRINT_MODE_TESTS    2
 
-extern int MaxThreads;
 extern int MaxDepth;
 extern U64 MaxNodes;
 extern U64 MaxTime;
+extern int MaxThreads;
 
 extern U64 ReduceTime;
 

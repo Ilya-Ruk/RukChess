@@ -15,10 +15,10 @@
 #include "Types.h"
 #include "Utils.h"
 
-int MaxThreads;
 int MaxDepth;
 U64 MaxNodes;
 U64 MaxTime;
+int MaxThreads;
 
 U64 ReduceTime = (U64)DEFAULT_REDUCE_TIME;
 

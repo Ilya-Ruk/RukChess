@@ -482,7 +482,7 @@ void GeneratorTest1(void)
         for (int Depth = 1; Depth <= GeneratorTests[TestNumber].Depth; ++Depth) {
             ResultNodes = CountLegalMoves(&BoardList[0], Depth);
 
-            if (GeneratorTests[TestNumber].Nodes[Depth - 1] == ResultNodes) {
+            if (ResultNodes == GeneratorTests[TestNumber].Nodes[Depth - 1]) {
                 ResultString = "PASSED";
             }
             else {
@@ -510,7 +510,7 @@ void GeneratorTest2(void)
 
     printf("\n");
 
-    printf("Max. depth (0-%d): ", MAX_PLY);
+    printf("Max. depth (min. 1 max. %d; 0 = %d): ", MAX_PLY, MAX_PLY);
     scanf_s("%d", &InputDepth);
 
     MaxDepth = (InputDepth >= 1 && InputDepth <= MAX_PLY) ? InputDepth : MAX_PLY;
@@ -612,12 +612,12 @@ void SearchPerformanceTest(void)
 
     printf("\n");
 
-    printf("Max. cycles: ");
+    printf("Max. cycles (min. 1): ");
     scanf_s("%d", &MaxCycles);
 
     MaxCycles = MAX(MaxCycles, 1);
 
-    printf("Max. moves: ");
+    printf("Max. moves (min. 1): ");
     scanf_s("%d", &MaxMoves);
 
     MaxMoves = MAX(MaxMoves, 1);
@@ -677,7 +677,7 @@ void EvaluateTests(const char* Tests[], const int TestCount)
 
     printf("\n");
 
-    printf("Max. cycles: ");
+    printf("Max. cycles (min. 1): ");
     scanf_s("%d", &MaxCycles);
 
     MaxCycles = MAX(MaxCycles, 1);

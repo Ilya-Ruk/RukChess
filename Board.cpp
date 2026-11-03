@@ -394,10 +394,6 @@ void PrintBoard(BoardItem* Board)
     printf("   +---+---+---+---+---+---+---+---+\n");
     printf("     a   b   c   d   e   f   g   h\n");
 
-//    printf("\n");
-
-//    printf("Hash = 0x%016llx\n", Board->Hash);
-
     printf("\n");
 
     printf("Static evaluate = %.2f\n", (double)Evaluate(Board) / 100.0);

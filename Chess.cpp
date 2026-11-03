@@ -26,35 +26,6 @@ int main(int argc, char** argv)
     printf("%s %s\n", PROGRAM_NAME, PROGRAM_VERSION);
     printf("Copyright (C) %s %s\n", YEAR, AUTHOR);
 
-    // Print debug information
-
-//    printf("MoveItem = %zd\n", sizeof(MoveItem));
-//    printf("AccumulatorItem = %zd\n", sizeof(AccumulatorItem));
-//    printf("HistoryItem = %zd\n", sizeof(HistoryItem));
-//    printf("BoardItem = %zd\n", sizeof(BoardItem));
-
-//    BoardItem Board;
-
-//    printf("BoardItem.MoveTable = %zd\n", sizeof(Board.MoveTable));
-//    printf("BoardItem.Accumulator = %zd\n", sizeof(Board.Accumulator));
-
-//    printf("SearchDataItem = %zd\n", sizeof(SearchDataItem));
-
-//    SearchDataItem SearchData;
-
-//    printf("SearchDataItem.BestMoves = %zd\n", sizeof(SearchData.BestMoves));
-//    printf("SearchDataItem.HeuristicTable = %zd\n", sizeof(SearchData.HeuristicTable));
-//    printf("SearchDataItem.CounterMoveHistoryTable = %zd\n", sizeof(SearchData.CounterMoveHistoryTable));
-//    printf("SearchDataItem.KillerMoveTable = %zd\n", sizeof(SearchData.KillerMoveTable));
-//    printf("SearchDataItem.CounterMoveTable = %zd\n", sizeof(SearchData.CounterMoveTable));
-
-//    printf("NodeItem = %zd\n", sizeof(NodeItem));
-//    printf("BookItem = %zd\n", sizeof(BookItem));
-
-//    printf("HashDataS = %zd\n", sizeof(HashDataS));
-//    printf("HashDataU = %zd\n", sizeof(HashDataU));
-//    printf("HashItem = %zd\n", sizeof(HashItem));
-
     // Initialize threads
 
     /*
@@ -99,8 +70,6 @@ int main(int argc, char** argv)
 #ifdef LATE_MOVE_PRUNING
     for (int Depth = 0; Depth < 7; ++Depth) {
         LateMovePruningTable[Depth] = (int)round(2.98484 + pow(Depth, 1.74716)); // Hakkapeliitta
-
-//        printf("LateMovePruningTable[%d] = %d\n", Depth, LateMovePruningTable[Depth]); // 3, 4, 6, 10, 14, 20, 26
     }
 #endif // LATE_MOVE_PRUNING
 
@@ -108,15 +77,9 @@ int main(int argc, char** argv)
 
 #ifdef LATE_MOVE_REDUCTION
     for (int Depth = 0; Depth < 64; ++Depth) {
-//        printf("LateMoveReductionTable[%2d] = ", Depth);
-
         for (int MoveNumber = 0; MoveNumber < 64; ++MoveNumber) {
             LateMoveReductionTable[Depth][MoveNumber] = (int)MAX(log(Depth + 1) * log(MoveNumber + 1) / 1.70, 1.0); // Hakkapeliitta
-
-//            printf("%d", LateMoveReductionTable[Depth][MoveNumber]);
         }
-
-//        printf("\n");
     }
 #endif // LATE_MOVE_REDUCTION
 

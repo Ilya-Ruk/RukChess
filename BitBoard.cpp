@@ -179,12 +179,14 @@ void InitBitBoards(void)
     int RookOffset = 0;
 
     // Init Bishop and Rook mask tables
+
     for (int Square = 0; Square < 64; ++Square) {
         BB_BishopMask[Square] = CalculatePieceAttack(BISHOP, Square, 0ULL, TRUE);
         BB_RookMask[Square] = CalculatePieceAttack(ROOK, Square, 0ULL, TRUE);
     }
 
     // Init Knight and King attack tables; Bishop and Rook offset and attack tables
+
     for (int Square = 0; Square < 64; ++Square) {
         BB_KnightAttack[Square] = CalculatePieceAttack(KNIGHT, Square, 0ULL, FALSE);
         BB_KingAttack[Square] = CalculatePieceAttack(KING, Square, 0ULL, FALSE);
