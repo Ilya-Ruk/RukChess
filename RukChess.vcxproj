@@ -71,7 +71,7 @@
     <ClCompile Include="BitBoard.cpp" />
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="Book.cpp" />
-    <ClCompile Include="Chess.cpp" />
+    <ClCompile Include="RukChess.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Gen.cpp" />
     <ClCompile Include="Hash.cpp" />
