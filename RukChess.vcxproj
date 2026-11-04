@@ -71,7 +71,6 @@
     <ClCompile Include="BitBoard.cpp" />
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="Book.cpp" />
-    <ClCompile Include="RukChess.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Gen.cpp" />
     <ClCompile Include="Hash.cpp" />
@@ -79,6 +78,7 @@
     <ClCompile Include="Move.cpp" />
     <ClCompile Include="NNUE2.cpp" />
     <ClCompile Include="QuiescenceSearch.cpp" />
+    <ClCompile Include="RukChess.cpp" />
     <ClCompile Include="Search.cpp" />
     <ClCompile Include="SEE.cpp" />
     <ClCompile Include="Sort.cpp" />
