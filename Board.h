@@ -36,7 +36,6 @@
        0  1  2  3  4  5  6  7 (File)
 
     <<<<<< _BitScanForward64() <<<<<<
-    >>>>>> _BitScanReverse64() >>>>>>
     63 62 61 60 59 58 ... 5 4 3 2 1 0
     (MSB)                       (LSB)
     (h1)                         (a8)
@@ -147,11 +146,11 @@ typedef struct {
 
     U64 Hash;
 
-#ifdef DEBUG_MOVE
+#ifdef DEBUG_MOVE_BIT_BOARD
     U64 BB_WhitePieces;
     U64 BB_BlackPieces;
     U64 BB_Pieces[2][6]; // [Color][Piece]
-#endif // DEBUG_MOVE
+#endif // DEBUG_MOVE_BIT_BOARD
 } HistoryItem;
 
 typedef struct {

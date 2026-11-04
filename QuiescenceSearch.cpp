@@ -50,7 +50,7 @@ int QuiescenceSearch(BoardItem* Board, SearchDataItem* SearchData, int Alpha, in
     BOOL GiveCheck;
 
 #ifdef USE_STATISTIC
-    ++Board->QuiescenceCount;
+    ++SearchData->QuiescenceCount;
 #endif // USE_STATISTIC
 
     if (omp_get_thread_num() == 0) { // Master thread
@@ -98,11 +98,11 @@ int QuiescenceSearch(BoardItem* Board, SearchDataItem* SearchData, int Alpha, in
 #endif // QUIESCENCE_MATE_DISTANCE_PRUNING
 
     if (Ply >= MAX_PLY) {
-        return Evaluate(Board);
+        return Evaluate(Board, SearchData);
     }
 
     if (Board->HalfMoveNumber >= MAX_GAME_MOVES) {
-        return Evaluate(Board);
+        return Evaluate(Board, SearchData);
     }
 
     LoadHash(Board->Hash, &HashDepth, Ply, &HashScore, &HashStaticScore, &HashMove, &HashFlag);
@@ -116,7 +116,7 @@ int QuiescenceSearch(BoardItem* Board, SearchDataItem* SearchData, int Alpha, in
 
     if (HashFlag) {
 #ifdef USE_STATISTIC
-        ++Board->HashCount;
+        ++SearchData->HashCount;
 #endif // USE_STATISTIC
 
         if (!IsPrincipal && HashDepth >= QuiescenceHashDepth) {
@@ -151,7 +151,7 @@ int QuiescenceSearch(BoardItem* Board, SearchDataItem* SearchData, int Alpha, in
             }
         }
         else {
-            BestScore = StaticScore = Evaluate(Board);
+            BestScore = StaticScore = Evaluate(Board, SearchData);
         }
 
         if (BestScore >= Beta) {
@@ -224,7 +224,7 @@ int QuiescenceSearch(BoardItem* Board, SearchDataItem* SearchData, int Alpha, in
                 }
                 else { // !IsPrincipal || BestScore >= Beta
 #ifdef USE_STATISTIC
-                    ++Board->CutoffCount;
+                    ++SearchData->CutoffCount;
 #endif // USE_STATISTIC
 
                     SaveHash(Board->Hash, QuiescenceHashDepth, Ply, BestScore, StaticScore, BestMove.Move, HASH_BETA);

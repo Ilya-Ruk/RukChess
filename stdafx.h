@@ -26,7 +26,7 @@
 #include <sys/timeb.h>          // _timeb, _ftime_s()
 #include <process.h>            // _beginthread(), _endthread()
 #include <omp.h>                // Open MP
-#include <intrin.h>             // __popcnt64(), _BitScanForward64(), _BitScanReverse64(), _mm_prefetch()
+#include <intrin.h>             // __popcnt64(), _BitScanForward64(), _mm_prefetch()
 #include <immintrin.h>          // _pdep_u64(), _pext_u64()
 #include <limits.h>             // INT_MAX
 #include <float.h>              // FLT_MAX

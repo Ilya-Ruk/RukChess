@@ -222,10 +222,6 @@ int CalculateWeightIndex(const int Perspective, const int Square, const int Piec
         WeightIndex = (PieceIndex << 6) + (Square ^ 56);
     }
 
-#ifdef PRINT_WEIGHT_INDEX
-    printf("Perspective = %d Square = %d Piece = %d Color = %d PieceIndex = %d WeightIndex = %d\n", Perspective, Square, PIECE_TYPE(PieceWithColor), PIECE_COLOR(PieceWithColor), PieceIndex, WeightIndex);
-#endif // PRINT_WEIGHT_INDEX
-
     return WeightIndex;
 }
 
@@ -295,15 +291,6 @@ I32 OutputLayer(BoardItem* Board)
 {
     I32 Result = OutputBias;
 
-#ifdef PRINT_ACCUMULATOR
-    for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) {
-        const I16 Acc0 = Board->Accumulator.Accumulator[Board->CurrentColor][Index];
-        const I16 Acc1 = Board->Accumulator.Accumulator[CHANGE_COLOR(Board->CurrentColor)][Index];
-
-        printf("Index = %d Acc0 = %d Acc1 = %d\n", Index, Acc0, Acc1);
-    }
-#endif // PRINT_ACCUMULATOR
-
 #ifdef USE_NNUE_AVX2
     const __m256i ConstZero = _mm256_setzero_si256();
 
@@ -357,10 +344,12 @@ I32 OutputLayer(BoardItem* Board)
     return (Result * SCALE) / (QUANTIZATION_PRECISION_IN * QUANTIZATION_PRECISION_OUT);
 }
 
-int Evaluate(BoardItem* Board)
+int Evaluate(BoardItem* Board, SearchDataItem* SearchData)
 {
 #ifdef USE_STATISTIC
-    ++Board->EvaluateCount;
+    if (SearchData) {
+        ++SearchData->EvaluateCount;
+    }
 #endif // USE_STATISTIC
 
     return (int)OutputLayer(Board);

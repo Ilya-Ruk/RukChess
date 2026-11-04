@@ -46,7 +46,7 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
 
     Info->Hash = Board->Hash;
 
-#ifdef DEBUG_MOVE
+#ifdef DEBUG_MOVE_BIT_BOARD
     Info->BB_WhitePieces = Board->BB_WhitePieces;
     Info->BB_BlackPieces = Board->BB_BlackPieces;
 
@@ -55,7 +55,7 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
             Info->BB_Pieces[Color][Piece] = Board->BB_Pieces[Color][Piece];
         }
     }
-#endif // DEBUG_MOVE
+#endif // DEBUG_MOVE_BIT_BOARD
 
     if (Info->EnPassantSquare != -1) {
         Board->EnPassantSquare = -1;
@@ -283,25 +283,7 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
 
     Board->Hash ^= ColorHash;
 
-#ifdef DEBUG_NNUE
-    I16 Accumulator[2][HIDDEN_DIMENSION]; // [Perspective][Hidden dimension]
-
-    memcpy(Accumulator, Board->Accumulator, sizeof(Accumulator));
-
-    InitAccumulator(Board);
-
-    for (int Perspective = 0; Perspective < 2; ++Perspective) { // STM/XSTM
-        for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) {
-            if (Board->Accumulator[Perspective][Index] != Accumulator[Perspective][Index]) {
-                printf("-- Accumulator error (make)! Color = %d Piece = %d From = %d To = %d Move type = %d\n", CHANGE_COLOR(Board->CurrentColor), Info->PieceTypeFrom, Info->From, Info->To, Info->Type);
-
-                break;
-            }
-        }
-    }
-#endif // DEBUG_NNUE
-
-#ifdef DEBUG_HASH
+#ifdef DEBUG_MOVE_HASH
     U64 PreviousHash = Board->Hash;
 
     InitHash(Board);
@@ -309,7 +291,25 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
     if (Board->Hash != PreviousHash) {
         printf("-- Board hash error! BoardHash = 0x%016llx PreviousHash = 0x%016llx\n", Board->Hash, PreviousHash);
     }
-#endif // DEBUG_HASH
+#endif // DEBUG_MOVE_HASH
+
+#ifdef DEBUG_MOVE_NNUE
+    I16 Accumulator[2][HIDDEN_DIMENSION]; // [Perspective][Hidden dimension]
+
+    memcpy(Accumulator, Board->Accumulator.Accumulator, sizeof(Accumulator));
+
+    InitAccumulator(Board);
+
+    for (int Perspective = 0; Perspective < 2; ++Perspective) { // STM/XSTM
+        for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) {
+            if (Board->Accumulator.Accumulator[Perspective][Index] != Accumulator[Perspective][Index]) {
+                printf("-- Accumulator error (make)! Color = %d Piece = %d From = %d To = %d Move type = %d\n", CHANGE_COLOR(Board->CurrentColor), Info->PieceTypeFrom, Info->From, Info->To, Info->Type);
+
+                break;
+            }
+        }
+    }
+#endif // DEBUG_MOVE_NNUE
 }
 
 void UnmakeMove(BoardItem* Board)
@@ -516,25 +516,7 @@ void UnmakeMove(BoardItem* Board)
 
     Board->Hash = Info->Hash;
 
-#ifdef DEBUG_NNUE
-    I16 Accumulator[2][HIDDEN_DIMENSION]; // [Perspective][Hidden dimension]
-
-    memcpy(Accumulator, Board->Accumulator, sizeof(Accumulator));
-
-    InitAccumulator(Board);
-
-    for (int Perspective = 0; Perspective < 2; ++Perspective) { // STM/XSTM
-        for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) {
-            if (Board->Accumulator[Perspective][Index] != Accumulator[Perspective][Index]) {
-                printf("-- Accumulator error (unmake)! Color = %d Piece = %d From = %d To = %d Move type = %d\n", CHANGE_COLOR(Board->CurrentColor), Info->PieceTypeFrom, Info->From, Info->To, Info->Type);
-
-                break;
-            }
-        }
-    }
-#endif // DEBUG_NNUE
-
-#ifdef DEBUG_MOVE
+#ifdef DEBUG_MOVE_BIT_BOARD
     if (Board->BB_WhitePieces != Info->BB_WhitePieces) {
         printf("-- BB_WhitePieces error! From = %d To = %d Move type = %d\n", Info->From, Info->To, Info->Type);
     }
@@ -550,7 +532,25 @@ void UnmakeMove(BoardItem* Board)
             }
         }
     }
-#endif // DEBUG_MOVE
+#endif // DEBUG_MOVE_BIT_BOARD
+
+#ifdef DEBUG_MOVE_NNUE
+    I16 Accumulator[2][HIDDEN_DIMENSION]; // [Perspective][Hidden dimension]
+
+    memcpy(Accumulator, Board->Accumulator.Accumulator, sizeof(Accumulator));
+
+    InitAccumulator(Board);
+
+    for (int Perspective = 0; Perspective < 2; ++Perspective) { // STM/XSTM
+        for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) {
+            if (Board->Accumulator.Accumulator[Perspective][Index] != Accumulator[Perspective][Index]) {
+                printf("-- Accumulator error (unmake)! Color = %d Piece = %d From = %d To = %d Move type = %d\n", CHANGE_COLOR(Board->CurrentColor), Info->PieceTypeFrom, Info->From, Info->To, Info->Type);
+
+                break;
+            }
+        }
+    }
+#endif // DEBUG_MOVE_NNUE
 }
 
 #ifdef NULL_MOVE_PRUNING
@@ -579,7 +579,7 @@ void MakeNullMove(BoardItem* Board)
 
     Board->Hash ^= ColorHash;
 
-#ifdef DEBUG_HASH
+#ifdef DEBUG_MOVE_HASH
     U64 PreviousHash = Board->Hash;
 
     InitHash(Board);
@@ -587,7 +587,7 @@ void MakeNullMove(BoardItem* Board)
     if (Board->Hash != PreviousHash) {
         printf("-- Board hash error! BoardHash = 0x%016llx PreviousHash = 0x%016llx\n", Board->Hash, PreviousHash);
     }
-#endif // DEBUG_HASH
+#endif // DEBUG_MOVE_HASH
 }
 
 void UnmakeNullMove(BoardItem* Board)

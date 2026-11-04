@@ -694,7 +694,7 @@ void EvaluateTests(const char* Tests[], const int TestCount)
 
             QueryPerformanceCounter(&EvaluateTimeStart);
 
-            Evaluate(&BoardList[0]);
+            Evaluate(&BoardList[0], NULL);
 
             QueryPerformanceCounter(&EvaluateTimeStop);
 

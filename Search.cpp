@@ -157,11 +157,11 @@ int Search(BoardItem* Board, SearchDataItem* SearchData, int Alpha, int Beta, in
     }
 
     if (Ply >= MAX_PLY) {
-        return Evaluate(Board);
+        return Evaluate(Board, SearchData);
     }
 
     if (Board->HalfMoveNumber >= MAX_GAME_MOVES) {
-        return Evaluate(Board);
+        return Evaluate(Board, SearchData);
     }
 
     if (IsPrincipal && SearchData->SelDepth < Ply + 1) {
@@ -180,7 +180,7 @@ int Search(BoardItem* Board, SearchDataItem* SearchData, int Alpha, int Beta, in
 
         if (HashFlag) {
 #ifdef USE_STATISTIC
-            ++Board->HashCount;
+            ++SearchData->HashCount;
 #endif // USE_STATISTIC
 
             if (!IsPrincipal && HashDepth >= Depth) {
@@ -232,7 +232,7 @@ int Search(BoardItem* Board, SearchDataItem* SearchData, int Alpha, int Beta, in
             StaticScore = HashStaticScore;
         }
         else {
-            StaticScore = Evaluate(Board);
+            StaticScore = Evaluate(Board, SearchData);
 
             if (!SkipMove) {
                 SaveHash(Board->Hash, -MAX_PLY, 0, 0, StaticScore, 0, HASH_STATIC_SCORE);
@@ -366,10 +366,6 @@ int Search(BoardItem* Board, SearchDataItem* SearchData, int Alpha, int Beta, in
 
 #ifdef IID
     if (!SkipMove && !HashMove && (IsPrincipal ? Depth > 4 : Depth > 7)) { // Hakkapeliitta
-#ifdef DEBUG_IID
-        printf("-- IID: Depth = %d\n", Depth);
-#endif // DEBUG_IID
-
         // Search with full window for reduced depth
         TempBestMoves[0] = (MoveItem){ 0, 0, 0 }; // End of move list
 
@@ -380,12 +376,6 @@ int Search(BoardItem* Board, SearchDataItem* SearchData, int Alpha, int Beta, in
         }
 
         LoadHash(Board->Hash, &HashDepth, Ply, &HashScore, &HashStaticScore, &HashMove, &HashFlag);
-
-#ifdef DEBUG_IID
-        if (HashMove) {
-            printf("-- IID: Depth = %d Move = %s%s\n", Depth, BoardName[MOVE_FROM(HashMove)], BoardName[MOVE_TO(HashMove)]);
-        }
-#endif // DEBUG_IID
     }
 #endif // IID
 
@@ -502,17 +492,7 @@ NextMove:
                 return 0;
             }
 
-#ifdef DEBUG_SINGULAR_EXTENSION
-            PrintBoard(Board);
-
-            printf("-- SE: Ply = %d Depth = %d SkipMove = %s%s HashScore = %d SingularBeta = %d Score = %d\n", Ply, Depth, BoardName[MOVE_FROM(MoveList[MoveNumber].Move)], BoardName[MOVE_TO(MoveList[MoveNumber].Move)], HashScore, SingularBeta, Score);
-#endif // DEBUG_SINGULAR_EXTENSION
-
             if (Score < SingularBeta) {
-#ifdef DEBUG_SINGULAR_EXTENSION
-                printf("-- SE: Extension = 1\n");
-#endif // DEBUG_SINGULAR_EXTENSION
-
                 Extension = 1;
             }
 
@@ -680,7 +660,7 @@ NextMove:
                 }
                 else { // !IsPrincipal || BestScore >= Beta
 #ifdef USE_STATISTIC
-                    ++Board->CutoffCount;
+                    ++SearchData->CutoffCount;
 #endif // USE_STATISTIC
 
                     if (!(BestMove.Type & (MOVE_CAPTURE | MOVE_PAWN_PROMOTE))) { // Not capture/promote move
