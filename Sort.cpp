@@ -11,7 +11,7 @@
 void SetHashMoveSortValue(MoveItem* GenMoveList, const int GenMoveCount, const int HashMove)
 {
     if (HashMove) {
-        for (int Index = 0; Index < GenMoveCount; ++Index) {
+        for (int Index = 0; Index < GenMoveCount; Index++) {
             if (GenMoveList[Index].Move == HashMove) {
                 GenMoveList[Index].SortValue = SORT_HASH_MOVE_VALUE;
 
@@ -28,7 +28,7 @@ void SetKillerMove1SortValue(const SearchDataItem* SearchData, const int Ply, Mo
     int KillerMove1 = SearchData->KillerMoveTable[Ply][0];
 
     if (KillerMove1 && KillerMove1 != HashMove) {
-        for (int Index = 0; Index < GenMoveCount; ++Index) {
+        for (int Index = 0; Index < GenMoveCount; Index++) {
             if (GenMoveList[Index].Move == KillerMove1) {
                 if (!(GenMoveList[Index].Type & (MOVE_CAPTURE | MOVE_PAWN_PROMOTE))) { // Not capture/promote move
                     GenMoveList[Index].SortValue = SORT_KILLER_MOVE_1_VALUE;
@@ -46,7 +46,7 @@ void SetKillerMove2SortValue(const SearchDataItem* SearchData, const int Ply, Mo
     int KillerMove2 = SearchData->KillerMoveTable[Ply][1];
 
     if (KillerMove2 && KillerMove2 != HashMove && KillerMove2 != KillerMove1) {
-        for (int Index = 0; Index < GenMoveCount; ++Index) {
+        for (int Index = 0; Index < GenMoveCount; Index++) {
             if (GenMoveList[Index].Move == KillerMove2) {
                 if (!(GenMoveList[Index].Type & (MOVE_CAPTURE | MOVE_PAWN_PROMOTE))) { // Not capture/promote move
                     GenMoveList[Index].SortValue = SORT_KILLER_MOVE_2_VALUE;
@@ -85,7 +85,7 @@ void SetCounterMoveSortValue(const BoardItem* Board, const SearchDataItem* Searc
 #else
     if (CounterMove && CounterMove != HashMove) {
 #endif // KILLER_MOVE
-        for (int Index = 0; Index < GenMoveCount; ++Index) {
+        for (int Index = 0; Index < GenMoveCount; Index++) {
             if (GenMoveList[Index].Move == CounterMove) {
                 if (!(GenMoveList[Index].Type & (MOVE_CAPTURE | MOVE_PAWN_PROMOTE))) { // Not capture/promote move
                     GenMoveList[Index].SortValue = SORT_COUNTER_MOVE_VALUE;
@@ -105,7 +105,7 @@ void PrepareNextMove(const int StartIndex, MoveItem* GenMoveList, const int GenM
 
     MoveItem TempMoveItem;
 
-    for (int Index = StartIndex + 1; Index < GenMoveCount; ++Index) {
+    for (int Index = StartIndex + 1; Index < GenMoveCount; Index++) {
         if (GenMoveList[Index].SortValue > BestMoveScore) {
             BestMoveIndex = Index;
             BestMoveScore = GenMoveList[Index].SortValue;

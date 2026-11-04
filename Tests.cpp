@@ -467,7 +467,7 @@ void GeneratorTest1(void)
 
     omp_set_num_threads(1);
 
-    for (int TestNumber = 0; TestNumber < GeneratorTestCount; ++TestNumber) {
+    for (int TestNumber = 0; TestNumber < GeneratorTestCount; TestNumber++) {
         printf("\n");
 
         printf("Test %d\n", TestNumber + 1);
@@ -479,7 +479,7 @@ void GeneratorTest1(void)
 
         printf("\n");
 
-        for (int Depth = 1; Depth <= GeneratorTests[TestNumber].Depth; ++Depth) {
+        for (int Depth = 1; Depth <= GeneratorTests[TestNumber].Depth; Depth++) {
             ResultNodes = CountLegalMoves(&BoardList[0], Depth);
 
             if (ResultNodes == GeneratorTests[TestNumber].Nodes[Depth - 1]) {
@@ -519,7 +519,7 @@ void GeneratorTest2(void)
 
     printf("\n");
 
-    for (int Depth = 1; Depth <= MaxDepth; ++Depth) {
+    for (int Depth = 1; Depth <= MaxDepth; Depth++) {
         ResultNodes = CountLegalMoves(&BoardList[0], Depth);
 
         printf("Depth = %2d Result nodes = %10llu\n", Depth, ResultNodes);
@@ -541,7 +541,7 @@ void Tests(const char* Tests[], const int TestCount)
 
     PrintMode = PRINT_MODE_TESTS;
 
-    for (int TestNumber = 0; TestNumber < TestCount; ++TestNumber) {
+    for (int TestNumber = 0; TestNumber < TestCount; TestNumber++) {
         printf("\n");
 
         printf("Test %d\n", TestNumber + 1);
@@ -570,7 +570,7 @@ void Tests(const char* Tests[], const int TestCount)
             if (strstr(BestMoves, NotateMoveStr) != NULL) {
                 ResultString = "PASSED";
 
-                ++TestPassedCount;
+                TestPassedCount++;
             }
             else {
                 ResultString = "FAILED";
@@ -622,7 +622,7 @@ void SearchPerformanceTest(void)
 
     MaxMoves = MAX(MaxMoves, 1);
 
-    for (int Cycle = 0; Cycle < MaxCycles; ++Cycle) {
+    for (int Cycle = 0; Cycle < MaxCycles; Cycle++) {
         printf("\n");
 
         printf("Cycle = %d\n", Cycle + 1);
@@ -635,14 +635,14 @@ void SearchPerformanceTest(void)
 
         PrintBoard(&BoardList[0]);
 
-        for (int Move = 0; Move < MaxMoves * 2; ++Move) {
+        for (int Move = 0; Move < MaxMoves * 2; Move++) {
             if (!ComputerMove()) {
                 return;
             }
 
             U64 Nodes = 0ULL;
 
-            for (int Thread = 0; Thread < omp_get_max_threads(); ++Thread) {
+            for (int Thread = 0; Thread < omp_get_max_threads(); Thread++) {
                 Nodes += SearchDataList[Thread].Nodes;
             }
 
@@ -684,10 +684,10 @@ void EvaluateTests(const char* Tests[], const int TestCount)
 
     printf("\n");
 
-    for (int Cycle = 0; Cycle < MaxCycles; ++Cycle) {
+    for (int Cycle = 0; Cycle < MaxCycles; Cycle++) {
         printf("Cycle = %d\n", Cycle + 1);
 
-        for (int TestNumber = 0; TestNumber < TestCount; ++TestNumber) {
+        for (int TestNumber = 0; TestNumber < TestCount; TestNumber++) {
             Fen = Tests[TestNumber * 2];
 
             SetFen(&BoardList[0], Fen);

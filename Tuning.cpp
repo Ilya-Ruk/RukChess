@@ -107,7 +107,7 @@ void Pgn2Fen(void)
             if (Stage == STAGE_NOTATION) {
                 // Prepare new game
 
-                ++GameNumber;
+                GameNumber++;
 
                 Result = 0.0; // Draw default
 
@@ -166,7 +166,7 @@ void Pgn2Fen(void)
 
             fprintf(FileOut, "%s|%.1f\n", FenOut, Result);
 
-            ++Ply;
+            Ply++;
 
             Stage = STAGE_NOTATION;
         }
@@ -202,7 +202,7 @@ void Pgn2Fen(void)
                     Stage = STAGE_NOTATION;
 
                     if (Error) {
-                        ++Part;
+                        Part++;
 
                         continue; // Next character in string
                     }
@@ -212,7 +212,7 @@ void Pgn2Fen(void)
 
                     MoveFound = FALSE;
 
-                    for (int MoveNumber = 0; MoveNumber < GenMoveCount; ++MoveNumber) {
+                    for (int MoveNumber = 0; MoveNumber < GenMoveCount; MoveNumber++) {
                         NotateMove(&BoardList[0], MoveList[MoveNumber], NotateMoveStr);
 
                         if (strcmp(MoveString, NotateMoveStr) == 0) {
@@ -254,7 +254,7 @@ void Pgn2Fen(void)
 
                         printf("Gen. moves:");
 
-                        for (int MoveNumber = 0; MoveNumber < GenMoveCount; ++MoveNumber) {
+                        for (int MoveNumber = 0; MoveNumber < GenMoveCount; MoveNumber++) {
                             NotateMove(&BoardList[0], MoveList[MoveNumber], NotateMoveStr);
 
                             printf(" %s%s", BoardName[MOVE_FROM(MoveList[MoveNumber].Move)], BoardName[MOVE_TO(MoveList[MoveNumber].Move)]);
@@ -269,11 +269,11 @@ void Pgn2Fen(void)
                         printf("\n");
                     }
 
-                    ++Ply;
+                    Ply++;
                 }
             }
 
-            ++Part;
+            Part++;
         } // while
     } // while
 

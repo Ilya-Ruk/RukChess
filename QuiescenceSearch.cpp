@@ -50,7 +50,7 @@ int QuiescenceSearch(BoardItem* Board, SearchDataItem* SearchData, int Alpha, in
     BOOL GiveCheck;
 
 #ifdef USE_STATISTIC
-    ++SearchData->QuiescenceCount;
+    SearchData->QuiescenceCount++;
 #endif // USE_STATISTIC
 
     if (omp_get_thread_num() == 0) { // Master thread
@@ -116,7 +116,7 @@ int QuiescenceSearch(BoardItem* Board, SearchDataItem* SearchData, int Alpha, in
 
     if (HashFlag) {
 #ifdef USE_STATISTIC
-        ++SearchData->HashCount;
+        SearchData->HashCount++;
 #endif // USE_STATISTIC
 
         if (!IsPrincipal && HashDepth >= QuiescenceHashDepth) {
@@ -174,7 +174,7 @@ int QuiescenceSearch(BoardItem* Board, SearchDataItem* SearchData, int Alpha, in
 
     SetHashMoveSortValue(MoveList, GenMoveCount, HashMove);
 
-    for (int MoveNumber = 0; MoveNumber < GenMoveCount; ++MoveNumber) {
+    for (int MoveNumber = 0; MoveNumber < GenMoveCount; MoveNumber++) {
         PrepareNextMove(MoveNumber, MoveList, GenMoveCount);
 
 #ifdef QUIESCENCE_SEE_MOVE_PRUNING
@@ -198,10 +198,10 @@ int QuiescenceSearch(BoardItem* Board, SearchDataItem* SearchData, int Alpha, in
         }
 
 #ifdef QUIESCENCE_USE_CHECK
-        ++LegalMoveCount;
+        LegalMoveCount++;
 #endif // QUIESCENCE_USE_CHECK
 
-        ++SearchData->Nodes;
+        SearchData->Nodes++;
 
         GiveCheck = IsInCheck(Board, Board->CurrentColor);
 
@@ -224,7 +224,7 @@ int QuiescenceSearch(BoardItem* Board, SearchDataItem* SearchData, int Alpha, in
                 }
                 else { // !IsPrincipal || BestScore >= Beta
 #ifdef USE_STATISTIC
-                    ++SearchData->CutoffCount;
+                    SearchData->CutoffCount++;
 #endif // USE_STATISTIC
 
                     SaveHash(Board->Hash, QuiescenceHashDepth, Ply, BestScore, StaticScore, BestMove.Move, HASH_BETA);

@@ -99,7 +99,7 @@ void LoadNetwork(const char* NnueFileName)
     MaxValue = -FLT_MAX;
 #endif // PRINT_MIN_MAX_VALUES
 
-    for (int Index = 0; Index < INPUT_DIMENSION * HIDDEN_DIMENSION; ++Index) {
+    for (int Index = 0; Index < INPUT_DIMENSION * HIDDEN_DIMENSION; Index++) {
         fread(&Value, sizeof(float), 1, File);
 
 #ifdef PRINT_MIN_MAX_VALUES
@@ -121,7 +121,7 @@ void LoadNetwork(const char* NnueFileName)
     MaxValue = -FLT_MAX;
 #endif // PRINT_MIN_MAX_VALUES
 
-    for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) {
+    for (int Index = 0; Index < HIDDEN_DIMENSION; Index++) {
         fread(&Value, sizeof(float), 1, File);
 
 #ifdef PRINT_MIN_MAX_VALUES
@@ -143,7 +143,7 @@ void LoadNetwork(const char* NnueFileName)
     MaxValue = -FLT_MAX;
 #endif // PRINT_MIN_MAX_VALUES
 
-    for (int Index = 0; Index < HIDDEN_DIMENSION * 2; ++Index) {
+    for (int Index = 0; Index < HIDDEN_DIMENSION * 2; Index++) {
         fread(&Value, sizeof(float), 1, File);
 
 #ifdef PRINT_MIN_MAX_VALUES
@@ -227,18 +227,18 @@ int CalculateWeightIndex(const int Perspective, const int Square, const int Piec
 
 void AccumulatorAdd(BoardItem* Board, int Square, int PieceWithColor)
 {
-    for (int Perspective = 0; Perspective < 2; ++Perspective) { // STM/XSTM
+    for (int Perspective = 0; Perspective < 2; Perspective++) { // STM/XSTM
         int WeightIndex = CalculateWeightIndex(Perspective, Square, PieceWithColor);
 
 #ifdef USE_NNUE_AVX2
         __m256i* AccumulatorTile = (__m256i*)Board->Accumulator.Accumulator[Perspective];
         __m256i* Weights = (__m256i*)&InputWeights[WeightIndex * HIDDEN_DIMENSION];
 
-        for (int Reg = 0; Reg < NUM_REGS; ++Reg) {
+        for (int Reg = 0; Reg < NUM_REGS; Reg++) {
             AccumulatorTile[Reg] = _mm256_add_epi16(AccumulatorTile[Reg], Weights[Reg]);
         }
 #else
-        for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) {
+        for (int Index = 0; Index < HIDDEN_DIMENSION; Index++) {
             Board->Accumulator.Accumulator[Perspective][Index] += InputWeights[WeightIndex * HIDDEN_DIMENSION + Index];
         }
 #endif // USE_NNUE_AVX2
@@ -247,18 +247,18 @@ void AccumulatorAdd(BoardItem* Board, int Square, int PieceWithColor)
 
 void AccumulatorSub(BoardItem* Board, int Square, int PieceWithColor)
 {
-    for (int Perspective = 0; Perspective < 2; ++Perspective) { // STM/XSTM
+    for (int Perspective = 0; Perspective < 2; Perspective++) { // STM/XSTM
         int WeightIndex = CalculateWeightIndex(Perspective, Square, PieceWithColor);
 
 #ifdef USE_NNUE_AVX2
         __m256i* AccumulatorTile = (__m256i*)Board->Accumulator.Accumulator[Perspective];
         __m256i* Weights = (__m256i*)&InputWeights[WeightIndex * HIDDEN_DIMENSION];
 
-        for (int Reg = 0; Reg < NUM_REGS; ++Reg) {
+        for (int Reg = 0; Reg < NUM_REGS; Reg++) {
             AccumulatorTile[Reg] = _mm256_sub_epi16(AccumulatorTile[Reg], Weights[Reg]);
         }
 #else
-        for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) {
+        for (int Index = 0; Index < HIDDEN_DIMENSION; Index++) {
             Board->Accumulator.Accumulator[Perspective][Index] -= InputWeights[WeightIndex * HIDDEN_DIMENSION + Index];
         }
 #endif // USE_NNUE_AVX2
@@ -307,7 +307,7 @@ I32 OutputLayer(BoardItem* Board)
     __m256i* Weights0 = (__m256i*)&OutputWeights;
     __m256i* Weights1 = (__m256i*)&OutputWeights[HIDDEN_DIMENSION];
 
-    for (int Reg = 0; Reg < NUM_REGS; ++Reg) {
+    for (int Reg = 0; Reg < NUM_REGS; Reg++) {
 #ifdef USE_CRELU
         const __m256i Acc0 = _mm256_max_epi16(ConstZero, _mm256_min_epi16(ConstMax, AccumulatorTile0[Reg])); // CReLU
         const __m256i Acc1 = _mm256_max_epi16(ConstZero, _mm256_min_epi16(ConstMax, AccumulatorTile1[Reg])); // CReLU
@@ -327,7 +327,7 @@ I32 OutputLayer(BoardItem* Board)
 
     Result += _mm_cvtsi128_si32(R1);
 #else
-    for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) {
+    for (int Index = 0; Index < HIDDEN_DIMENSION; Index++) {
 #ifdef USE_CRELU
         const I16 Acc0 = MAX(0, MIN(QUANTIZATION_PRECISION_IN, Board->Accumulator.Accumulator[Board->CurrentColor][Index])); // CReLU
         const I16 Acc1 = MAX(0, MIN(QUANTIZATION_PRECISION_IN, Board->Accumulator.Accumulator[CHANGE_COLOR(Board->CurrentColor)][Index])); // CReLU
@@ -348,7 +348,7 @@ int Evaluate(BoardItem* Board, SearchDataItem* SearchData)
 {
 #ifdef USE_STATISTIC
     if (SearchData) {
-        ++SearchData->EvaluateCount;
+        SearchData->EvaluateCount++;
     }
 #endif // USE_STATISTIC
 

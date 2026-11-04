@@ -94,7 +94,7 @@ U64 CalculatePieceAttack(const int Piece, const int Square, const U64 Occupied, 
 
     U64 Result = 0ULL;
 
-    for (int Direction = 0; Direction < 8; ++Direction) {
+    for (int Direction = 0; Direction < 8; Direction++) {
         if (!MoveDelta[Piece][Direction]) { // Out of directions
             break; // for
         }
@@ -149,7 +149,7 @@ void InitAttackTable(const int Piece, const int Square, const U64* BB_Mask, int*
 
     BB_OffsetTable[Square] = *Offset;
 
-    for (int Index = 0; Index < MaxIndex; ++Index) {
+    for (int Index = 0; Index < MaxIndex; Index++) {
         Occupied = PDEP((U64)Index, BB_Mask[Square]);
 
         Attack = CalculatePieceAttack(Piece, Square, Occupied, FALSE);
@@ -180,14 +180,14 @@ void InitBitBoards(void)
 
     // Init Bishop and Rook mask tables
 
-    for (int Square = 0; Square < 64; ++Square) {
+    for (int Square = 0; Square < 64; Square++) {
         BB_BishopMask[Square] = CalculatePieceAttack(BISHOP, Square, 0ULL, TRUE);
         BB_RookMask[Square] = CalculatePieceAttack(ROOK, Square, 0ULL, TRUE);
     }
 
     // Init Knight and King attack tables; Bishop and Rook offset and attack tables
 
-    for (int Square = 0; Square < 64; ++Square) {
+    for (int Square = 0; Square < 64; Square++) {
         BB_KnightAttack[Square] = CalculatePieceAttack(KNIGHT, Square, 0ULL, FALSE);
         BB_KingAttack[Square] = CalculatePieceAttack(KING, Square, 0ULL, FALSE);
 

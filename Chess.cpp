@@ -68,7 +68,7 @@ int main(int argc, char** argv)
     // Initialize LMP
 
 #ifdef LATE_MOVE_PRUNING
-    for (int Depth = 0; Depth < 7; ++Depth) {
+    for (int Depth = 0; Depth < 7; Depth++) {
         LateMovePruningTable[Depth] = (int)round(2.98484 + pow(Depth, 1.74716)); // Hakkapeliitta
     }
 #endif // LATE_MOVE_PRUNING
@@ -76,8 +76,8 @@ int main(int argc, char** argv)
     // Initialize LMR
 
 #ifdef LATE_MOVE_REDUCTION
-    for (int Depth = 0; Depth < 64; ++Depth) {
-        for (int MoveNumber = 0; MoveNumber < 64; ++MoveNumber) {
+    for (int Depth = 0; Depth < 64; Depth++) {
+        for (int MoveNumber = 0; MoveNumber < 64; MoveNumber++) {
             LateMoveReductionTable[Depth][MoveNumber] = (int)MAX(log(Depth + 1) * log(MoveNumber + 1) / 1.70, 1.0); // Hakkapeliitta
         }
     }

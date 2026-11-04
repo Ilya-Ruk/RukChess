@@ -50,8 +50,8 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
     Info->BB_WhitePieces = Board->BB_WhitePieces;
     Info->BB_BlackPieces = Board->BB_BlackPieces;
 
-    for (int Color = 0; Color < 2; ++Color) { // White/Black
-        for (int Piece = 0; Piece < 6; ++Piece) { // PNBRQK
+    for (int Color = 0; Color < 2; Color++) { // White/Black
+        for (int Piece = 0; Piece < 6; Piece++) { // PNBRQK
             Info->BB_Pieces[Color][Piece] = Board->BB_Pieces[Color][Piece];
         }
     }
@@ -276,7 +276,7 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
         Board->FiftyMove = 0;
     }
     else {
-        ++Board->FiftyMove;
+        Board->FiftyMove++;
     }
 
     Board->CurrentColor ^= 1;
@@ -300,8 +300,8 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
 
     InitAccumulator(Board);
 
-    for (int Perspective = 0; Perspective < 2; ++Perspective) { // STM/XSTM
-        for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) {
+    for (int Perspective = 0; Perspective < 2; Perspective++) { // STM/XSTM
+        for (int Index = 0; Index < HIDDEN_DIMENSION; Index++) {
             if (Board->Accumulator.Accumulator[Perspective][Index] != Accumulator[Perspective][Index]) {
                 printf("-- Accumulator error (make)! Color = %d Piece = %d From = %d To = %d Move type = %d\n", CHANGE_COLOR(Board->CurrentColor), Info->PieceTypeFrom, Info->From, Info->To, Info->Type);
 
@@ -525,8 +525,8 @@ void UnmakeMove(BoardItem* Board)
         printf("-- BB_BlackPieces error! From = %d To = %d Move type = %d\n", Info->From, Info->To, Info->Type);
     }
 
-    for (int Color = 0; Color < 2; ++Color) { // White/Black
-        for (int Piece = 0; Piece < 6; ++Piece) { // PNBRQK
+    for (int Color = 0; Color < 2; Color++) { // White/Black
+        for (int Piece = 0; Piece < 6; Piece++) { // PNBRQK
             if (Board->BB_Pieces[Color][Piece] != Info->BB_Pieces[Color][Piece]) {
                 printf("-- BB_Pieces error! Color = %d Piece = %d From = %d To = %d Move type = %d\n", Color, Piece, Info->From, Info->To, Info->Type);
             }
@@ -541,8 +541,8 @@ void UnmakeMove(BoardItem* Board)
 
     InitAccumulator(Board);
 
-    for (int Perspective = 0; Perspective < 2; ++Perspective) { // STM/XSTM
-        for (int Index = 0; Index < HIDDEN_DIMENSION; ++Index) {
+    for (int Perspective = 0; Perspective < 2; Perspective++) { // STM/XSTM
+        for (int Index = 0; Index < HIDDEN_DIMENSION; Index++) {
             if (Board->Accumulator.Accumulator[Perspective][Index] != Accumulator[Perspective][Index]) {
                 printf("-- Accumulator error (unmake)! Color = %d Piece = %d From = %d To = %d Move type = %d\n", CHANGE_COLOR(Board->CurrentColor), Info->PieceTypeFrom, Info->From, Info->To, Info->Type);
 
@@ -573,7 +573,7 @@ void MakeNullMove(BoardItem* Board)
         Board->Hash ^= EnPassantHash[Info->EnPassantSquare];
     }
 
-    ++Board->FiftyMove;
+    Board->FiftyMove++;
 
     Board->CurrentColor ^= 1;
 

@@ -45,7 +45,7 @@ void FreeNode(NodeItem* Node)
 {
     NodeItem* ChildNode;
 
-    for (int Index = 0; Index < MAX_CHILDREN; ++Index) {
+    for (int Index = 0; Index < MAX_CHILDREN; Index++) {
         ChildNode = Node->Children[Index];
 
         if (ChildNode) {
@@ -62,7 +62,7 @@ void PrintNode(BoardItem* Board, const NodeItem* Node, FILE* FileOut)
 
     int Total = 0;
 
-    for (int Index = 0; Index < MAX_CHILDREN; ++Index) {
+    for (int Index = 0; Index < MAX_CHILDREN; Index++) {
         ChildNode = Node->Children[Index];
 
         if (ChildNode) {
@@ -74,7 +74,7 @@ void PrintNode(BoardItem* Board, const NodeItem* Node, FILE* FileOut)
         return;
     }
 
-    for (int Index = 0; Index < MAX_CHILDREN; ++Index) {
+    for (int Index = 0; Index < MAX_CHILDREN; Index++) {
         ChildNode = Node->Children[Index];
 
         if (ChildNode) {
@@ -190,7 +190,7 @@ void GenerateBook(void)
             if (Stage == STAGE_NOTATION) {
                 // Prepare new game
 
-                ++GameNumber;
+                GameNumber++;
 
                 Result = 0; // Draw default
 
@@ -256,19 +256,19 @@ void GenerateBook(void)
 
         if (Stage == STAGE_TAG) {
             if (Result == 1) { // White win
-                ++RootNode->White;
+                RootNode->White++;
 
-                ++RootNode->Total;
+                RootNode->Total++;
             }
             else if (Result == 0) { // Draw
-                ++RootNode->Draw;
+                RootNode->Draw++;
 
-                ++RootNode->Total;
+                RootNode->Total++;
             }
             else if (Result == -1) { // Black win
-                ++RootNode->Black;
+                RootNode->Black++;
 
-                ++RootNode->Total;
+                RootNode->Total++;
             }
 
             Stage = STAGE_NOTATION;
@@ -305,7 +305,7 @@ void GenerateBook(void)
                     Stage = STAGE_NOTATION;
 
                     if (Error || Ply >= MAX_BOOK_PLY) {
-                        ++Part;
+                        Part++;
 
                         continue; // Next character in string
                     }
@@ -315,7 +315,7 @@ void GenerateBook(void)
 
                     MoveFound = FALSE;
 
-                    for (int MoveNumber = 0; MoveNumber < GenMoveCount; ++MoveNumber) {
+                    for (int MoveNumber = 0; MoveNumber < GenMoveCount; MoveNumber++) {
                         NotateMove(&BoardList[0], MoveList[MoveNumber], NotateMoveStr);
 
                         if (strcmp(MoveString, NotateMoveStr) == 0) {
@@ -337,7 +337,7 @@ void GenerateBook(void)
 
                             ChildNode = NULL;
 
-                            for (int Index = 0; Index < MAX_CHILDREN; ++Index) {
+                            for (int Index = 0; Index < MAX_CHILDREN; Index++) {
                                 if (Node->Children[Index]) {
                                     if (Node->Children[Index]->Move.Move == MoveList[MoveNumber].Move) {
                                         ChildNode = Node->Children[Index];
@@ -367,19 +367,19 @@ void GenerateBook(void)
                             }
                             else {
                                 if (Result == 1) { // White win
-                                    ++ChildNode->White;
+                                    ChildNode->White++;
 
-                                    ++ChildNode->Total;
+                                    ChildNode->Total++;
                                 }
                                 else if (Result == 0) { // Draw
-                                    ++ChildNode->Draw;
+                                    ChildNode->Draw++;
 
-                                    ++ChildNode->Total;
+                                    ChildNode->Total++;
                                 }
                                 else if (Result == -1) { // Black win
-                                    ++ChildNode->Black;
+                                    ChildNode->Black++;
 
-                                    ++ChildNode->Total;
+                                    ChildNode->Total++;
                                 }
 
                                 Node = ChildNode;
@@ -402,7 +402,7 @@ void GenerateBook(void)
 
                         printf("Gen. moves:");
 
-                        for (int MoveNumber = 0; MoveNumber < GenMoveCount; ++MoveNumber) {
+                        for (int MoveNumber = 0; MoveNumber < GenMoveCount; MoveNumber++) {
                             NotateMove(&BoardList[0], MoveList[MoveNumber], NotateMoveStr);
 
                             printf(" %s%s", BoardName[MOVE_FROM(MoveList[MoveNumber].Move)], BoardName[MOVE_TO(MoveList[MoveNumber].Move)]);
@@ -417,11 +417,11 @@ void GenerateBook(void)
                         printf("\n");
                     }
 
-                    ++Ply;
+                    Ply++;
                 }
             }
 
-            ++Part;
+            Part++;
         } // while
     } // while
 
@@ -507,7 +507,7 @@ void LoadBook(const char* BookFileName)
     BookStore.Count = 0;
 
     while (fgets(Buf, sizeof(Buf), File) != NULL) {
-        ++BookStore.Count;
+        BookStore.Count++;
     }
 
     // Allocate memory to store book
@@ -553,7 +553,7 @@ void LoadBook(const char* BookFileName)
             return;
         }
 
-        ++Part; // Space
+        Part++; // Space
 
         From = atoi(Part);
 
@@ -568,10 +568,10 @@ void LoadBook(const char* BookFileName)
         }
 
         while (*Part != ' ') {
-            ++Part;
+            Part++;
         }
 
-        ++Part; // Space
+        Part++; // Space
 
         To = atoi(Part);
 
@@ -586,10 +586,10 @@ void LoadBook(const char* BookFileName)
         }
 
         while (*Part != ' ') {
-            ++Part;
+            Part++;
         }
 
-        ++Part; // Space
+        Part++; // Space
 
         Total = atoi(Part);
 
@@ -646,7 +646,7 @@ BOOL GetBookMove(const BoardItem* Board, MoveItem* BestMove)
 
     Total = 0;
 
-    for (int Index = 0; Index < BookStore.Count; ++Index) {
+    for (int Index = 0; Index < BookStore.Count; Index++) {
         BookItemPointer = &BookStore.Item[Index];
 
         if (BookItemPointer->Hash == Board->Hash) { // Position hash found in book
@@ -654,7 +654,7 @@ BOOL GetBookMove(const BoardItem* Board, MoveItem* BestMove)
                 FirstIndex = Index;
             }
 
-            ++BookCount;
+            BookCount++;
 
             Total += BookItemPointer->Total;
         }
@@ -671,7 +671,7 @@ BOOL GetBookMove(const BoardItem* Board, MoveItem* BestMove)
 
     Offset = 0;
 
-    for (int Index = FirstIndex, Count = 0; Count < BookCount; ++Index, ++Count) {
+    for (int Index = FirstIndex, Count = 0; Count < BookCount; Index++, Count++) {
         BookItemPointer = &BookStore.Item[Index];
 
         Offset += BookItemPointer->Total;
@@ -680,7 +680,7 @@ BOOL GetBookMove(const BoardItem* Board, MoveItem* BestMove)
             GenMoveCount = 0;
             GenerateAllMoves(Board, NULL, NULL, MoveList, &GenMoveCount);
 
-            for (int MoveNumber = 0; MoveNumber < GenMoveCount; ++MoveNumber) {
+            for (int MoveNumber = 0; MoveNumber < GenMoveCount; MoveNumber++) {
                 if (
                     MOVE_FROM(MoveList[MoveNumber].Move) == BookItemPointer->From
                     && MOVE_TO(MoveList[MoveNumber].Move) == BookItemPointer->To

@@ -71,9 +71,9 @@ BOOL IsHashTableInitialized(void)
 
 void InitHashBoards(void)
 {
-    for (int Color = 0; Color < 2; ++Color) { // White/Black
-        for (int Piece = 0; Piece < 6; ++Piece) { // PNBRQK
-            for (int Square = 0; Square < 64; ++Square) {
+    for (int Color = 0; Color < 2; Color++) { // White/Black
+        for (int Piece = 0; Piece < 6; Piece++) { // PNBRQK
+            for (int Square = 0; Square < 64; Square++) {
                 PieceHash[Color][Piece][Square] = Rand64();
             }
         }
@@ -81,7 +81,7 @@ void InitHashBoards(void)
 
     ColorHash = Rand64();
 
-    for (int Square = 0; Square < 64; ++Square) {
+    for (int Square = 0; Square < 64; Square++) {
         EnPassantHash[Square] = Rand64();
     }
 }
@@ -205,9 +205,9 @@ int FullHash(void)
 {
     int HashHit = 0;
 
-    for (int Index = 0; Index < 1000; ++Index) {
+    for (int Index = 0; Index < 1000; Index++) {
         if (HashStore.Item[Index].Value.Data.Iteration == HashStore.Iteration) {
-            ++HashHit;
+            HashHit++;
         }
     }
 

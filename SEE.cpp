@@ -110,13 +110,13 @@ int SEE(const BoardItem* Board, const int MoveType, const int Move)
 
         Gain[Depth] = -Gain[Depth - 1] + PiecesScoreSEE[PieceType];
 
-        ++Depth;
+        Depth++;
 
         if (PieceType == KING) {
             break; // while
         }
 
-        for (PieceType = 0; PieceType < 6; ++PieceType) { // PNBRQK
+        for (PieceType = 0; PieceType < 6; PieceType++) { // PNBRQK
             if (CurrentAttackers & Board->BB_Pieces[Color][PieceType]) {
 #ifdef DEBUG_SEE
                 printf("-- SEE: From = %s\n", BoardName[LSB(CurrentAttackers & Board->BB_Pieces[Color][PieceType])]);

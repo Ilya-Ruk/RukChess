@@ -21,7 +21,7 @@ void AddMove(const BoardItem* Board, SearchDataItem* SearchData, int** CMH_Point
         MoveList[*GenMoveCount].Move = MOVE_CREATE(From, To, KNIGHT);
         MoveList[*GenMoveCount].SortValue = SORT_PAWN_PROMOTE_MOVE_BONUS + KNIGHT;
 
-        ++(*GenMoveCount);
+        (*GenMoveCount)++;
 
         // Bishop
 
@@ -29,7 +29,7 @@ void AddMove(const BoardItem* Board, SearchDataItem* SearchData, int** CMH_Point
         MoveList[*GenMoveCount].Move = MOVE_CREATE(From, To, BISHOP);
         MoveList[*GenMoveCount].SortValue = SORT_PAWN_PROMOTE_MOVE_BONUS + BISHOP;
 
-        ++(*GenMoveCount);
+        (*GenMoveCount)++;
 
         // Rook
 
@@ -37,7 +37,7 @@ void AddMove(const BoardItem* Board, SearchDataItem* SearchData, int** CMH_Point
         MoveList[*GenMoveCount].Move = MOVE_CREATE(From, To, ROOK);
         MoveList[*GenMoveCount].SortValue = SORT_PAWN_PROMOTE_MOVE_BONUS + ROOK;
 
-        ++(*GenMoveCount);
+        (*GenMoveCount)++;
 
         // Queen
 
@@ -45,7 +45,7 @@ void AddMove(const BoardItem* Board, SearchDataItem* SearchData, int** CMH_Point
         MoveList[*GenMoveCount].Move = MOVE_CREATE(From, To, QUEEN);
         MoveList[*GenMoveCount].SortValue = SORT_PAWN_PROMOTE_MOVE_BONUS + QUEEN;
 
-        ++(*GenMoveCount);
+        (*GenMoveCount)++;
     }
     else {
         MoveList[*GenMoveCount].Type = MoveType;
@@ -77,7 +77,7 @@ void AddMove(const BoardItem* Board, SearchDataItem* SearchData, int** CMH_Point
 #endif // COUNTER_MOVE_HISTORY
         }
 
-        ++(*GenMoveCount);
+        (*GenMoveCount)++;
     }
 }
 
@@ -597,7 +597,7 @@ void GenerateAllLegalMoves(BoardItem* Board, SearchDataItem* SearchData, int** C
     GenMoveCount = 0;
     GenerateAllMoves(Board, SearchData, CMH_Pointer, MoveList, &GenMoveCount);
 
-    for (int MoveNumber = 0; MoveNumber < GenMoveCount; ++MoveNumber) {
+    for (int MoveNumber = 0; MoveNumber < GenMoveCount; MoveNumber++) {
         MakeMove(Board, MoveList[MoveNumber]);
 
         if (!IsInCheck(Board, CHANGE_COLOR(Board->CurrentColor))) { // Legal move

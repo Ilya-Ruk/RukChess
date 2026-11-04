@@ -180,7 +180,7 @@ int Search(BoardItem* Board, SearchDataItem* SearchData, int Alpha, int Beta, in
 
         if (HashFlag) {
 #ifdef USE_STATISTIC
-            ++SearchData->HashCount;
+            SearchData->HashCount++;
 #endif // USE_STATISTIC
 
             if (!IsPrincipal && HashDepth >= Depth) {
@@ -275,7 +275,7 @@ int Search(BoardItem* Board, SearchDataItem* SearchData, int Alpha, int Beta, in
             Prefetch(Board->Hash);
 #endif // HASH_PREFETCH
 
-            ++SearchData->Nodes;
+            SearchData->Nodes++;
 
             GiveCheck = IsInCheck(Board, Board->CurrentColor);
 
@@ -308,7 +308,7 @@ int Search(BoardItem* Board, SearchDataItem* SearchData, int Alpha, int Beta, in
             GenMoveCount = 0;
             GenerateCaptureMoves(Board, SearchData, CMH_Pointer, MoveList, &GenMoveCount);
 
-            for (int MoveNumber = 0; MoveNumber < GenMoveCount; ++MoveNumber) {
+            for (int MoveNumber = 0; MoveNumber < GenMoveCount; MoveNumber++) {
                 PrepareNextMove(MoveNumber, MoveList, GenMoveCount);
 
                 if (MoveList[MoveNumber].Move == SkipMove) {
@@ -335,7 +335,7 @@ int Search(BoardItem* Board, SearchDataItem* SearchData, int Alpha, int Beta, in
                     continue; // Next move
                 }
 
-                ++SearchData->Nodes;
+                SearchData->Nodes++;
 
                 GiveCheck = IsInCheck(Board, Board->CurrentColor);
 
@@ -400,7 +400,7 @@ int Search(BoardItem* Board, SearchDataItem* SearchData, int Alpha, int Beta, in
     SearchData->KillerMoveTable[Ply + 1][1] = 0;
 #endif // KILLER_MOVE
 
-    for (int MoveNumber = 0; MoveNumber < GenMoveCount; ++MoveNumber) {
+    for (int MoveNumber = 0; MoveNumber < GenMoveCount; MoveNumber++) {
 #ifdef BAD_CAPTURE_LAST
 NextMove:
 #endif // BAD_CAPTURE_LAST
@@ -440,9 +440,9 @@ NextMove:
             continue; // Next move
         }
 
-        ++LegalMoveCount;
+        LegalMoveCount++;
 
-        ++SearchData->Nodes;
+        SearchData->Nodes++;
 
 #ifdef PRINT_CURRENT_MOVE
         if (omp_get_thread_num() == 0) { // Master thread
@@ -596,7 +596,7 @@ NextMove:
                 LateMoveReduction = LateMoveReductionTable[MIN(Depth, 63)][MIN(MoveNumber, 63)]; // Hakkapeliitta
 
                 if (IsPrincipal) {
-                    --LateMoveReduction;
+                    LateMoveReduction--;
                 }
             }
             else {
@@ -643,7 +643,7 @@ NextMove:
                         if (Ply == 0) { // Root node
                             if (BestMove.Move == BestMoves[0].Move) { // Move not changed
                                 if (TimeStep > 0) {
-                                    --TimeStep;
+                                    TimeStep--;
                                 }
                             }
                             else { // Move changed
@@ -660,13 +660,13 @@ NextMove:
                 }
                 else { // !IsPrincipal || BestScore >= Beta
 #ifdef USE_STATISTIC
-                    ++SearchData->CutoffCount;
+                    SearchData->CutoffCount++;
 #endif // USE_STATISTIC
 
                     if (!(BestMove.Type & (MOVE_CAPTURE | MOVE_PAWN_PROMOTE))) { // Not capture/promote move
                         UpdateHeuristic(Board, SearchData, CMH_Pointer, BestMove.Move, BONUS(Depth));
 
-                        for (int QuietMoveNumber = 0; QuietMoveNumber < QuietMoveCount; ++QuietMoveNumber) {
+                        for (int QuietMoveNumber = 0; QuietMoveNumber < QuietMoveCount; QuietMoveNumber++) {
                             UpdateHeuristic(Board, SearchData, CMH_Pointer, QuietMoveList[QuietMoveNumber], -BONUS(Depth));
                         }
 

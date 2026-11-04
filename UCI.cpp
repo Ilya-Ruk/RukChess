@@ -148,7 +148,7 @@ void UCI(void)
             }
 
             if (*Part == ' ') {
-                ++Part; // Space
+                Part++; // Space
             }
 
             if (strncmp(Part, "moves ", 6) == 0) {
@@ -201,7 +201,7 @@ void UCI(void)
                     GenMoveCount = 0;
                     GenerateAllMoves(&BoardList[0], NULL, NULL, MoveList, &GenMoveCount);
 
-                    for (int MoveNumber = 0; MoveNumber < GenMoveCount; ++MoveNumber) {
+                    for (int MoveNumber = 0; MoveNumber < GenMoveCount; MoveNumber++) {
                         if (MoveList[MoveNumber].Move == Move) {
                             MoveFound = TRUE;
 
@@ -230,7 +230,7 @@ void UCI(void)
                     }
 
                     if (*Part == ' ') {
-                        ++Part; // Space
+                        Part++; // Space
                     }
                 } // while
             } // if
@@ -311,11 +311,11 @@ void UCI(void)
                 }
 
                 while (*Part != ' ' && *Part != '\r' && *Part != '\n' && *Part != '\0') {
-                    ++Part;
+                    Part++;
                 }
 
                 if (*Part == ' ') {
-                    ++Part; // Space
+                    Part++; // Space
                 }
             } // while
 
@@ -338,7 +338,7 @@ void UCI(void)
 
                     TimeForMove = (MaxTime / (U64)MovesToGo) + WInc;
 
-                    for (int Step = 0; Step < MAX_TIME_STEPS; ++Step) {
+                    for (int Step = 0; Step < MAX_TIME_STEPS; Step++) {
                         Ratio = MIN_TIME_RATIO + Step * (MAX_TIME_RATIO - MIN_TIME_RATIO) / (MAX_TIME_STEPS - 1);
 
                         TargetTime[Step] = MIN((U64)(Ratio * (double)TimeForMove), MaxTime);
@@ -356,7 +356,7 @@ void UCI(void)
 
                     TimeForMove = (MaxTime / (U64)MovesToGo) + BInc;
 
-                    for (int Step = 0; Step < MAX_TIME_STEPS; ++Step) {
+                    for (int Step = 0; Step < MAX_TIME_STEPS; Step++) {
                         Ratio = MIN_TIME_RATIO + Step * (MAX_TIME_RATIO - MIN_TIME_RATIO) / (MAX_TIME_STEPS - 1);
 
                         TargetTime[Step] = MIN((U64)(Ratio * (double)TimeForMove), MaxTime);

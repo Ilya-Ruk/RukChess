@@ -45,7 +45,7 @@ void PrintBestMoves(const int Depth, const MoveItem* BestMoves, const int BestSc
 
     int SelDepth = 0;
 
-    for (int Thread = 0; Thread < omp_get_max_threads(); ++Thread) {
+    for (int Thread = 0; Thread < omp_get_max_threads(); Thread++) {
         Nodes += SearchDataList[Thread].Nodes;
 
         SelDepth = MAX(SelDepth, SearchDataList[Thread].SelDepth);
@@ -86,7 +86,7 @@ void PrintBestMoves(const int Depth, const MoveItem* BestMoves, const int BestSc
         printf(" PV");
     }
 
-    for (int Ply = 0; Ply < MAX_PLY && BestMoves[Ply].Move; ++Ply) {
+    for (int Ply = 0; Ply < MAX_PLY && BestMoves[Ply].Move; Ply++) {
         printf(" %s%s", BoardName[MOVE_FROM(BestMoves[Ply].Move)], BoardName[MOVE_TO(BestMoves[Ply].Move)]);
 
         if (BestMoves[Ply].Type & MOVE_PAWN_PROMOTE) {
@@ -101,7 +101,7 @@ void SaveBestMoves(MoveItem* BestMoves, const MoveItem BestMove, const MoveItem*
 {
     BestMoves[0] = BestMove;
 
-    for (int Ply = 1; Ply < MAX_PLY; ++Ply) {
+    for (int Ply = 1; Ply < MAX_PLY; Ply++) {
         BestMoves[Ply] = TempBestMoves[Ply - 1];
 
         if (!BestMoves[Ply].Move) {
@@ -123,7 +123,7 @@ BOOL PrintResult(const BOOL InCheck, const MoveItem BestMove, const MoveItem Pon
     U64 QuiescenceCount = 0ULL;
 #endif // USE_STATISTIC
 
-    for (int Thread = 0; Thread < omp_get_max_threads(); ++Thread) {
+    for (int Thread = 0; Thread < omp_get_max_threads(); Thread++) {
         Nodes += SearchDataList[Thread].Nodes;
 
 #ifdef USE_STATISTIC
@@ -320,7 +320,7 @@ BOOL ComputerMove(void)
         goto Done;
     }
 
-    for (int Thread = 1; Thread < omp_get_max_threads(); ++Thread) {
+    for (int Thread = 1; Thread < omp_get_max_threads(); Thread++) {
         BoardList[Thread] = BoardList[0];
     }
 
@@ -364,7 +364,7 @@ BOOL ComputerMove(void)
 
         ThreadScore = 0;
 
-        for (int Depth = 1; Depth <= MaxDepth; ++Depth) {
+        for (int Depth = 1; Depth <= MaxDepth; Depth++) {
 #ifdef ASPIRATION_WINDOW
             if (Depth >= ASPIRATION_WINDOW_START_DEPTH) {
                 Delta = ASPIRATION_WINDOW_INIT_DELTA;
@@ -434,7 +434,7 @@ BOOL ComputerMove(void)
             if (MaxNodes > 0ULL) {
                 U64 Nodes = 0ULL;
 
-                for (int Thread = 0; Thread < omp_get_max_threads(); ++Thread) {
+                for (int Thread = 0; Thread < omp_get_max_threads(); Thread++) {
                     Nodes += SearchDataList[Thread].Nodes;
                 }
 
@@ -556,7 +556,7 @@ BOOL HumanMove(void)
 
             Move = MOVE_CREATE(From, To, PromotePieceType);
 
-            for (int MoveNumber = 0; MoveNumber < GenMoveCount; ++MoveNumber) {
+            for (int MoveNumber = 0; MoveNumber < GenMoveCount; MoveNumber++) {
                 if (MoveList[MoveNumber].Move == Move) {
                     NotateMove(&BoardList[0], MoveList[MoveNumber], NotateMoveStr);
 
