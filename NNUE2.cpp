@@ -11,8 +11,9 @@
 #include "Utils.h"
 
 #define NNUE_FILE_MAGIC             ('B' | 'R' << 8 | 'K' << 16 | 'R' << 24)
-//#define NNUE_FILE_HASH            0x00007342FB032855
 #define NNUE_FILE_SIZE              ((INPUT_DIMENSION * HIDDEN_DIMENSION + HIDDEN_DIMENSION + HIDDEN_DIMENSION * 2 + 1) * 4 + 12)
+
+#define HASH_FUNCTION(Hash, Value)  (((Hash) + (324723947ULL + (Value))) ^ 93485734985ULL)
 
 #define STM                         0
 #define XSTM                        1
@@ -44,6 +45,8 @@ void LoadNetwork(const char* NnueFileName)
 
     int FileMagic;
     U64 FileHash;
+
+    U64 NetHash = 0ULL;
 
     float Value;
 
@@ -80,18 +83,10 @@ void LoadNetwork(const char* NnueFileName)
         return;
     }
 
-    // File hash
+    // File hash (part 1)
 
     fread(&FileHash, sizeof(U64), 1, File);
-/*
-    if (FileHash != NNUE_FILE_HASH) { // File format error
-        printf("File '%s' format error!\n", NnueFileName);
 
-        fclose(File);
-
-        return;
-    }
-*/
     // Feature weights
 
 #ifdef PRINT_MIN_MAX_VALUES
@@ -106,6 +101,8 @@ void LoadNetwork(const char* NnueFileName)
         MinValue = MIN(MinValue, Value);
         MaxValue = MAX(MaxValue, Value);
 #endif // PRINT_MIN_MAX_VALUES
+
+        NetHash = HASH_FUNCTION(NetHash, (int)Value);
 
         InputWeights[Index] = LoadInt16(Value, QUANTIZATION_PRECISION_IN);
     }
@@ -129,6 +126,8 @@ void LoadNetwork(const char* NnueFileName)
         MaxValue = MAX(MaxValue, Value);
 #endif // PRINT_MIN_MAX_VALUES
 
+        NetHash = HASH_FUNCTION(NetHash, (int)Value);
+
         InputBiases[Index] = LoadInt16(Value, QUANTIZATION_PRECISION_IN);
     }
 
@@ -151,6 +150,8 @@ void LoadNetwork(const char* NnueFileName)
         MaxValue = MAX(MaxValue, Value);
 #endif // PRINT_MIN_MAX_VALUES
 
+        NetHash = HASH_FUNCTION(NetHash, (int)Value);
+
         OutputWeights[Index] = LoadInt16(Value, QUANTIZATION_PRECISION_OUT);
     }
 
@@ -161,6 +162,8 @@ void LoadNetwork(const char* NnueFileName)
     // Output bias
 
     fread(&Value, sizeof(float), 1, File);
+
+    NetHash = HASH_FUNCTION(NetHash, (int)Value);
 
     OutputBias = LoadInt32(Value, QUANTIZATION_PRECISION_IN * QUANTIZATION_PRECISION_OUT);
 
@@ -189,6 +192,16 @@ void LoadNetwork(const char* NnueFileName)
     FilePos = ftell(File);
 
     if (FilePos != NNUE_FILE_SIZE) { // File format error
+        printf("File '%s' format error!\n", NnueFileName);
+
+        fclose(File);
+
+        return;
+    }
+
+    // File hash (part 2)
+
+    if (FileHash != NetHash) { // File format error
         printf("File '%s' format error!\n", NnueFileName);
 
         fclose(File);
