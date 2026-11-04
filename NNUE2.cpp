@@ -13,7 +13,7 @@
 #define NNUE_FILE_MAGIC             ('B' | 'R' << 8 | 'K' << 16 | 'R' << 24)
 #define NNUE_FILE_SIZE              ((INPUT_DIMENSION * HIDDEN_DIMENSION + HIDDEN_DIMENSION + HIDDEN_DIMENSION * 2 + 1) * 4 + 12)
 
-#define HASH_FUNCTION(Hash, Value)  (((Hash) + (324723947ULL + (Value))) ^ 93485734985ULL)
+#define NNUE_HASH(Hash, Value)      (((Hash) + (324723947ULL + (Value))) ^ 93485734985ULL)
 
 #define STM                         0
 #define XSTM                        1
@@ -46,7 +46,7 @@ void LoadNetwork(const char* NnueFileName)
     int FileMagic;
     U64 FileHash;
 
-    U64 NetHash = 0ULL;
+    U64 NnueHash = 0ULL;
 
     float Value;
 
@@ -102,7 +102,7 @@ void LoadNetwork(const char* NnueFileName)
         MaxValue = MAX(MaxValue, Value);
 #endif // PRINT_MIN_MAX_VALUES
 
-        NetHash = HASH_FUNCTION(NetHash, (int)Value);
+        NnueHash = NNUE_HASH(NnueHash, (int)Value);
 
         InputWeights[Index] = LoadInt16(Value, QUANTIZATION_PRECISION_IN);
     }
@@ -126,7 +126,7 @@ void LoadNetwork(const char* NnueFileName)
         MaxValue = MAX(MaxValue, Value);
 #endif // PRINT_MIN_MAX_VALUES
 
-        NetHash = HASH_FUNCTION(NetHash, (int)Value);
+        NnueHash = NNUE_HASH(NnueHash, (int)Value);
 
         InputBiases[Index] = LoadInt16(Value, QUANTIZATION_PRECISION_IN);
     }
@@ -150,7 +150,7 @@ void LoadNetwork(const char* NnueFileName)
         MaxValue = MAX(MaxValue, Value);
 #endif // PRINT_MIN_MAX_VALUES
 
-        NetHash = HASH_FUNCTION(NetHash, (int)Value);
+        NnueHash = NNUE_HASH(NnueHash, (int)Value);
 
         OutputWeights[Index] = LoadInt16(Value, QUANTIZATION_PRECISION_OUT);
     }
@@ -163,7 +163,7 @@ void LoadNetwork(const char* NnueFileName)
 
     fread(&Value, sizeof(float), 1, File);
 
-    NetHash = HASH_FUNCTION(NetHash, (int)Value);
+    NnueHash = NNUE_HASH(NnueHash, (int)Value);
 
     OutputBias = LoadInt32(Value, QUANTIZATION_PRECISION_IN * QUANTIZATION_PRECISION_OUT);
 
@@ -201,7 +201,7 @@ void LoadNetwork(const char* NnueFileName)
 
     // File hash (part 2)
 
-    if (FileHash != NetHash) { // File format error
+    if (FileHash != NnueHash) { // File format error
         printf("File '%s' format error!\n", NnueFileName);
 
         fclose(File);
