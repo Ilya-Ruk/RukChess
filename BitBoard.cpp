@@ -137,12 +137,6 @@ void InitAttackTable(const int Piece, const int Square, const U64* BB_Mask, int*
 {
     U64 Occupied;
 
-    U64 Attack;
-
-#ifdef DEBUG_BIT_BOARD_INIT
-    U64 PreviousAttack;
-#endif // DEBUG_BIT_BOARD_INIT
-
     int CountBits = POPCNT(BB_Mask[Square]); // Max. 12 bits (example, rook on a1)
 
     int MaxIndex = 1 << CountBits; // Max. 4096 (1 << 12)
@@ -152,22 +146,7 @@ void InitAttackTable(const int Piece, const int Square, const U64* BB_Mask, int*
     for (int Index = 0; Index < MaxIndex; Index++) {
         Occupied = PDEP((U64)Index, BB_Mask[Square]);
 
-        Attack = CalculatePieceAttack(Piece, Square, Occupied, FALSE);
-
-#ifdef DEBUG_BIT_BOARD_INIT
-        PreviousAttack = BB_AttackTable[*Offset + Index];
-
-        if (PreviousAttack && PreviousAttack != Attack) {
-            if (Piece == BISHOP) {
-                printf("-- Bishop attack error!\n");
-            }
-            else { // Rook
-                printf("-- Rook attack error!\n");
-            }
-        }
-#endif // DEBUG_BIT_BOARD_INIT
-
-        BB_AttackTable[*Offset + Index] = Attack;
+        BB_AttackTable[*Offset + Index] = CalculatePieceAttack(Piece, Square, Occupied, FALSE);
     }
 
     *Offset += MaxIndex;

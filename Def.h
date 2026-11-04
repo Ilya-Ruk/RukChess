@@ -9,7 +9,6 @@
 
 // Debug
 
-//#define DEBUG_BIT_BOARD_INIT
 //#define DEBUG_MOVE_BIT_BOARD
 //#define DEBUG_MOVE_HASH
 //#define DEBUG_MOVE_NNUE
