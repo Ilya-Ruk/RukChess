@@ -236,7 +236,7 @@ int PositionRepeat2(const BoardItem* Board);
 
 BOOL IsInsufficientMaterial(const BoardItem* Board);
 
-void PrintBoard(BoardItem* Board);
+void PrintBoard(const BoardItem* Board);
 
 int SetFen(BoardItem* Board, const char* Fen);
 void GetFen(const BoardItem* Board, char* Fen);

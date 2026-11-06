@@ -86,13 +86,13 @@ void InitHashBoards(void)
     }
 }
 
-void InitHash(BoardItem* Board)
+U64 GetBoardHash(const BoardItem* Board)
 {
+    U64 Hash = 0ULL;
+
     U64 Pieces;
 
     int Square;
-
-    U64 Hash = 0ULL;
 
     // White pieces
 
@@ -130,7 +130,7 @@ void InitHash(BoardItem* Board)
         Hash ^= EnPassantHash[Board->EnPassantSquare];
     }
 
-    Board->Hash = Hash;
+    return Hash;
 }
 
 void AddHashStoreIteration(void)

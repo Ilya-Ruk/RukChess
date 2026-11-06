@@ -284,12 +284,10 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
     Board->Hash ^= ColorHash;
 
 #ifdef DEBUG_MOVE_HASH
-    U64 PreviousHash = Board->Hash;
+    U64 Hash = GetBoardHash(Board);
 
-    InitHash(Board);
-
-    if (Board->Hash != PreviousHash) {
-        printf("-- Board hash error! BoardHash = 0x%016llx PreviousHash = 0x%016llx\n", Board->Hash, PreviousHash);
+    if (Hash != Board->Hash) {
+        printf("-- Board hash error (make move)!\n");
     }
 #endif // DEBUG_MOVE_HASH
 
@@ -303,9 +301,9 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
     for (int Perspective = 0; Perspective < 2; Perspective++) { // STM/XSTM
         for (int Index = 0; Index < HIDDEN_DIMENSION; Index++) {
             if (Board->Accumulator.Accumulator[Perspective][Index] != Accumulator[Perspective][Index]) {
-                printf("-- Accumulator error (make)! Color = %d Piece = %d From = %d To = %d Move type = %d\n", CHANGE_COLOR(Board->CurrentColor), Info->PieceTypeFrom, Info->From, Info->To, Info->Type);
+                printf("-- Accumulator error (make move)!\n");
 
-                break;
+                break 2;
             }
         }
     }
@@ -518,17 +516,19 @@ void UnmakeMove(BoardItem* Board)
 
 #ifdef DEBUG_MOVE_BIT_BOARD
     if (Board->BB_WhitePieces != Info->BB_WhitePieces) {
-        printf("-- BB_WhitePieces error! From = %d To = %d Move type = %d\n", Info->From, Info->To, Info->Type);
+        printf("-- White pieces error!\n");
     }
 
     if (Board->BB_BlackPieces != Info->BB_BlackPieces) {
-        printf("-- BB_BlackPieces error! From = %d To = %d Move type = %d\n", Info->From, Info->To, Info->Type);
+        printf("-- Black pieces error!\n");
     }
 
     for (int Color = 0; Color < 2; Color++) { // White/Black
         for (int Piece = 0; Piece < 6; Piece++) { // PNBRQK
             if (Board->BB_Pieces[Color][Piece] != Info->BB_Pieces[Color][Piece]) {
-                printf("-- BB_Pieces error! Color = %d Piece = %d From = %d To = %d Move type = %d\n", Color, Piece, Info->From, Info->To, Info->Type);
+                printf("-- Pieces error!\n");
+
+                break 2;
             }
         }
     }
@@ -544,9 +544,9 @@ void UnmakeMove(BoardItem* Board)
     for (int Perspective = 0; Perspective < 2; Perspective++) { // STM/XSTM
         for (int Index = 0; Index < HIDDEN_DIMENSION; Index++) {
             if (Board->Accumulator.Accumulator[Perspective][Index] != Accumulator[Perspective][Index]) {
-                printf("-- Accumulator error (unmake)! Color = %d Piece = %d From = %d To = %d Move type = %d\n", CHANGE_COLOR(Board->CurrentColor), Info->PieceTypeFrom, Info->From, Info->To, Info->Type);
+                printf("-- Accumulator error (unmake move)!\n");
 
-                break;
+                break 2;
             }
         }
     }
@@ -580,12 +580,10 @@ void MakeNullMove(BoardItem* Board)
     Board->Hash ^= ColorHash;
 
 #ifdef DEBUG_MOVE_HASH
-    U64 PreviousHash = Board->Hash;
+    U64 Hash = GetBoardHash(Board);
 
-    InitHash(Board);
-
-    if (Board->Hash != PreviousHash) {
-        printf("-- Board hash error! BoardHash = 0x%016llx PreviousHash = 0x%016llx\n", Board->Hash, PreviousHash);
+    if (Hash != Board->Hash) {
+        printf("-- Board hash error (make null move)!\n");
     }
 #endif // DEBUG_MOVE_HASH
 }

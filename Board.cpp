@@ -364,7 +364,7 @@ BOOL IsInsufficientMaterial(const BoardItem* Board)
     return FALSE;
 }
 
-void PrintBoard(BoardItem* Board)
+void PrintBoard(const BoardItem* Board)
 {
     printf("\n");
 
@@ -616,9 +616,15 @@ int SetFen(BoardItem* Board, const char* Fen)
         Part++;
     }
 
-    InitHash(Board);
+    // Set board hash
+
+    Board->Hash = GetBoardHash(Board);
+
+    // Clear move table
 
     memset(Board->MoveTable, 0, sizeof(Board->MoveTable));
+
+    // Initialize accumulator
 
     InitAccumulator(Board);
 

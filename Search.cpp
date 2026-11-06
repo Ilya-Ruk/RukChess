@@ -39,7 +39,7 @@ int RazoringMargin(const int Depth) // Hakkapeliitta
 }
 #endif // RAZORING
 
-int Search(BoardItem* Board, SearchDataItem* SearchData, int Alpha, int Beta, int Depth, const int Ply, MoveItem* BestMoves, const BOOL IsPrincipal, const BOOL InCheck, const BOOL UsePruning, const int SkipMove)
+int Search(BoardItem* Board, SearchDataItem* SearchData, int Alpha, int Beta, const int Depth, const int Ply, MoveItem* BestMoves, const BOOL IsPrincipal, const BOOL InCheck, const BOOL UsePruning, const int SkipMove)
 {
     assert(Alpha >= -INF);
     assert(Beta <= INF);

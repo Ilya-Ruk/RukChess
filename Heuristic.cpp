@@ -8,7 +8,7 @@
 #include "Def.h"
 #include "Utils.h"
 
-void UpdateHeuristic(BoardItem* Board, SearchDataItem* SearchData, int** CMH_Pointer, const int Move, const int Bonus)
+void UpdateHeuristic(const BoardItem* Board, SearchDataItem* SearchData, int** CMH_Pointer, const int Move, const int Bonus)
 {
     SearchData->HeuristicTable[Board->CurrentColor][PIECE_TYPE(Board->Pieces[MOVE_FROM(Move)])][MOVE_TO(Move)] += Bonus - SearchData->HeuristicTable[Board->CurrentColor][PIECE_TYPE(Board->Pieces[MOVE_FROM(Move)])][MOVE_TO(Move)] * ABS(Bonus) / MAX_HEURISTIC_SCORE;
 
@@ -35,10 +35,8 @@ void ClearHeuristic(SearchDataItem* SearchData)
 }
 
 #ifdef COUNTER_MOVE_HISTORY
-void SetCounterMoveHistoryPointer(BoardItem* Board, SearchDataItem* SearchData, int** CMH_Pointer, const int Ply)
+void SetCounterMoveHistoryPointer(const BoardItem* Board, const SearchDataItem* SearchData, const int** CMH_Pointer, const int Ply)
 {
-    HistoryItem* Info;
-
     if (Ply == 0) {
         CMH_Pointer[0] = NULL;
         CMH_Pointer[1] = NULL;
@@ -46,7 +44,7 @@ void SetCounterMoveHistoryPointer(BoardItem* Board, SearchDataItem* SearchData, 
         return;
     }
 
-    Info = &Board->MoveTable[Board->HalfMoveNumber - 1]; // Prev. move info
+    const HistoryItem* Info = &Board->MoveTable[Board->HalfMoveNumber - 1]; // Prev. move info
 
     if (Info->Type == MOVE_NULL) {
         CMH_Pointer[0] = NULL;
@@ -99,13 +97,13 @@ void ClearKillerMove(SearchDataItem* SearchData)
 
 #ifdef COUNTER_MOVE
 
-void UpdateCounterMove(BoardItem* Board, SearchDataItem* SearchData, const int Move, const int Ply)
+void UpdateCounterMove(const BoardItem* Board, SearchDataItem* SearchData, const int Move, const int Ply)
 {
     if (Ply == 0) {
         return;
     }
 
-    HistoryItem* Info = &Board->MoveTable[Board->HalfMoveNumber - 1]; // Prev. move info
+    const HistoryItem* Info = &Board->MoveTable[Board->HalfMoveNumber - 1]; // Prev. move info
 
     if (Info->Type == MOVE_NULL) {
         return;

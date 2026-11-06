@@ -13,11 +13,11 @@
 
 #define BONUS(Depth)            (SQR(MIN((Depth), 16)) * 64) // Max. 16384
 
-void UpdateHeuristic(BoardItem* Board, SearchDataItem* SearchData, int** CMH_Pointer, const int Move, const int Bonus);
+void UpdateHeuristic(const BoardItem* Board, SearchDataItem* SearchData, int** CMH_Pointer, const int Move, const int Bonus);
 void ClearHeuristic(SearchDataItem* SearchData);
 
 #ifdef COUNTER_MOVE_HISTORY
-void SetCounterMoveHistoryPointer(BoardItem* Board, SearchDataItem* SearchData, int** CMH_Pointer, const int Ply);
+void SetCounterMoveHistoryPointer(const BoardItem* Board, const SearchDataItem* SearchData, const int** CMH_Pointer, const int Ply);
 #endif // COUNTER_MOVE_HISTORY
 
 #ifdef KILLER_MOVE
@@ -26,7 +26,7 @@ void ClearKillerMove(SearchDataItem* SearchData);
 #endif // KILLER_MOVE
 
 #ifdef COUNTER_MOVE
-void UpdateCounterMove(BoardItem* Board, SearchDataItem* SearchData, const int Move, const int Ply);
+void UpdateCounterMove(const BoardItem* Board, SearchDataItem* SearchData, const int Move, const int Ply);
 void ClearCounterMove(SearchDataItem* SearchData);
 #endif // COUNTER_MOVE
 

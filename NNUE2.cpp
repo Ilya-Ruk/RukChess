@@ -300,7 +300,7 @@ void InitAccumulator(BoardItem* Board)
     }
 }
 
-I32 OutputLayer(BoardItem* Board)
+I32 OutputLayer(const BoardItem* Board)
 {
     I32 Result = OutputBias;
 
@@ -357,7 +357,7 @@ I32 OutputLayer(BoardItem* Board)
     return (Result * SCALE) / (QUANTIZATION_PRECISION_IN * QUANTIZATION_PRECISION_OUT);
 }
 
-int Evaluate(BoardItem* Board, SearchDataItem* SearchData)
+int Evaluate(const BoardItem* Board, SearchDataItem* SearchData)
 {
 #ifdef USE_STATISTIC
     if (SearchData) {

@@ -12,7 +12,7 @@
 #include "Sort.h"
 #include "Types.h"
 
-void AddMove(const BoardItem* Board, SearchDataItem* SearchData, int** CMH_Pointer, MoveItem* MoveList, int* GenMoveCount, const int From, const int To, const int MoveType)
+void AddMove(const BoardItem* Board, const SearchDataItem* SearchData, const int** CMH_Pointer, MoveItem* MoveList, int* GenMoveCount, const int From, const int To, const int MoveType)
 {
     if ((MoveType & MOVE_PAWN) && (RANK(To) == 0 || RANK(To) == 7)) { // Pawn promote
         // Knight
@@ -81,7 +81,7 @@ void AddMove(const BoardItem* Board, SearchDataItem* SearchData, int** CMH_Point
     }
 }
 
-void GenerateAllMoves(const BoardItem* Board, SearchDataItem* SearchData, int** CMH_Pointer, MoveItem* MoveList, int* GenMoveCount)
+void GenerateAllMoves(const BoardItem* Board, const SearchDataItem* SearchData, const int** CMH_Pointer, MoveItem* MoveList, int* GenMoveCount)
 {
     U64 Pieces;
     U64 Attacks;
@@ -386,7 +386,7 @@ void GenerateAllMoves(const BoardItem* Board, SearchDataItem* SearchData, int** 
     }
 }
 
-void GenerateCaptureMoves(const BoardItem* Board, SearchDataItem* SearchData, int** CMH_Pointer, MoveItem* MoveList, int* GenMoveCount)
+void GenerateCaptureMoves(const BoardItem* Board, const SearchDataItem* SearchData, const int** CMH_Pointer, MoveItem* MoveList, int* GenMoveCount)
 {
     U64 Pieces;
     U64 Attacks;
@@ -589,7 +589,7 @@ void GenerateCaptureMoves(const BoardItem* Board, SearchDataItem* SearchData, in
     }
 }
 
-void GenerateAllLegalMoves(BoardItem* Board, SearchDataItem* SearchData, int** CMH_Pointer, MoveItem* LegalMoveList, int* LegalMoveCount)
+void GenerateAllLegalMoves(BoardItem* Board, const SearchDataItem* SearchData, const int** CMH_Pointer, MoveItem* LegalMoveList, int* LegalMoveCount)
 {
     int GenMoveCount;
     MoveItem MoveList[MAX_GEN_MOVES];

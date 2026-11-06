@@ -58,7 +58,7 @@ BOOL IsHashTableInitialized(void);
 
 void InitHashBoards(void);
 
-void InitHash(BoardItem* Board);
+U64 GetBoardHash(const BoardItem* Board);
 
 void AddHashStoreIteration(void);
 
