@@ -33,7 +33,7 @@ void InitHashTable(const int SizeInMb) // Xiphos
     HashStore.Size = RoundItems * sizeof(HashItem);
     HashStore.Mask = RoundItems - 1ULL;
 
-    HashStore.Iteration = 0;
+    HashStore.Iteration = (U8)0;
 
     HashStore.Item = (HashItem*)calloc(RoundItems, sizeof(HashItem));
 

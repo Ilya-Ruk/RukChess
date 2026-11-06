@@ -102,7 +102,7 @@ void LoadNetwork(const char* NnueFileName)
         MaxValue = MAX(MaxValue, Value);
 #endif // PRINT_MIN_MAX_VALUES
 
-        NnueHash = NNUE_HASH(NnueHash, (int)Value);
+        NnueHash = NNUE_HASH(NnueHash, (U64)Value);
 
         InputWeights[Index] = LoadInt16(Value, QUANTIZATION_PRECISION_IN);
     }
@@ -126,7 +126,7 @@ void LoadNetwork(const char* NnueFileName)
         MaxValue = MAX(MaxValue, Value);
 #endif // PRINT_MIN_MAX_VALUES
 
-        NnueHash = NNUE_HASH(NnueHash, (int)Value);
+        NnueHash = NNUE_HASH(NnueHash, (U64)Value);
 
         InputBiases[Index] = LoadInt16(Value, QUANTIZATION_PRECISION_IN);
     }
@@ -150,7 +150,7 @@ void LoadNetwork(const char* NnueFileName)
         MaxValue = MAX(MaxValue, Value);
 #endif // PRINT_MIN_MAX_VALUES
 
-        NnueHash = NNUE_HASH(NnueHash, (int)Value);
+        NnueHash = NNUE_HASH(NnueHash, (U64)Value);
 
         OutputWeights[Index] = LoadInt16(Value, QUANTIZATION_PRECISION_OUT);
     }
@@ -163,7 +163,7 @@ void LoadNetwork(const char* NnueFileName)
 
     fread(&Value, sizeof(float), 1, File);
 
-    NnueHash = NNUE_HASH(NnueHash, (int)Value);
+    NnueHash = NNUE_HASH(NnueHash, (U64)Value);
 
     OutputBias = LoadInt32(Value, QUANTIZATION_PRECISION_IN * QUANTIZATION_PRECISION_OUT);
 
