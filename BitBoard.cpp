@@ -178,30 +178,30 @@ void InitBitBoards(void)
 U64 PawnAttacks(const U64 Pawns, const int Color)
 {
     if (Color == WHITE) {
-        return ((Pawns >> 7) & ~BB_FILE_A) | ((Pawns >> 9) & ~BB_FILE_H);
+        return ((Pawns >> 7ULL) & ~BB_FILE_A) | ((Pawns >> 9ULL) & ~BB_FILE_H);
     }
     else { // BLACK
-        return ((Pawns << 9) & ~BB_FILE_A) | ((Pawns << 7) & ~BB_FILE_H);
+        return ((Pawns << 9ULL) & ~BB_FILE_A) | ((Pawns << 7ULL) & ~BB_FILE_H);
     }
 }
 
 U64 PushedPawns(const U64 Pawns, const int Color, const U64 NotOccupied)
 {
     if (Color == WHITE) {
-        return (Pawns >> 8) & NotOccupied;
+        return (Pawns >> 8ULL) & NotOccupied;
     }
     else { // BLACK
-        return (Pawns << 8) & NotOccupied;
+        return (Pawns << 8ULL) & NotOccupied;
     }
 }
 
 U64 PushedPawns2(const U64 Pawns, const int Color, const U64 NotOccupied)
 {
     if (Color == WHITE) {
-        return (((Pawns >> 8) & NotOccupied) >> 8) & NotOccupied & BB_RANK_4;
+        return (((Pawns >> 8ULL) & NotOccupied) >> 8ULL) & NotOccupied & BB_RANK_4;
     }
     else { // BLACK
-        return (((Pawns << 8) & NotOccupied) << 8) & NotOccupied & BB_RANK_5;
+        return (((Pawns << 8ULL) & NotOccupied) << 8ULL) & NotOccupied & BB_RANK_5;
     }
 }
 

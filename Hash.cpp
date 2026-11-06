@@ -31,7 +31,7 @@ void InitHashTable(const int SizeInMb) // Xiphos
     }
 
     HashStore.Size = RoundItems * sizeof(HashItem);
-    HashStore.Mask = RoundItems - 1;
+    HashStore.Mask = RoundItems - 1ULL;
 
     HashStore.Iteration = 0;
 
@@ -103,7 +103,7 @@ U64 GetBoardHash(const BoardItem* Board)
 
         Hash ^= PieceHash[WHITE][PIECE_TYPE(Board->Pieces[Square])][Square];
 
-        Pieces &= Pieces - 1;
+        Pieces &= Pieces - 1ULL;
     }
 
     // Black pieces
@@ -115,7 +115,7 @@ U64 GetBoardHash(const BoardItem* Board)
 
         Hash ^= PieceHash[BLACK][PIECE_TYPE(Board->Pieces[Square])][Square];
 
-        Pieces &= Pieces - 1;
+        Pieces &= Pieces - 1ULL;
     }
 
     // Color

@@ -296,7 +296,7 @@ void InitAccumulator(BoardItem* Board)
 
         AccumulatorAdd(Board, Square, PieceWithColor);
 
-        Pieces &= Pieces - 1;
+        Pieces &= Pieces - 1ULL;
     }
 }
 
