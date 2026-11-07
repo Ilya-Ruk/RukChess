@@ -312,7 +312,7 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
 
 void UnmakeMove(BoardItem* Board)
 {
-    HistoryItem* Info = &Board->MoveTable[--Board->HalfMoveNumber];
+    const HistoryItem* Info = &Board->MoveTable[--Board->HalfMoveNumber];
 
     Board->CurrentColor ^= 1;
 
@@ -590,7 +590,7 @@ void MakeNullMove(BoardItem* Board)
 
 void UnmakeNullMove(BoardItem* Board)
 {
-    HistoryItem* Info = &Board->MoveTable[--Board->HalfMoveNumber];
+    const HistoryItem* Info = &Board->MoveTable[--Board->HalfMoveNumber];
 
     Board->CurrentColor ^= 1;
 

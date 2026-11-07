@@ -215,7 +215,6 @@ U64 BishopAttacks(const int Square, const U64 Occupied)
     U64 BishopOccupied = Occupied & BB_BishopMask[Square];
 
     int Offset = BB_BishopOffset[Square];
-
     int Index = PEXT(BishopOccupied, BB_BishopMask[Square]);
 
     return BB_BishopAttack[Offset + Index];
@@ -226,7 +225,6 @@ U64 RookAttacks(const int Square, const U64 Occupied)
     U64 RookOccupied = Occupied & BB_RookMask[Square];
 
     int Offset = BB_RookOffset[Square];
-
     int Index = PEXT(RookOccupied, BB_RookMask[Square]);
 
     return BB_RookAttack[Offset + Index];

@@ -71,9 +71,9 @@ BOOL IsSquareAttacked(const BoardItem* Board, const int Square, const int Color)
     assert(Square >= SQ_A8 && Square <= SQ_H1);
     assert(Color == WHITE || Color == BLACK);
 
-    U64 Attackers = 0ULL;
-
     int EnemyColor = CHANGE_COLOR(Color);
+
+    U64 Attackers = 0ULL;
 
     // Pawns
     Attackers |= PawnAttacks(BB_SQUARE(Square), Color) & Board->BB_Pieces[EnemyColor][PAWN];
@@ -371,7 +371,7 @@ void PrintBoard(const BoardItem* Board)
     printf("     a   b   c   d   e   f   g   h\n");
 
     for (int Square = 0; Square < 64; Square++) {
-        if (Square % 8 == 0) {
+        if ((Square % 8) == 0) {
             printf("   +---+---+---+---+---+---+---+---+\n");
             printf(" %d |", 8 - Square / 8);
         }
@@ -386,7 +386,7 @@ void PrintBoard(const BoardItem* Board)
             printf(" %c |", PiecesCharBlack[PIECE_TYPE(Board->Pieces[Square])]);
         }
 
-        if ((Square + 1) % 8 == 0) {
+        if (((Square + 1) % 8) == 0) {
             printf(" %d\n", 8 - Square / 8);
         }
     }
