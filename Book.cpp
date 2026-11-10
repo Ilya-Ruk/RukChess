@@ -138,14 +138,6 @@ void GenerateBook(void)
         return;
     }
 
-    // Cache not used
-
-    InitHashTable(1);
-
-    // Threads not used
-
-    omp_set_num_threads(1);
-
     // Prepare new game
 
     GameNumber = 1;

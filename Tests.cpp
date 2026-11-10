@@ -455,14 +455,6 @@ const int WinAtChessTestCount = sizeof(WinAtChessTests) / sizeof(char*) / 2;
 
 void GeneratorTest1(void)
 {
-    // Cache not used
-
-    InitHashTable(1);
-
-    // Threads not used
-
-    omp_set_num_threads(1);
-
     for (int TestNumber = 0; TestNumber < GeneratorTestCount; TestNumber++) {
         printf("\n");
 
@@ -494,17 +486,9 @@ void GeneratorTest1(void)
 
 void GeneratorTest2(void)
 {
-    int InputDepth;
-
-    // Cache not used
-
-    InitHashTable(1);
-
-    // Threads not used
-
-    omp_set_num_threads(1);
-
     printf("\n");
+
+    int InputDepth;
 
     printf("Max. depth (min. 1 max. %d; 0 = %d): ", MAX_PLY, MAX_PLY);
     scanf_s("%d", &InputDepth);
@@ -524,11 +508,11 @@ void GeneratorTest2(void)
 
 void Tests(const char* Tests[], const int TestCount)
 {
-    int TestPassedCount = 0;
-
     InputParametrs();
 
     PrintMode = PRINT_MODE_TESTS;
+
+    int TestPassedCount = 0;
 
     for (int TestNumber = 0; TestNumber < TestCount; TestNumber++) {
         printf("\n");
@@ -595,25 +579,26 @@ void WinAtChessTest(void)
 
 void SearchPerformanceTest(void)
 {
-    int MaxCycles;
-    int MaxMoves;
-
-    U64 TotalTestNodes = 0ULL;
-    U64 TotalTestTime = 0ULL;
-
     InputParametrs();
 
     printf("\n");
+
+    int MaxCycles;
 
     printf("Max. cycles (min. 1): ");
     scanf_s("%d", &MaxCycles);
 
     MaxCycles = MAX(MaxCycles, 1);
 
+    int MaxMoves;
+
     printf("Max. moves (min. 1): ");
     scanf_s("%d", &MaxMoves);
 
     MaxMoves = MAX(MaxMoves, 1);
+
+    U64 TotalTestNodes = 0ULL;
+    U64 TotalTestTime = 0ULL;
 
     for (int Cycle = 0; Cycle < MaxCycles; Cycle++) {
         printf("\n");
@@ -657,16 +642,9 @@ void SearchPerformanceTest(void)
 
 void EvaluateTests(const char* Tests[], const int TestCount)
 {
-    int MaxCycles;
-
-    LARGE_INTEGER EvaluateTimeStart;
-    LARGE_INTEGER EvaluateTimeStop;
-
-    LARGE_INTEGER Frequency;
-
-    I64 EvaluateTotalTime = 0LL;
-
     printf("\n");
+
+    int MaxCycles;
 
     printf("Max. cycles (min. 1): ");
     scanf_s("%d", &MaxCycles);
@@ -674,6 +652,8 @@ void EvaluateTests(const char* Tests[], const int TestCount)
     MaxCycles = MAX(MaxCycles, 1);
 
     printf("\n");
+
+    I64 EvaluateTotalTime = 0LL;
 
     for (int Cycle = 0; Cycle < MaxCycles; Cycle++) {
         printf("Cycle = %d\n", Cycle + 1);
@@ -683,15 +663,21 @@ void EvaluateTests(const char* Tests[], const int TestCount)
 
             SetFen(&BoardList[0], Fen);
 
+            LARGE_INTEGER EvaluateTimeStart;
+
             QueryPerformanceCounter(&EvaluateTimeStart);
 
             Evaluate(&BoardList[0], NULL);
+
+            LARGE_INTEGER EvaluateTimeStop;
 
             QueryPerformanceCounter(&EvaluateTimeStop);
 
             EvaluateTotalTime += EvaluateTimeStop.QuadPart - EvaluateTimeStart.QuadPart;
         }
     }
+
+    LARGE_INTEGER Frequency;
 
     QueryPerformanceFrequency(&Frequency);
 
