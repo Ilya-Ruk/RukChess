@@ -168,7 +168,7 @@ void GenerateBook(void)
     char Buf[4096];
 
     while (fgets(Buf, sizeof(Buf), FileIn) != NULL) {
-        const char* Part = Buf;
+        char* Part = Buf;
 
         if (*Part == '\r' || *Part == '\n') { // Empty string
             if (Stage == STAGE_NOTATION) {
@@ -445,8 +445,8 @@ void GenerateBook(void)
 
 int HashCompare(const void* BookItem1, const void* BookItem2)
 {
-    const U64 Hash1 = ((BookItem*)BookItem1)->Hash;
-    const U64 Hash2 = ((BookItem*)BookItem2)->Hash;
+    U64 Hash1 = ((BookItem*)BookItem1)->Hash;
+    U64 Hash2 = ((BookItem*)BookItem2)->Hash;
 
     if (Hash1 < Hash2) {
         return -1;
@@ -508,7 +508,7 @@ void LoadBook(const char* BookFileName)
     int PositionNumber = 0;
 
     while (fgets(Buf, sizeof(Buf), File) != NULL) {
-        const char* Part = Buf;
+        char* Part = Buf;
 
         char HashString[64];
         char* HashPointer = HashString;
@@ -611,7 +611,7 @@ BOOL GetBookMove(const BoardItem* Board, MoveItem* BestMove)
     int Total = 0;
 
     for (int Index = 0; Index < BookStore.Count; Index++) {
-        const BookItem* BookItemPointer = &BookStore.Item[Index];
+        BookItem* BookItemPointer = &BookStore.Item[Index];
 
         if (BookItemPointer->Hash == Board->Hash) { // Position hash found in book
             if (FirstIndex < 0) {
@@ -637,7 +637,7 @@ BOOL GetBookMove(const BoardItem* Board, MoveItem* BestMove)
     int Offset = 0;
 
     for (int Index = FirstIndex, Count = 0; Count < BookCount; Index++, Count++) {
-        const BookItem* BookItemPointer = &BookStore.Item[Index];
+        BookItem* BookItemPointer = &BookStore.Item[Index];
 
         Offset += BookItemPointer->Total;
 

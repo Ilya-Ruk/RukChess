@@ -41,8 +41,8 @@ int SEE(const BoardItem* Board, const int MoveType, const int Move)
 {
     int Gain[32];
 
-    const int From = MOVE_FROM(Move);
-    const int To = MOVE_TO(Move);
+    int From = MOVE_FROM(Move);
+    int To = MOVE_TO(Move);
 
     int PieceType;
 

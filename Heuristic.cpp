@@ -78,7 +78,7 @@ void SetCounterMoveHistoryPointer(const BoardItem* Board, const SearchDataItem* 
 void UpdateKillerMove(SearchDataItem* SearchData, const int Move, const int Ply)
 {
     if (SearchData->KillerMoveTable[Ply][0] != Move) {
-        const int TempMove = SearchData->KillerMoveTable[Ply][0];
+        int TempMove = SearchData->KillerMoveTable[Ply][0];
 
         SearchData->KillerMoveTable[Ply][0] = Move;
         SearchData->KillerMoveTable[Ply][1] = TempMove;

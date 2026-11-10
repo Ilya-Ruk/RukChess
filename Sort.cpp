@@ -25,7 +25,7 @@ void SetHashMoveSortValue(MoveItem* GenMoveList, const int GenMoveCount, const i
 
 void SetKillerMove1SortValue(const SearchDataItem* SearchData, const int Ply, MoveItem* GenMoveList, const int GenMoveCount, const int HashMove)
 {
-    const int KillerMove1 = SearchData->KillerMoveTable[Ply][0];
+    int KillerMove1 = SearchData->KillerMoveTable[Ply][0];
 
     if (KillerMove1 && KillerMove1 != HashMove) {
         for (int Index = 0; Index < GenMoveCount; Index++) {
@@ -42,8 +42,8 @@ void SetKillerMove1SortValue(const SearchDataItem* SearchData, const int Ply, Mo
 
 void SetKillerMove2SortValue(const SearchDataItem* SearchData, const int Ply, MoveItem* GenMoveList, const int GenMoveCount, const int HashMove)
 {
-    const int KillerMove1 = SearchData->KillerMoveTable[Ply][0];
-    const int KillerMove2 = SearchData->KillerMoveTable[Ply][1];
+    int KillerMove1 = SearchData->KillerMoveTable[Ply][0];
+    int KillerMove2 = SearchData->KillerMoveTable[Ply][1];
 
     if (KillerMove2 && KillerMove2 != HashMove && KillerMove2 != KillerMove1) {
         for (int Index = 0; Index < GenMoveCount; Index++) {
@@ -73,11 +73,11 @@ void SetCounterMoveSortValue(const BoardItem* Board, const SearchDataItem* Searc
         return;
     }
 
-    const int CounterMove = SearchData->CounterMoveTable[CHANGE_COLOR(Board->CurrentColor)][Info_1->PieceTypeFrom][Info_1->To];
+    int CounterMove = SearchData->CounterMoveTable[CHANGE_COLOR(Board->CurrentColor)][Info_1->PieceTypeFrom][Info_1->To];
 
 #ifdef KILLER_MOVE
-    const int KillerMove1 = SearchData->KillerMoveTable[Ply][0];
-    const int KillerMove2 = SearchData->KillerMoveTable[Ply][1];
+    int KillerMove1 = SearchData->KillerMoveTable[Ply][0];
+    int KillerMove2 = SearchData->KillerMoveTable[Ply][1];
 #endif // KILLER_MOVE
 
 #ifdef KILLER_MOVE
@@ -111,7 +111,7 @@ void PrepareNextMove(const int StartIndex, MoveItem* GenMoveList, const int GenM
     }
 
     if (StartIndex != BestMoveIndex) {
-        const MoveItem TempMoveItem = GenMoveList[StartIndex];
+        MoveItem TempMoveItem = GenMoveList[StartIndex];
 
         GenMoveList[StartIndex] = GenMoveList[BestMoveIndex];
         GenMoveList[BestMoveIndex] = TempMoveItem;

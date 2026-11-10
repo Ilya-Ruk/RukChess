@@ -15,8 +15,8 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
 {
     HistoryItem* Info = &Board->MoveTable[Board->HalfMoveNumber++];
 
-    const int From = MOVE_FROM(Move.Move);
-    const int To = MOVE_TO(Move.Move);
+    int From = MOVE_FROM(Move.Move);
+    int To = MOVE_TO(Move.Move);
 
     assert(From >= SQ_A8 && From <= SQ_H1);
     assert(To >= SQ_A8 && To <= SQ_H1);
@@ -312,7 +312,7 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
 
 void UnmakeMove(BoardItem* Board)
 {
-    const HistoryItem* Info = &Board->MoveTable[--Board->HalfMoveNumber];
+    HistoryItem* Info = &Board->MoveTable[--Board->HalfMoveNumber];
 
     Board->CurrentColor ^= 1;
 
@@ -590,7 +590,7 @@ void MakeNullMove(BoardItem* Board)
 
 void UnmakeNullMove(BoardItem* Board)
 {
-    const HistoryItem* Info = &Board->MoveTable[--Board->HalfMoveNumber];
+    HistoryItem* Info = &Board->MoveTable[--Board->HalfMoveNumber];
 
     Board->CurrentColor ^= 1;
 

@@ -163,9 +163,9 @@ void SaveHash(const U64 Hash, const int Depth, const int Ply, const int Score, c
 
 void LoadHash(const U64 Hash, int* Depth, const int Ply, int* Score, int* StaticScore, int* Move, int* Flag)
 {
-    const HashItem* HashItemPointer = &HashStore.Item[Hash & HashStore.Mask];
+    HashItem* HashItemPointer = &HashStore.Item[Hash & HashStore.Mask];
 
-    const HashDataU DataU = HashItemPointer->Value; // Load data from record
+    HashDataU DataU = HashItemPointer->Value; // Load data from record
 
     if ((HashItemPointer->KeyValue ^ Hash) != DataU.RawData) { // Hash does not match or data is corrupted (SMP)
         return;
@@ -204,7 +204,7 @@ int FullHash(void)
 #ifdef HASH_PREFETCH
 void Prefetch(const U64 Hash)
 {
-    const HashItem* HashItemPointer = &HashStore.Item[Hash & HashStore.Mask];
+    HashItem* HashItemPointer = &HashStore.Item[Hash & HashStore.Mask];
 
     _mm_prefetch((char*)HashItemPointer, _MM_HINT_T0);
 }

@@ -71,7 +71,7 @@ BOOL IsSquareAttacked(const BoardItem* Board, const int Square, const int Color)
     assert(Square >= SQ_A8 && Square <= SQ_H1);
     assert(Color == WHITE || Color == BLACK);
 
-    const int EnemyColor = CHANGE_COLOR(Color);
+    int EnemyColor = CHANGE_COLOR(Color);
 
     U64 Attackers = 0ULL;
 
@@ -97,7 +97,7 @@ BOOL IsInCheck(const BoardItem* Board, const int Color)
 {
     assert(Color == WHITE || Color == BLACK);
 
-    const int KingSquare = LSB(Board->BB_Pieces[Color][KING]);
+    int KingSquare = LSB(Board->BB_Pieces[Color][KING]);
 
     return IsSquareAttacked(Board, KingSquare, Color);
 }

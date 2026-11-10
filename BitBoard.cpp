@@ -109,7 +109,7 @@ U64 CalculatePieceAttack(const int Piece, const int Square, const U64 Occupied, 
                 break; // while
             }
 
-            const U64 Bit = BB_SQUARE(To);
+            U64 Bit = BB_SQUARE(To);
 
             Result |= Bit;
 
@@ -130,14 +130,14 @@ U64 CalculatePieceAttack(const int Piece, const int Square, const U64 Occupied, 
 
 void InitAttackTable(const int Piece, const int Square, const U64* BB_Mask, int* BB_OffsetTable, U64* BB_AttackTable, int* Offset)
 {
-    const int CountBits = POPCNT(BB_Mask[Square]); // Max. 12 bits (example, rook on a1)
+    int CountBits = POPCNT(BB_Mask[Square]); // Max. 12 bits (example, rook on a1)
 
-    const int MaxIndex = 1 << CountBits; // Max. 4096 (1 << 12)
+    int MaxIndex = 1 << CountBits; // Max. 4096 (1 << 12)
 
     BB_OffsetTable[Square] = *Offset;
 
     for (int Index = 0; Index < MaxIndex; Index++) {
-        const U64 Occupied = PDEP((U64)Index, BB_Mask[Square]);
+        U64 Occupied = PDEP((U64)Index, BB_Mask[Square]);
 
         BB_AttackTable[*Offset + Index] = CalculatePieceAttack(Piece, Square, Occupied, FALSE);
     }
@@ -205,20 +205,20 @@ U64 KnightAttacks(const int Square)
 
 U64 BishopAttacks(const int Square, const U64 Occupied)
 {
-    const U64 BishopOccupied = Occupied & BB_BishopMask[Square];
+    U64 BishopOccupied = Occupied & BB_BishopMask[Square];
 
-    const int Offset = BB_BishopOffset[Square];
-    const int Index = PEXT(BishopOccupied, BB_BishopMask[Square]);
+    int Offset = BB_BishopOffset[Square];
+    int Index = PEXT(BishopOccupied, BB_BishopMask[Square]);
 
     return BB_BishopAttack[Offset + Index];
 }
 
 U64 RookAttacks(const int Square, const U64 Occupied)
 {
-    const U64 RookOccupied = Occupied & BB_RookMask[Square];
+    U64 RookOccupied = Occupied & BB_RookMask[Square];
 
-    const int Offset = BB_RookOffset[Square];
-    const int Index = PEXT(RookOccupied, BB_RookMask[Square]);
+    int Offset = BB_RookOffset[Square];
+    int Index = PEXT(RookOccupied, BB_RookMask[Square]);
 
     return BB_RookAttack[Offset + Index];
 }

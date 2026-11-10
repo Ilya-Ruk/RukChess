@@ -35,7 +35,7 @@ void UCI(void)
 
     while (TRUE) {
         char Buf[4096];
-        const char* Part = Buf;
+        char* Part = Buf;
 
         fgets(Buf, sizeof(Buf), stdin);
 

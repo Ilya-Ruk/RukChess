@@ -91,7 +91,7 @@ void Pgn2Fen(void)
     char Buf[4096];
 
     while (fgets(Buf, sizeof(Buf), FileIn) != NULL) {
-        const char* Part = Buf;
+        char* Part = Buf;
 
         if (*Part == '\r' || *Part == '\n') { // Empty string
             if (Stage == STAGE_NOTATION) {
