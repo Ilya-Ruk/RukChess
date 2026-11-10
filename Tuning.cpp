@@ -20,40 +20,26 @@
 
 void Pgn2Fen(void)
 {
-    FILE* FileIn;
-    FILE* FileOut;
-
     int GameNumber;
 
     double Result;
+
+    char MoveString[16];
+    char* Move;
 
     int Ply;
 
     BOOL Error;
 
-    char MoveString[16];
-    char* Move;
-
     int Stage;
 
-    char Buf[4096];
-    char* Part;
-
-    char FenString[MAX_FEN_LENGTH];
-    char* Fen;
-
     char FenOut[MAX_FEN_LENGTH];
-
-    int GenMoveCount;
-    MoveItem MoveList[MAX_GEN_MOVES];
-
-    BOOL MoveFound;
-
-    char NotateMoveStr[16];
 
     printf("\n");
 
     printf("Convert PGN file to FEN file...\n");
+
+    FILE* FileIn;
 
     fopen_s(&FileIn, "games.pgn", "r");
 
@@ -62,6 +48,8 @@ void Pgn2Fen(void)
 
         return;
     }
+
+    FILE* FileOut;
 
     fopen_s(&FileOut, "games.fen", "w");
 
@@ -87,12 +75,12 @@ void Pgn2Fen(void)
 
     Result = 0.0; // Draw default
 
+    Move = MoveString;
+    *Move = '\0'; // Nul
+
     Ply = 0;
 
     Error = FALSE;
-
-    Move = MoveString;
-    *Move = '\0'; // Nul
 
     SetFen(&BoardList[0], StartFen);
 
@@ -100,8 +88,10 @@ void Pgn2Fen(void)
 
     printf("\n");
 
+    char Buf[4096];
+
     while (fgets(Buf, sizeof(Buf), FileIn) != NULL) {
-        Part = Buf;
+        const char* Part = Buf;
 
         if (*Part == '\r' || *Part == '\n') { // Empty string
             if (Stage == STAGE_NOTATION) {
@@ -111,12 +101,12 @@ void Pgn2Fen(void)
 
                 Result = 0.0; // Draw default
 
+                Move = MoveString;
+                *Move = '\0'; // Nul
+
                 Ply = 0;
 
                 Error = FALSE;
-
-                Move = MoveString;
-                *Move = '\0'; // Nul
 
                 SetFen(&BoardList[0], StartFen);
 
@@ -136,18 +126,19 @@ void Pgn2Fen(void)
             }
 
             if (strncmp(Part, "[Result \"1-0\"]", 14) == 0) { // Result 1-0
-                Result = 1.0;
+                Result = 1.0; // White win
             }
             else if (strncmp(Part, "[Result \"1/2-1/2\"]", 18) == 0) { // Result 1/2-1/2
-                Result = 0.5;
+                Result = 0.5; // Draw
             }
             else if (strncmp(Part, "[Result \"0-1\"]", 14) == 0) { // Result 0-1
-                Result = 0.0;
+                Result = 0.0; // Black win
             }
             else if (strncmp(Part, "[FEN \"", 6) == 0) { // FEN
                 Part += 6;
 
-                Fen = FenString;
+                char FenString[MAX_FEN_LENGTH];
+                char* Fen = FenString;
 
                 while (*Part != '"') {
                     *Fen++ = *Part++; // Copy FEN
@@ -207,12 +198,17 @@ void Pgn2Fen(void)
                         continue; // Next character in string
                     }
 
+                    int GenMoveCount;
+                    MoveItem MoveList[MAX_GEN_MOVES];
+
                     GenMoveCount = 0;
                     GenerateAllMoves(&BoardList[0], NULL, NULL, MoveList, &GenMoveCount);
 
-                    MoveFound = FALSE;
+                    BOOL MoveFound = FALSE;
 
                     for (int MoveNumber = 0; MoveNumber < GenMoveCount; MoveNumber++) {
+                        char NotateMoveStr[16];
+
                         NotateMove(&BoardList[0], MoveList[MoveNumber], NotateMoveStr);
 
                         if (strcmp(MoveString, NotateMoveStr) == 0) {
@@ -255,6 +251,8 @@ void Pgn2Fen(void)
                         printf("Gen. moves:");
 
                         for (int MoveNumber = 0; MoveNumber < GenMoveCount; MoveNumber++) {
+                            char NotateMoveStr[16];
+
                             NotateMove(&BoardList[0], MoveList[MoveNumber], NotateMoveStr);
 
                             printf(" %s%s", BoardName[MOVE_FROM(MoveList[MoveNumber].Move)], BoardName[MOVE_TO(MoveList[MoveNumber].Move)]);

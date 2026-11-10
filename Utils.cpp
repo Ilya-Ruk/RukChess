@@ -49,17 +49,7 @@ void SetRandState(const U64 NewRandState)
 
 void InitThreadNode(void)
 {
-    int Nodes = 0;      // Physical processors
-    int Cores = 0;      // Logical processors
-    int Threads = 0;    // Threads
-
-    int Index = 0;
-
     DWORD ReturnedLength = 0;
-    DWORD ByteOffset = 0;
-
-    SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX* Buffer;
-    SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX* Ptr;
 
     // First call to get ReturnLength. We expect it to fail due to null buffer
     if (GetLogicalProcessorInformationEx(RelationAll, NULL, &ReturnedLength)) {
@@ -75,7 +65,7 @@ void InitThreadNode(void)
     }
 
     // Once we know ReturnLength, allocate the buffer
-    Buffer = (SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX*)malloc(ReturnedLength);
+    SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX* Buffer = (SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX*)malloc(ReturnedLength);
 
     if (Buffer == NULL) { // Allocate memory error
         printf("Allocate memory to buffer error!\n");
@@ -92,7 +82,13 @@ void InitThreadNode(void)
         return;
     }
 
-    Ptr = Buffer;
+    int Nodes = 0;      // Physical processors
+    int Cores = 0;      // Logical processors
+    int Threads = 0;    // Threads
+
+    DWORD ByteOffset = 0;
+
+    SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX* Ptr = Buffer;
 
     while (ByteOffset < ReturnedLength) {
         if (Ptr->Relationship == RelationNumaNode) {
@@ -111,6 +107,8 @@ void InitThreadNode(void)
 
     free(Buffer);
 
+    int Index = 0;
+
     // Run as many threads as possible on the same node until core limit is reached,
     // then move on filling the next node
     for (int Node = 0; Node < Nodes; Node++) {
@@ -128,15 +126,13 @@ void InitThreadNode(void)
 
 void BindThread(const int ThreadNumber)
 {
-    USHORT Node;
-
-    GROUP_AFFINITY GroupAffinity;
-
     if (ThreadNumber < 0 || ThreadNumber >= MaxThreads) {
         return;
     }
 
-    Node = (USHORT)ThreadNode[ThreadNumber];
+    USHORT Node = (USHORT)ThreadNode[ThreadNumber];
+
+    GROUP_AFFINITY GroupAffinity;
 
     if (GetNumaNodeProcessorMaskEx(Node, &GroupAffinity)) {
         SetThreadGroupAffinity(GetCurrentThread(), &GroupAffinity, NULL);
@@ -148,13 +144,11 @@ void BindThread(const int ThreadNumber)
 #ifdef BIND_THREAD_V2
 void BindThread(const int ThreadNumber)
 {
-    DWORD_PTR AffinityMask;
-
     if (ThreadNumber < 0 || ThreadNumber >= MIN(MaxThreads, 64)) { // Max. 64 CPUs [0..63]
         return;
     }
 
-    AffinityMask = 1ULL << ThreadNumber;
+    DWORD_PTR AffinityMask = 1ULL << ThreadNumber;
 
     SetThreadAffinityMask(GetCurrentThread(), AffinityMask);
 }

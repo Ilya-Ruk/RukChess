@@ -13,7 +13,7 @@
 #define NNUE_FILE_MAGIC             ('B' | 'R' << 8 | 'K' << 16 | 'R' << 24)
 #define NNUE_FILE_SIZE              ((INPUT_DIMENSION * HIDDEN_DIMENSION + HIDDEN_DIMENSION + HIDDEN_DIMENSION * 2 + 1) * 4 + 12)
 
-#define NNUE_HASH(Hash, Value)      (((Hash) + (324723947ULL + (Value))) ^ 93485734985ULL)
+#define NNUE_HASH(Hash, Value)      (((Hash) + 324723947ULL + (Value)) ^ 93485734985ULL)
 
 #define STM                         0
 #define XSTM                        1
@@ -280,19 +280,15 @@ void AccumulatorSub(BoardItem* Board, int Square, int PieceWithColor)
 
 void InitAccumulator(BoardItem* Board)
 {
-    U64 Pieces;
-
-    int Square;
-    int PieceWithColor;
-
     memcpy(Board->Accumulator.Accumulator[STM], InputBiases, sizeof(Board->Accumulator.Accumulator[STM]));
     memcpy(Board->Accumulator.Accumulator[XSTM], InputBiases, sizeof(Board->Accumulator.Accumulator[XSTM]));
 
-    Pieces = (Board->BB_WhitePieces | Board->BB_BlackPieces);
+    U64 Pieces = (Board->BB_WhitePieces | Board->BB_BlackPieces);
 
     while (Pieces) {
-        Square = LSB(Pieces);
-        PieceWithColor = Board->Pieces[Square];
+        int Square = LSB(Pieces);
+
+        int PieceWithColor = Board->Pieces[Square];
 
         AccumulatorAdd(Board, Square, PieceWithColor);
 
@@ -360,7 +356,7 @@ I32 OutputLayer(const BoardItem* Board)
 int Evaluate(const BoardItem* Board, SearchDataItem* SearchData)
 {
 #ifdef USE_STATISTIC
-    if (SearchData) {
+    if (SearchData != NULL) {
         SearchData->EvaluateCount++;
     }
 #endif // USE_STATISTIC

@@ -13,12 +13,12 @@ void UpdateHeuristic(const BoardItem* Board, SearchDataItem* SearchData, int** C
     SearchData->HeuristicTable[Board->CurrentColor][PIECE_TYPE(Board->Pieces[MOVE_FROM(Move)])][MOVE_TO(Move)] += Bonus - SearchData->HeuristicTable[Board->CurrentColor][PIECE_TYPE(Board->Pieces[MOVE_FROM(Move)])][MOVE_TO(Move)] * ABS(Bonus) / MAX_HEURISTIC_SCORE;
 
 #ifdef COUNTER_MOVE_HISTORY
-    if (CMH_Pointer) {
-        if (CMH_Pointer[0]) {
+    if (CMH_Pointer != NULL) {
+        if (CMH_Pointer[0] != NULL) {
             CMH_Pointer[0][(PIECE_TYPE(Board->Pieces[MOVE_FROM(Move)]) << 6) + MOVE_TO(Move)] += Bonus - CMH_Pointer[0][(PIECE_TYPE(Board->Pieces[MOVE_FROM(Move)]) << 6) + MOVE_TO(Move)] * ABS(Bonus) / MAX_HEURISTIC_SCORE;
         }
 
-        if (CMH_Pointer[1]) {
+        if (CMH_Pointer[1] != NULL) {
             CMH_Pointer[1][(PIECE_TYPE(Board->Pieces[MOVE_FROM(Move)]) << 6) + MOVE_TO(Move)] += Bonus - CMH_Pointer[1][(PIECE_TYPE(Board->Pieces[MOVE_FROM(Move)]) << 6) + MOVE_TO(Move)] * ABS(Bonus) / MAX_HEURISTIC_SCORE;
         }
     }
@@ -44,16 +44,16 @@ void SetCounterMoveHistoryPointer(const BoardItem* Board, const SearchDataItem* 
         return;
     }
 
-    const HistoryItem* Info = &Board->MoveTable[Board->HalfMoveNumber - 1]; // Prev. move info
+    const HistoryItem* Info_1 = &Board->MoveTable[Board->HalfMoveNumber - 1]; // Prev. move info
 
-    if (Info->Type == MOVE_NULL) {
+    if (Info_1->Type == MOVE_NULL) {
         CMH_Pointer[0] = NULL;
         CMH_Pointer[1] = NULL;
 
         return;
     }
 
-    CMH_Pointer[0] = SearchData->CounterMoveHistoryTable[Info->PieceTypeFrom][Info->To];
+    CMH_Pointer[0] = SearchData->CounterMoveHistoryTable[Info_1->PieceTypeFrom][Info_1->To];
 
     if (Ply == 1) {
         CMH_Pointer[1] = NULL;
@@ -61,15 +61,15 @@ void SetCounterMoveHistoryPointer(const BoardItem* Board, const SearchDataItem* 
         return;
     }
 
-    Info = &Board->MoveTable[Board->HalfMoveNumber - 2]; // Prev. prev. move info
+    const HistoryItem* Info_2 = &Board->MoveTable[Board->HalfMoveNumber - 2]; // Prev. prev. move info
 
-    if (Info->Type == MOVE_NULL) {
+    if (Info_2->Type == MOVE_NULL) {
         CMH_Pointer[1] = NULL;
 
         return;
     }
 
-    CMH_Pointer[1] = SearchData->CounterMoveHistoryTable[Info->PieceTypeFrom][Info->To];
+    CMH_Pointer[1] = SearchData->CounterMoveHistoryTable[Info_2->PieceTypeFrom][Info_2->To];
 }
 #endif // COUNTER_MOVE_HISTORY
 
@@ -77,13 +77,10 @@ void SetCounterMoveHistoryPointer(const BoardItem* Board, const SearchDataItem* 
 
 void UpdateKillerMove(SearchDataItem* SearchData, const int Move, const int Ply)
 {
-    int TempMove;
-
     if (SearchData->KillerMoveTable[Ply][0] != Move) {
-        TempMove = SearchData->KillerMoveTable[Ply][0];
+        const int TempMove = SearchData->KillerMoveTable[Ply][0];
 
         SearchData->KillerMoveTable[Ply][0] = Move;
-
         SearchData->KillerMoveTable[Ply][1] = TempMove;
     }
 }
@@ -103,13 +100,13 @@ void UpdateCounterMove(const BoardItem* Board, SearchDataItem* SearchData, const
         return;
     }
 
-    const HistoryItem* Info = &Board->MoveTable[Board->HalfMoveNumber - 1]; // Prev. move info
+    const HistoryItem* Info_1 = &Board->MoveTable[Board->HalfMoveNumber - 1]; // Prev. move info
 
-    if (Info->Type == MOVE_NULL) {
+    if (Info_1->Type == MOVE_NULL) {
         return;
     }
 
-    SearchData->CounterMoveTable[CHANGE_COLOR(Board->CurrentColor)][Info->PieceTypeFrom][Info->To] = Move;
+    SearchData->CounterMoveTable[CHANGE_COLOR(Board->CurrentColor)][Info_1->PieceTypeFrom][Info_1->To] = Move;
 }
 
 void ClearCounterMove(SearchDataItem* SearchData)

@@ -69,39 +69,9 @@ int Search(BoardItem* Board, SearchDataItem* SearchData, int Alpha, int Beta, co
     int BestScore;
     int StaticScore;
 
-    BOOL GiveCheck;
-
-    int Extension;
-
-    int NewDepth;
-
 #if defined(REVERSE_FUTILITY_PRUNING) || defined(NULL_MOVE_PRUNING)
     BOOL NonPawnMaterial = !!(Board->BB_Pieces[Board->CurrentColor][KNIGHT] | Board->BB_Pieces[Board->CurrentColor][BISHOP] | Board->BB_Pieces[Board->CurrentColor][ROOK] | Board->BB_Pieces[Board->CurrentColor][QUEEN]);
 #endif // REVERSE_FUTILITY_PRUNING || NULL_MOVE_PRUNING
-
-#ifdef RAZORING
-    int RazoringAlpha;
-#endif // RAZORING
-
-#ifdef NULL_MOVE_PRUNING
-    int NullMoveReduction;
-#endif // NULL_MOVE_PRUNING
-
-#ifdef PROBCUT
-    int BetaCut;
-#endif // PROBCUT
-
-#ifdef BAD_CAPTURE_LAST
-    int SEE_Value;
-#endif // BAD_CAPTURE_LAST
-
-#ifdef LATE_MOVE_REDUCTION
-    int LateMoveReduction;
-#endif // LATE_MOVE_REDUCTION
-
-#ifdef SINGULAR_EXTENSION
-    int SingularBeta;
-#endif // SINGULAR_EXTENSION
 
     int* CMH_Pointer[2];
 
@@ -250,7 +220,7 @@ int Search(BoardItem* Board, SearchDataItem* SearchData, int Alpha, int Beta, co
 
 #ifdef RAZORING
         if (Depth <= 3 && (StaticScore + RazoringMargin(Depth)) <= Alpha) { // Hakkapeliitta
-            RazoringAlpha = Alpha - RazoringMargin(Depth);
+            int RazoringAlpha = Alpha - RazoringMargin(Depth);
 
             // Zero window quiescence search
             Score = QuiescenceSearch(Board, SearchData, RazoringAlpha, RazoringAlpha + 1, 0, Ply, FALSE, FALSE);
@@ -267,7 +237,7 @@ int Search(BoardItem* Board, SearchDataItem* SearchData, int Alpha, int Beta, co
 
 #ifdef NULL_MOVE_PRUNING
         if (NonPawnMaterial && Depth > 1 && StaticScore >= Beta) { // Hakkapeliitta
-            NullMoveReduction = 3 + Depth / 6;
+            int NullMoveReduction = 3 + Depth / 6;
 
             MakeNullMove(Board);
 
@@ -277,7 +247,7 @@ int Search(BoardItem* Board, SearchDataItem* SearchData, int Alpha, int Beta, co
 
             SearchData->Nodes++;
 
-            GiveCheck = IsInCheck(Board, Board->CurrentColor);
+            BOOL GiveCheck = IsInCheck(Board, Board->CurrentColor);
 
             // Zero window search for reduced depth
             TempBestMoves[0] = (MoveItem){ 0, 0, 0 }; // End of move list
@@ -303,7 +273,7 @@ int Search(BoardItem* Board, SearchDataItem* SearchData, int Alpha, int Beta, co
 
 #ifdef PROBCUT
         if (Depth >= 5 && Beta < INF - MAX_PLY) { // Xiphos
-            BetaCut = Beta + 100;
+            int BetaCut = Beta + 100;
 
             GenMoveCount = 0;
             GenerateCaptureMoves(Board, SearchData, CMH_Pointer, MoveList, &GenMoveCount);
@@ -337,7 +307,7 @@ int Search(BoardItem* Board, SearchDataItem* SearchData, int Alpha, int Beta, co
 
                 SearchData->Nodes++;
 
-                GiveCheck = IsInCheck(Board, Board->CurrentColor);
+                BOOL GiveCheck = IsInCheck(Board, Board->CurrentColor);
 
                 // Zero window quiescence search
                 Score = -QuiescenceSearch(Board, SearchData, -BetaCut, -BetaCut + 1, 0, Ply + 1, FALSE, GiveCheck);
@@ -418,7 +388,7 @@ NextMove:
             && MoveList[MoveNumber].SortValue >= 0
             && MoveList[MoveNumber].Move != HashMove
         ) {
-            SEE_Value = SEE(Board, MoveList[MoveNumber].Type, MoveList[MoveNumber].Move);
+            int SEE_Value = SEE(Board, MoveList[MoveNumber].Type, MoveList[MoveNumber].Move);
 
             if (SEE_Value < 0) { // Bad capture move
                 MoveList[MoveNumber].SortValue = SEE_Value - SORT_CAPTURE_MOVE_BONUS; // Search move later
@@ -458,9 +428,9 @@ NextMove:
         }
 #endif // PRINT_CURRENT_MOVE
 
-        GiveCheck = IsInCheck(Board, Board->CurrentColor);
+        BOOL GiveCheck = IsInCheck(Board, Board->CurrentColor);
 
-        Extension = 0;
+        int Extension = 0;
 
 #ifdef CHECK_EXTENSION
         if (!Extension && GiveCheck) {
@@ -481,7 +451,7 @@ NextMove:
         ) { // Xiphos
             UnmakeMove(Board);
 
-            SingularBeta = HashScore - Depth;
+            int SingularBeta = HashScore - Depth;
 
             // Zero window search for reduced depth
             TempBestMoves[0] = (MoveItem){ 0, 0, 0 }; // End of move list
@@ -575,7 +545,7 @@ NextMove:
         } // if
 #endif // FUTILITY_PRUNING || LATE_MOVE_PRUNING || SEE_QUIET_MOVE_PRUNING || SEE_CAPTURE_MOVE_PRUNING
 
-        NewDepth = Depth - 1 + Extension;
+        int NewDepth = Depth - 1 + Extension;
 
         if (IsPrincipal && LegalMoveCount == 1) {
             // Search with full window
@@ -585,6 +555,8 @@ NextMove:
         }
         else { // !IsPrincipal || LegalMoveCount > 1
 #ifdef LATE_MOVE_REDUCTION
+            int LateMoveReduction;
+
             if (
                 !Extension
                 && !InCheck

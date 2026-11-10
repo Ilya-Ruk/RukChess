@@ -43,10 +43,8 @@ NodeItem* CreateNode(const MoveItem Move)
 
 void FreeNode(NodeItem* Node)
 {
-    NodeItem* ChildNode;
-
     for (int Index = 0; Index < MAX_CHILDREN; Index++) {
-        ChildNode = Node->Children[Index];
+        NodeItem* ChildNode = Node->Children[Index];
 
         if (ChildNode) {
             FreeNode(ChildNode);
@@ -58,12 +56,10 @@ void FreeNode(NodeItem* Node)
 
 void PrintNode(BoardItem* Board, const NodeItem* Node, FILE* FileOut)
 {
-    NodeItem* ChildNode;
-
     int Total = 0;
 
     for (int Index = 0; Index < MAX_CHILDREN; Index++) {
-        ChildNode = Node->Children[Index];
+        NodeItem* ChildNode = Node->Children[Index];
 
         if (ChildNode) {
             Total += ChildNode->Total;
@@ -75,7 +71,7 @@ void PrintNode(BoardItem* Board, const NodeItem* Node, FILE* FileOut)
     }
 
     for (int Index = 0; Index < MAX_CHILDREN; Index++) {
-        ChildNode = Node->Children[Index];
+        NodeItem* ChildNode = Node->Children[Index];
 
         if (ChildNode) {
             fprintf(FileOut, "0x%016llx %d %d %d\n", Board->Hash, MOVE_FROM(ChildNode->Move.Move), MOVE_TO(ChildNode->Move.Move), ChildNode->Total);
@@ -91,9 +87,6 @@ void PrintNode(BoardItem* Board, const NodeItem* Node, FILE* FileOut)
 
 void GenerateBook(void)
 {
-    FILE* FileIn;
-    FILE* FileOut;
-
     int GameNumber;
 
     int Result;
@@ -103,36 +96,23 @@ void GenerateBook(void)
 
     int Ply;
 
-    NodeItem* RootNode;
     NodeItem* Node;
-    NodeItem* ChildNode;
 
     BOOL Error;
 
     int Stage;
 
-    char Buf[4096];
-    char* Part;
-
-    char FenString[MAX_FEN_LENGTH];
-    char* Fen;
-
-    int GenMoveCount;
-    MoveItem MoveList[MAX_GEN_MOVES];
-
-    BOOL MoveFound;
-
-    char NotateMoveStr[16];
-
     printf("\n");
 
     printf("Generate book file from PGN file...\n");
 
-    RootNode = CreateNode((MoveItem){ 0, 0, 0 });
+    NodeItem* RootNode = CreateNode((MoveItem){ 0, 0, 0 });
 
     if (RootNode == NULL) { // Create node error
         return;
     }
+
+    FILE* FileIn;
 
     fopen_s(&FileIn, "book.pgn", "r");
 
@@ -143,6 +123,8 @@ void GenerateBook(void)
 
         return;
     }
+
+    FILE* FileOut;
 
     fopen_s(&FileOut, DEFAULT_BOOK_FILE_NAME, "w");
 
@@ -183,8 +165,10 @@ void GenerateBook(void)
 
     Stage = STAGE_NONE;
 
+    char Buf[4096];
+
     while (fgets(Buf, sizeof(Buf), FileIn) != NULL) {
-        Part = Buf;
+        const char* Part = Buf;
 
         if (*Part == '\r' || *Part == '\n') { // Empty string
             if (Stage == STAGE_NOTATION) {
@@ -240,7 +224,8 @@ void GenerateBook(void)
             else if (strncmp(Part, "[FEN \"", 6) == 0) { // FEN
                 Part += 6;
 
-                Fen = FenString;
+                char FenString[MAX_FEN_LENGTH];
+                char* Fen = FenString;
 
                 while (*Part != '"') {
                     *Fen++ = *Part++; // Copy FEN
@@ -310,12 +295,17 @@ void GenerateBook(void)
                         continue; // Next character in string
                     }
 
+                    int GenMoveCount;
+                    MoveItem MoveList[MAX_GEN_MOVES];
+
                     GenMoveCount = 0;
                     GenerateAllMoves(&BoardList[0], NULL, NULL, MoveList, &GenMoveCount);
 
-                    MoveFound = FALSE;
+                    BOOL MoveFound = FALSE;
 
                     for (int MoveNumber = 0; MoveNumber < GenMoveCount; MoveNumber++) {
+                        char NotateMoveStr[16];
+
                         NotateMove(&BoardList[0], MoveList[MoveNumber], NotateMoveStr);
 
                         if (strcmp(MoveString, NotateMoveStr) == 0) {
@@ -335,7 +325,7 @@ void GenerateBook(void)
 
                             MoveFound = TRUE;
 
-                            ChildNode = NULL;
+                            NodeItem* ChildNode = NULL;
 
                             for (int Index = 0; Index < MAX_CHILDREN; Index++) {
                                 if (Node->Children[Index]) {
@@ -403,6 +393,8 @@ void GenerateBook(void)
                         printf("Gen. moves:");
 
                         for (int MoveNumber = 0; MoveNumber < GenMoveCount; MoveNumber++) {
+                            char NotateMoveStr[16];
+
                             NotateMove(&BoardList[0], MoveList[MoveNumber], NotateMoveStr);
 
                             printf(" %s%s", BoardName[MOVE_FROM(MoveList[MoveNumber].Move)], BoardName[MOVE_TO(MoveList[MoveNumber].Move)]);
@@ -453,8 +445,8 @@ void GenerateBook(void)
 
 int HashCompare(const void* BookItem1, const void* BookItem2)
 {
-    U64 Hash1 = ((BookItem*)BookItem1)->Hash;
-    U64 Hash2 = ((BookItem*)BookItem2)->Hash;
+    const U64 Hash1 = ((BookItem*)BookItem1)->Hash;
+    const U64 Hash2 = ((BookItem*)BookItem2)->Hash;
 
     if (Hash1 < Hash2) {
         return -1;
@@ -469,30 +461,15 @@ int HashCompare(const void* BookItem1, const void* BookItem2)
 
 void LoadBook(const char* BookFileName)
 {
-    FILE* File;
-
     char Buf[256];
-    char* Part;
-
-    int PositionNumber;
-
-    char HashString[64];
-    char* HashPointer;
-
-    U64 Hash;
-
-    int From;
-    int To;
-
-    int Total;
-
-    BookItem* BookItemPointer;
 
     printf("\n");
 
     printf("Load book...\n");
 
     FreeBook(); // The book may have been loaded earlier
+
+    FILE* File;
 
     fopen_s(&File, BookFileName, "r");
 
@@ -528,12 +505,13 @@ void LoadBook(const char* BookFileName)
 
     // The second cycle to read book items
 
-    PositionNumber = 0;
+    int PositionNumber = 0;
 
     while (fgets(Buf, sizeof(Buf), File) != NULL) {
-        Part = Buf;
+        const char* Part = Buf;
 
-        HashPointer = HashString;
+        char HashString[64];
+        char* HashPointer = HashString;
 
         while (*Part != ' ') {
             *HashPointer++ = *Part++; // Copy hash
@@ -541,9 +519,9 @@ void LoadBook(const char* BookFileName)
 
         *HashPointer = '\0'; // Nul
 
-        Hash = strtoull(HashString, NULL, 16);
+        U64 Hash = strtoull(HashString, NULL, 16);
 
-        if (Hash == 0) { // Hash error
+        if (Hash == 0ULL) { // Hash error
             printf("Read book error!\n");
 
             free(BookStore.Item);
@@ -555,7 +533,7 @@ void LoadBook(const char* BookFileName)
 
         Part++; // Space
 
-        From = atoi(Part);
+        int From = atoi(Part);
 
         if (From < 0 || From > 63) {
             printf("Read book error!\n");
@@ -573,7 +551,7 @@ void LoadBook(const char* BookFileName)
 
         Part++; // Space
 
-        To = atoi(Part);
+        int To = atoi(Part);
 
         if (To < 0 || To > 63) {
             printf("Read book error!\n");
@@ -591,9 +569,9 @@ void LoadBook(const char* BookFileName)
 
         Part++; // Space
 
-        Total = atoi(Part);
+        int Total = atoi(Part);
 
-        BookItemPointer = &BookStore.Item[PositionNumber++];
+        BookItem* BookItemPointer = &BookStore.Item[PositionNumber++];
 
         BookItemPointer->Hash = Hash;
 
@@ -623,31 +601,17 @@ void FreeBook(void)
 
 BOOL GetBookMove(const BoardItem* Board, MoveItem* BestMove)
 {
-    int FirstIndex;
-    int BookCount;
-
-    int Total;
-    int Selected;
-    int Offset;
-
-    BookItem* BookItemPointer;
-
-    int GenMoveCount;
-    MoveItem MoveList[MAX_GEN_MOVES];
-
-    U64 RandomValue;
-
     if (!BookFileLoaded) {
         return FALSE;
     }
 
-    FirstIndex = -1;
-    BookCount = 0;
+    int FirstIndex = -1;
+    int BookCount = 0;
 
-    Total = 0;
+    int Total = 0;
 
     for (int Index = 0; Index < BookStore.Count; Index++) {
-        BookItemPointer = &BookStore.Item[Index];
+        const BookItem* BookItemPointer = &BookStore.Item[Index];
 
         if (BookItemPointer->Hash == Board->Hash) { // Position hash found in book
             if (FirstIndex < 0) {
@@ -666,17 +630,21 @@ BOOL GetBookMove(const BoardItem* Board, MoveItem* BestMove)
 
     // Weighted random choice
 
-    RandomValue = Rand64();
-    Selected = ((int)RandomValue & 0x7FFFFFFF) % Total;
+    U64 RandomValue = Rand64();
 
-    Offset = 0;
+    int Selected = ((int)RandomValue & 0x7FFFFFFF) % Total;
+
+    int Offset = 0;
 
     for (int Index = FirstIndex, Count = 0; Count < BookCount; Index++, Count++) {
-        BookItemPointer = &BookStore.Item[Index];
+        const BookItem* BookItemPointer = &BookStore.Item[Index];
 
         Offset += BookItemPointer->Total;
 
         if (Selected < Offset) {
+            int GenMoveCount;
+            MoveItem MoveList[MAX_GEN_MOVES];
+
             GenMoveCount = 0;
             GenerateAllMoves(Board, NULL, NULL, MoveList, &GenMoveCount);
 

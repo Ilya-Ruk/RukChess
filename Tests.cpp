@@ -455,10 +455,6 @@ const int WinAtChessTestCount = sizeof(WinAtChessTests) / sizeof(char*) / 2;
 
 void GeneratorTest1(void)
 {
-    U64 ResultNodes;
-
-    char* ResultString;
-
     // Cache not used
 
     InitHashTable(1);
@@ -480,7 +476,9 @@ void GeneratorTest1(void)
         printf("\n");
 
         for (int Depth = 1; Depth <= GeneratorTests[TestNumber].Depth; Depth++) {
-            ResultNodes = CountLegalMoves(&BoardList[0], Depth);
+            U64 ResultNodes = CountLegalMoves(&BoardList[0], Depth);
+
+            char* ResultString;
 
             if (ResultNodes == GeneratorTests[TestNumber].Nodes[Depth - 1]) {
                 ResultString = "PASSED";
@@ -497,8 +495,6 @@ void GeneratorTest1(void)
 void GeneratorTest2(void)
 {
     int InputDepth;
-
-    U64 ResultNodes;
 
     // Cache not used
 
@@ -520,7 +516,7 @@ void GeneratorTest2(void)
     printf("\n");
 
     for (int Depth = 1; Depth <= MaxDepth; Depth++) {
-        ResultNodes = CountLegalMoves(&BoardList[0], Depth);
+        U64 ResultNodes = CountLegalMoves(&BoardList[0], Depth);
 
         printf("Depth = %2d Result nodes = %10llu\n", Depth, ResultNodes);
     }
@@ -528,13 +524,6 @@ void GeneratorTest2(void)
 
 void Tests(const char* Tests[], const int TestCount)
 {
-    const char* Fen;
-    const char* BestMoves;
-
-    char NotateMoveStr[16];
-
-    char* ResultString;
-
     int TestPassedCount = 0;
 
     InputParametrs();
@@ -546,8 +535,8 @@ void Tests(const char* Tests[], const int TestCount)
 
         printf("Test %d\n", TestNumber + 1);
 
-        Fen = Tests[TestNumber * 2];
-        BestMoves = Tests[TestNumber * 2 + 1];
+        const char* Fen = Tests[TestNumber * 2];
+        const char* BestMoves = Tests[TestNumber * 2 + 1];
 
         printf("FEN = %s\n", Fen);
         printf("Best moves = %s\n", BestMoves);
@@ -565,7 +554,11 @@ void Tests(const char* Tests[], const int TestCount)
         printf("\n");
 
         if (SearchDataList[0].BestMoves[0].Move) {
+            char NotateMoveStr[16];
+
             NotateMove(&BoardList[0], SearchDataList[0].BestMoves[0], NotateMoveStr);
+
+            char* ResultString;
 
             if (strstr(BestMoves, NotateMoveStr) != NULL) {
                 ResultString = "PASSED";
@@ -666,8 +659,6 @@ void EvaluateTests(const char* Tests[], const int TestCount)
 {
     int MaxCycles;
 
-    const char* Fen;
-
     LARGE_INTEGER EvaluateTimeStart;
     LARGE_INTEGER EvaluateTimeStop;
 
@@ -688,7 +679,7 @@ void EvaluateTests(const char* Tests[], const int TestCount)
         printf("Cycle = %d\n", Cycle + 1);
 
         for (int TestNumber = 0; TestNumber < TestCount; TestNumber++) {
-            Fen = Tests[TestNumber * 2];
+            const char* Fen = Tests[TestNumber * 2];
 
             SetFen(&BoardList[0], Fen);
 

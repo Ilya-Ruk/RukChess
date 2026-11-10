@@ -17,10 +17,6 @@
 
 int main(int argc, char** argv)
 {
-    char Buf[64];
-
-    int Choice;
-
     // Print program name, program version and copyright information
 
     printf("%s %s\n", PROGRAM_NAME, PROGRAM_VERSION);
@@ -111,6 +107,8 @@ int main(int argc, char** argv)
 
     printf("Use UCI commands or press Enter to display the menu\n");
 
+    char Buf[64];
+
     fgets(Buf, sizeof(Buf), stdin);
 
     if (strncmp(Buf, "uci", 3) == 0) { // UCI
@@ -170,6 +168,8 @@ int main(int argc, char** argv)
         printf("15: Exit\n");
 
         printf("\n");
+
+        int Choice;
 
         printf("Choice: ");
         scanf_s("%d", &Choice);

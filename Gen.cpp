@@ -57,7 +57,7 @@ void AddMove(const BoardItem* Board, const SearchDataItem* SearchData, const int
             MoveList[*GenMoveCount].SortValue = SORT_CAPTURE_MOVE_BONUS + ((PIECE_TYPE(Board->Pieces[To]) + 1) << 3) - (PIECE_TYPE(Board->Pieces[From]) + 1);
         }
         else {
-            if (SearchData) {
+            if (SearchData != NULL) {
                 MoveList[*GenMoveCount].SortValue = SearchData->HeuristicTable[Board->CurrentColor][PIECE_TYPE(Board->Pieces[From])][To];
             }
             else {

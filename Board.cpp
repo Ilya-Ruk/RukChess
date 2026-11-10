@@ -71,7 +71,7 @@ BOOL IsSquareAttacked(const BoardItem* Board, const int Square, const int Color)
     assert(Square >= SQ_A8 && Square <= SQ_H1);
     assert(Color == WHITE || Color == BLACK);
 
-    int EnemyColor = CHANGE_COLOR(Color);
+    const int EnemyColor = CHANGE_COLOR(Color);
 
     U64 Attackers = 0ULL;
 
@@ -97,7 +97,7 @@ BOOL IsInCheck(const BoardItem* Board, const int Color)
 {
     assert(Color == WHITE || Color == BLACK);
 
-    int KingSquare = LSB(Board->BB_Pieces[Color][KING]);
+    const int KingSquare = LSB(Board->BB_Pieces[Color][KING]);
 
     return IsSquareAttacked(Board, KingSquare, Color);
 }
@@ -138,10 +138,6 @@ void NotateMove(BoardItem* Board, const MoveItem Move, char* Result)
 
     int PieceTypeFrom = PIECE_TYPE(Board->Pieces[From]);
 
-    int GenMoveCount;
-    MoveItem MoveList[MAX_GEN_MOVES];
-
-    BOOL GiveCheck;
     BOOL LegalMoves = FALSE;
 
     BOOL Ambiguous = FALSE;
@@ -154,6 +150,9 @@ void NotateMove(BoardItem* Board, const MoveItem Move, char* Result)
     if (PieceTypeFrom == PAWN && (Move.Type & MOVE_CAPTURE)) {
         ShowFileFrom = TRUE;
     }
+
+    int GenMoveCount;
+    MoveItem MoveList[MAX_GEN_MOVES];
 
     GenMoveCount = 0;
     GenerateAllMoves(Board, NULL, NULL, MoveList, &GenMoveCount);
@@ -222,7 +221,7 @@ void NotateMove(BoardItem* Board, const MoveItem Move, char* Result)
         return;
     }
 
-    GiveCheck = IsInCheck(Board, Board->CurrentColor);
+    BOOL GiveCheck = IsInCheck(Board, Board->CurrentColor);
 
     if (GiveCheck) {
         LegalMoves = HasLegalMoves(Board);
@@ -328,11 +327,11 @@ int PositionRepeat1(const BoardItem* Board)
 
 int PositionRepeat2(const BoardItem* Board)
 {
-    int RepeatCounter = 0;
-
     if (Board->FiftyMove < 4) {
         return 0;
     }
+
+    int RepeatCounter = 0;
 
     for (int Index = Board->HalfMoveNumber - 2; Index >= Board->HalfMoveNumber - Board->FiftyMove; Index -= 2) {
         if (Board->MoveTable[Index].Hash == Board->Hash) {
@@ -403,16 +402,9 @@ int SetFen(BoardItem* Board, const char* Fen)
 {
     const char* Part = Fen;
 
-    int Square;
-
-    int File;
-    int Rank;
-
-    int MoveNumber;
-
     // Clear board
 
-    for (Square = 0; Square < 64; Square++) {
+    for (int Square = 0; Square < 64; Square++) {
         Board->Pieces[Square] = NO_PIECE;
     }
 
@@ -427,7 +419,7 @@ int SetFen(BoardItem* Board, const char* Fen)
 
     // Load pieces
 
-    Square = 0;
+    int Square = 0;
 
     while (*Part != ' ') {
         if (*Part == 'P') { // White pawn
@@ -586,8 +578,8 @@ int SetFen(BoardItem* Board, const char* Fen)
         Part++;
     }
     else {
-        File = Part[0] - 'a';
-        Rank = 7 - (Part[1] - '1');
+        int File = Part[0] - 'a';
+        int Rank = 7 - (Part[1] - '1');
 
         Board->EnPassantSquare = SQUARE_CREATE(File, Rank);
 
@@ -608,7 +600,7 @@ int SetFen(BoardItem* Board, const char* Fen)
 
     Part++; // Space
 
-    MoveNumber = atoi(Part);
+    int MoveNumber = atoi(Part);
 
     Board->HalfMoveNumber = (MoveNumber - 1) * 2 + Board->CurrentColor;
 
@@ -736,14 +728,14 @@ void GetFen(const BoardItem* Board, char* Fen)
 
 U64 CountLegalMoves(BoardItem* Board, const int Depth)
 {
-    int GenMoveCount;
-    MoveItem MoveList[MAX_GEN_MOVES];
-
-    U64 LegalMoveCount = 0ULL;
-
     if (Depth == 0) {
         return 1ULL;
     }
+
+    U64 LegalMoveCount = 0ULL;
+
+    int GenMoveCount;
+    MoveItem MoveList[MAX_GEN_MOVES];
 
     GenMoveCount = 0;
     GenerateAllMoves(Board, NULL, NULL, MoveList, &GenMoveCount);

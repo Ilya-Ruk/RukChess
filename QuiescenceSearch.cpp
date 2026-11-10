@@ -47,8 +47,6 @@ int QuiescenceSearch(BoardItem* Board, SearchDataItem* SearchData, int Alpha, in
     int BestScore;
     int StaticScore;
 
-    BOOL GiveCheck;
-
 #ifdef USE_STATISTIC
     SearchData->QuiescenceCount++;
 #endif // USE_STATISTIC
@@ -203,7 +201,7 @@ int QuiescenceSearch(BoardItem* Board, SearchDataItem* SearchData, int Alpha, in
 
         SearchData->Nodes++;
 
-        GiveCheck = IsInCheck(Board, Board->CurrentColor);
+        BOOL GiveCheck = IsInCheck(Board, Board->CurrentColor);
 
         Score = -QuiescenceSearch(Board, SearchData, -Beta, -Alpha, Depth - 1, Ply + 1, IsPrincipal, GiveCheck);
 

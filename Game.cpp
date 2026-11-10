@@ -112,8 +112,6 @@ void SaveBestMoves(MoveItem* BestMoves, const MoveItem BestMove, const MoveItem*
 
 BOOL PrintResult(const BOOL InCheck, const MoveItem BestMove, const MoveItem PonderMove, const int BestScore)
 {
-    char NotateMoveStr[16];
-
     U64 Nodes = 0ULL;
 
 #ifdef USE_STATISTIC
@@ -190,6 +188,8 @@ BOOL PrintResult(const BOOL InCheck, const MoveItem BestMove, const MoveItem Pon
 
             return FALSE;
         }
+
+        char NotateMoveStr[16];
 
         NotateMove(&BoardList[0], BestMove, NotateMoveStr);
 
@@ -274,24 +274,6 @@ BOOL PrintResult(const BOOL InCheck, const MoveItem BestMove, const MoveItem Pon
 
 BOOL ComputerMove(void)
 {
-    BOOL InCheck;
-
-    int ThreadId;
-
-    BoardItem* ThreadBoard;
-    SearchDataItem* ThreadSearchData;
-
-    int ThreadScore;
-
-#ifdef ASPIRATION_WINDOW
-    int Alpha;
-    int Beta;
-
-    int Delta;
-#endif // ASPIRATION_WINDOW
-
-    U64 TargetTimeLocal;
-
     int BestScore = 0;
 
     MoveItem BestMove = (MoveItem){ 0, 0, 0 };
@@ -312,7 +294,7 @@ BOOL ComputerMove(void)
 
     StopSearch = FALSE;
 
-    InCheck = IsInCheck(&BoardList[0], BoardList[0].CurrentColor);
+    BOOL InCheck = IsInCheck(&BoardList[0], BoardList[0].CurrentColor);
 
     AddHashStoreIteration();
 
@@ -324,20 +306,16 @@ BOOL ComputerMove(void)
         BoardList[Thread] = BoardList[0];
     }
 
-#ifdef ASPIRATION_WINDOW
-#pragma omp parallel private(ThreadId, ThreadBoard, ThreadSearchData, ThreadScore, Alpha, Beta, Delta, TargetTimeLocal)
-#else
-#pragma omp parallel private(ThreadId, ThreadBoard, ThreadSearchData, ThreadScore, TargetTimeLocal)
-#endif // ASPIRATION_WINDOW
+#pragma omp parallel
     {
-        ThreadId = omp_get_thread_num();
+        int ThreadId = omp_get_thread_num();
 
 #if defined(BIND_THREAD_V1) || defined(BIND_THREAD_V2)
         BindThread(ThreadId);
 #endif // BIND_THREAD_V1 || BIND_THREAD_V2
 
-        ThreadBoard = &BoardList[ThreadId];
-        ThreadSearchData = &SearchDataList[ThreadId];
+        BoardItem* ThreadBoard = &BoardList[ThreadId];
+        SearchDataItem* ThreadSearchData = &SearchDataList[ThreadId];
 
         ThreadSearchData->Nodes = 0ULL;
 
@@ -362,15 +340,15 @@ BOOL ComputerMove(void)
         ClearCounterMove(ThreadSearchData);
 #endif // COUNTER_MOVE
 
-        ThreadScore = 0;
+        int ThreadScore = 0;
 
         for (int Depth = 1; Depth <= MaxDepth; Depth++) {
 #ifdef ASPIRATION_WINDOW
             if (Depth >= ASPIRATION_WINDOW_START_DEPTH) {
-                Delta = ASPIRATION_WINDOW_INIT_DELTA;
+                int Delta = ASPIRATION_WINDOW_INIT_DELTA;
 
-                Alpha = MAX((ThreadScore - Delta), -INF);
-                Beta = MIN((ThreadScore + Delta), INF);
+                int Alpha = MAX((ThreadScore - Delta), -INF);
+                int Beta = MIN((ThreadScore + Delta), INF);
 
                 while (Delta <= INF) {
                     ThreadScore = Search(ThreadBoard, ThreadSearchData, Alpha, Beta, Depth, 0, ThreadSearchData->BestMoves, TRUE, InCheck, FALSE, 0);
@@ -410,7 +388,7 @@ BOOL ComputerMove(void)
 
                 PrintBestMoves(CompletedDepth, ThreadSearchData->BestMoves, ThreadScore);
 
-                TargetTimeLocal = TargetTime[TimeStep];
+                U64 TargetTimeLocal = TargetTime[TimeStep];
 
                 if (TargetTimeLocal > 0ULL && BestScore > ThreadScore) {
                     TargetTimeLocal = (U64)((double)TargetTimeLocal * MIN((1.0 + (double)(BestScore - ThreadScore) / 80.0), 2.0));
@@ -474,14 +452,6 @@ BOOL HumanMove(void)
     int File;
     int Rank;
 
-    int From;
-    int To;
-    int PromotePieceType;
-
-    int Move;
-
-    char NotateMoveStr[16];
-
     int GenMoveCount;
     MoveItem MoveList[MAX_GEN_MOVES];
 
@@ -531,12 +501,14 @@ BOOL HumanMove(void)
             File = ReadStr[0] - 'a';
             Rank = 7 - (ReadStr[1] - '1');
 
-            From = SQUARE_CREATE(File, Rank);
+            int From = SQUARE_CREATE(File, Rank);
 
             File = ReadStr[2] - 'a';
             Rank = 7 - (ReadStr[3] - '1');
 
-            To = SQUARE_CREATE(File, Rank);
+            int To = SQUARE_CREATE(File, Rank);
+
+            int PromotePieceType;
 
             if (ReadStr[4] == 'N' || ReadStr[4] == 'n') {
                 PromotePieceType = KNIGHT;
@@ -554,10 +526,12 @@ BOOL HumanMove(void)
                 PromotePieceType = 0;
             }
 
-            Move = MOVE_CREATE(From, To, PromotePieceType);
+            int Move = MOVE_CREATE(From, To, PromotePieceType);
 
             for (int MoveNumber = 0; MoveNumber < GenMoveCount; MoveNumber++) {
                 if (MoveList[MoveNumber].Move == Move) {
+                    char NotateMoveStr[16];
+
                     NotateMove(&BoardList[0], MoveList[MoveNumber], NotateMoveStr);
 
                     MakeMove(&BoardList[0], MoveList[MoveNumber]);

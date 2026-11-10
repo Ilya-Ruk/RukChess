@@ -19,12 +19,11 @@ U64 EnPassantHash[64];      // [Square]
 
 void InitHashTable(const int SizeInMb) // Xiphos
 {
-    U64 Items;
-    U64 RoundItems = 1ULL;
-
     FreeHashTable(); // The hash table may have been initialized earlier
 
-    Items = ((U64)SizeInMb << 20) / sizeof(HashItem);
+    U64 Items = ((U64)SizeInMb << 20) / sizeof(HashItem);
+
+    U64 RoundItems = 1ULL;
 
     while (Items >>= 1) {
         RoundItems <<= 1;
@@ -90,41 +89,29 @@ U64 GetBoardHash(const BoardItem* Board)
 {
     U64 Hash = 0ULL;
 
-    U64 Pieces;
+    U64 WhitePieces = Board->BB_WhitePieces;
 
-    int Square;
-
-    // White pieces
-
-    Pieces = Board->BB_WhitePieces;
-
-    while (Pieces) {
-        Square = LSB(Pieces);
+    while (WhitePieces) {
+        int Square = LSB(WhitePieces);
 
         Hash ^= PieceHash[WHITE][PIECE_TYPE(Board->Pieces[Square])][Square];
 
-        Pieces &= Pieces - 1ULL;
+        WhitePieces &= WhitePieces - 1ULL;
     }
 
-    // Black pieces
+    U64 BlackPieces = Board->BB_BlackPieces;
 
-    Pieces = Board->BB_BlackPieces;
-
-    while (Pieces) {
-        Square = LSB(Pieces);
+    while (BlackPieces) {
+        int Square = LSB(BlackPieces);
 
         Hash ^= PieceHash[BLACK][PIECE_TYPE(Board->Pieces[Square])][Square];
 
-        Pieces &= Pieces - 1ULL;
+        BlackPieces &= BlackPieces - 1ULL;
     }
-
-    // Color
 
     if (Board->CurrentColor == BLACK) {
         Hash ^= ColorHash;
     }
-
-    // En passant
 
     if (Board->EnPassantSquare != -1) {
         Hash ^= EnPassantHash[Board->EnPassantSquare];

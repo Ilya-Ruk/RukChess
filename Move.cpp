@@ -15,8 +15,8 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
 {
     HistoryItem* Info = &Board->MoveTable[Board->HalfMoveNumber++];
 
-    int From = MOVE_FROM(Move.Move);
-    int To = MOVE_TO(Move.Move);
+    const int From = MOVE_FROM(Move.Move);
+    const int To = MOVE_TO(Move.Move);
 
     assert(From >= SQ_A8 && From <= SQ_H1);
     assert(To >= SQ_A8 && To <= SQ_H1);

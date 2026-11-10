@@ -17,45 +17,6 @@
 
 void UCI(void)
 {
-    char Buf[4096];
-    char* Part;
-
-    int File;
-    int Rank;
-
-    int From;
-    int To;
-    int PromotePieceType;
-
-    int Move;
-
-    BOOL MoveFound;
-    BOOL MoveInCheck;
-
-    int GenMoveCount;
-    MoveItem MoveList[MAX_GEN_MOVES];
-
-    int HashSize;
-    int Threads;
-
-    char BookFileNameString[256];
-    char* BookFileName;
-
-    char NnueFileNameString[256];
-    char* NnueFileName;
-
-    U64 WTime;
-    U64 BTime;
-
-    U64 WInc;
-    U64 BInc;
-
-    int MovesToGo;
-
-    int Mate;
-
-    double Ratio;
-
     setvbuf(stdin, NULL, _IONBF, 0);
     setvbuf(stdout, NULL, _IONBF, 0);
 
@@ -73,9 +34,10 @@ void UCI(void)
     printf("uciok\n");
 
     while (TRUE) {
-        fgets(Buf, sizeof(Buf), stdin);
+        char Buf[4096];
+        const char* Part = Buf;
 
-        Part = Buf;
+        fgets(Buf, sizeof(Buf), stdin);
 
         if (strncmp(Part, "isready", 7) == 0) {
             printf("readyok\n");
@@ -88,7 +50,7 @@ void UCI(void)
         else if (strncmp(Part, "setoption name Hash value ", 26) == 0) {
             Part += 26;
 
-            HashSize = atoi(Part);
+            int HashSize = atoi(Part);
             HashSize = (HashSize >= 1 && HashSize <= MAX_HASH_TABLE_SIZE) ? HashSize : DEFAULT_HASH_TABLE_SIZE;
 
             InitHashTable(HashSize);
@@ -96,7 +58,7 @@ void UCI(void)
         else if (strncmp(Part, "setoption name Threads value ", 29) == 0) {
             Part += 29;
 
-            Threads = atoi(Part);
+            int Threads = atoi(Part);
             Threads = (Threads >= 1 && Threads <= MaxThreads) ? Threads : DEFAULT_THREADS;
 
             omp_set_num_threads(Threads);
@@ -104,7 +66,8 @@ void UCI(void)
         else if (strncmp(Part, "setoption name BookFile value ", 30) == 0) {
             Part += 30;
 
-            BookFileName = BookFileNameString;
+            char BookFileNameString[256];
+            char* BookFileName = BookFileNameString;
 
             while (*Part != '\r' && *Part != '\n' && *Part != '\0') {
                 *BookFileName++ = *Part++; // Copy file name
@@ -117,7 +80,8 @@ void UCI(void)
         else if (strncmp(Part, "setoption name NnueFile value ", 30) == 0) {
             Part += 30;
 
-            NnueFileName = NnueFileNameString;
+            char NnueFileNameString[256];
+            char* NnueFileName = NnueFileNameString;
 
             while (*Part != '\r' && *Part != '\n' && *Part != '\0') {
                 *NnueFileName++ = *Part++; // Copy file name
@@ -157,15 +121,20 @@ void UCI(void)
                 while (*Part != '\r' && *Part != '\n' && *Part != '\0') {
                     // Move (e2e4, e7e8q)
 
+                    int File;
+                    int Rank;
+
                     File = Part[0] - 'a';
                     Rank = 7 - (Part[1] - '1');
 
-                    From = SQUARE_CREATE(File, Rank);
+                    int From = SQUARE_CREATE(File, Rank);
 
                     File = Part[2] - 'a';
                     Rank = 7 - (Part[3] - '1');
 
-                    To = SQUARE_CREATE(File, Rank);
+                    int To = SQUARE_CREATE(File, Rank);
+
+                    int PromotePieceType;
 
                     if (Part[4] == 'N' || Part[4] == 'n') {
                         PromotePieceType = KNIGHT;
@@ -193,10 +162,13 @@ void UCI(void)
                         Part += 4;
                     }
 
-                    Move = MOVE_CREATE(From, To, PromotePieceType);
+                    int Move = MOVE_CREATE(From, To, PromotePieceType);
 
-                    MoveFound = FALSE;
-                    MoveInCheck = FALSE;
+                    BOOL MoveFound = FALSE;
+                    BOOL MoveInCheck = FALSE;
+
+                    int GenMoveCount;
+                    MoveItem MoveList[MAX_GEN_MOVES];
 
                     GenMoveCount = 0;
                     GenerateAllMoves(&BoardList[0], NULL, NULL, MoveList, &GenMoveCount);
@@ -238,13 +210,13 @@ void UCI(void)
         else if (strncmp(Part, "go ", 3) == 0) {
             Part += 3;
 
-            WTime = 0ULL;
-            BTime = 0ULL;
+            U64 WTime = 0ULL;
+            U64 BTime = 0ULL;
 
-            WInc = 0ULL;
-            BInc = 0ULL;
+            U64 WInc = 0ULL;
+            U64 BInc = 0ULL;
 
-            MovesToGo = 0;
+            int MovesToGo = 0;
 
             MaxDepth = 0;
 
@@ -295,7 +267,7 @@ void UCI(void)
                 else if (strncmp(Part, "mate ", 5) == 0) {
                     Part += 5;
 
-                    Mate = atoi(Part);
+                    int Mate = atoi(Part);
 
                     MaxDepth = Mate * 2 - 1;
                 }
@@ -339,7 +311,7 @@ void UCI(void)
                     TimeForMove = (MaxTime / (U64)MovesToGo) + WInc;
 
                     for (int Step = 0; Step < MAX_TIME_STEPS; Step++) {
-                        Ratio = MIN_TIME_RATIO + Step * (MAX_TIME_RATIO - MIN_TIME_RATIO) / (MAX_TIME_STEPS - 1);
+                        double Ratio = MIN_TIME_RATIO + Step * (MAX_TIME_RATIO - MIN_TIME_RATIO) / (MAX_TIME_STEPS - 1);
 
                         TargetTime[Step] = MIN((U64)(Ratio * (double)TimeForMove), MaxTime);
                     }
@@ -357,7 +329,7 @@ void UCI(void)
                     TimeForMove = (MaxTime / (U64)MovesToGo) + BInc;
 
                     for (int Step = 0; Step < MAX_TIME_STEPS; Step++) {
-                        Ratio = MIN_TIME_RATIO + Step * (MAX_TIME_RATIO - MIN_TIME_RATIO) / (MAX_TIME_STEPS - 1);
+                        double Ratio = MIN_TIME_RATIO + Step * (MAX_TIME_RATIO - MIN_TIME_RATIO) / (MAX_TIME_STEPS - 1);
 
                         TargetTime[Step] = MIN((U64)(Ratio * (double)TimeForMove), MaxTime);
                     }
