@@ -363,7 +363,7 @@ BOOL IsInsufficientMaterial(const BoardItem* Board)
     return FALSE;
 }
 
-void PrintBoard(const BoardItem* Board)
+void PrintBoard(BoardItem* Board)
 {
     printf("\n");
 

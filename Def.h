@@ -11,8 +11,8 @@
 
 //#define DEBUG_MOVE_BIT_BOARD
 //#define DEBUG_MOVE_HASH
-//#define DEBUG_MOVE_NNUE
 //#define DEBUG_SEE
+//#define DEBUG_NNUE_UPDATE
 
 // Common
 

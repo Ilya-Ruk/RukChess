@@ -225,7 +225,7 @@ BOOL PrintResult(const BOOL InCheck, const MoveItem BestMove, const MoveItem Pon
 #ifdef USE_STATISTIC
         printf("\n");
 
-        printf("Hash count %llu Evaluate count %llu Cutoff count %llu Quiescence count %llu\n", HashCount, EvaluateCount, CutoffCount, QuiescenceCount);
+        printf("Hash hit %llu Evaluate %llu Cutoff %llu Quiescence %llu\n", HashCount, EvaluateCount, CutoffCount, QuiescenceCount);
 #endif // USE_STATISTIC
 
         if (BestScore <= -INF + 1 || BestScore >= INF - 1) { // Checkmate

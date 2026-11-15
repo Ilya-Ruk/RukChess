@@ -46,6 +46,8 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
 
     Info->Hash = Board->Hash;
 
+    Info->Accumulator = Board->Accumulator;
+
 #ifdef DEBUG_MOVE_BIT_BOARD
     Info->BB_WhitePieces = Board->BB_WhitePieces;
     Info->BB_BlackPieces = Board->BB_BlackPieces;
@@ -78,16 +80,12 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
 
             Board->Hash ^= PieceHash[WHITE][ROOK][SQ_H1];
 
-            AccumulatorSub(Board, SQ_H1, PIECE_CREATE(ROOK, WHITE));
-
             Board->Pieces[SQ_F1] = PIECE_CREATE(ROOK, WHITE);
 
             Board->BB_WhitePieces |= BB_SQUARE(SQ_F1);
             Board->BB_Pieces[WHITE][ROOK] |= BB_SQUARE(SQ_F1);
 
             Board->Hash ^= PieceHash[WHITE][ROOK][SQ_F1];
-
-            AccumulatorAdd(Board, SQ_F1, PIECE_CREATE(ROOK, WHITE));
         }
 
         if (Move.Type & MOVE_CASTLE_QUEEN) {
@@ -98,16 +96,12 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
 
             Board->Hash ^= PieceHash[WHITE][ROOK][SQ_A1];
 
-            AccumulatorSub(Board, SQ_A1, PIECE_CREATE(ROOK, WHITE));
-
             Board->Pieces[SQ_D1] = PIECE_CREATE(ROOK, WHITE);
 
             Board->BB_WhitePieces |= BB_SQUARE(SQ_D1);
             Board->BB_Pieces[WHITE][ROOK] |= BB_SQUARE(SQ_D1);
 
             Board->Hash ^= PieceHash[WHITE][ROOK][SQ_D1];
-
-            AccumulatorAdd(Board, SQ_D1, PIECE_CREATE(ROOK, WHITE));
         }
 
         Board->CastleFlags &= CastleMask[From] & CastleMask[To];
@@ -123,8 +117,6 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
             Board->BB_Pieces[BLACK][PAWN] &= ~BB_SQUARE(Info->CapturePawnSquare);
 
             Board->Hash ^= PieceHash[BLACK][PAWN][Info->CapturePawnSquare];
-
-            AccumulatorSub(Board, Info->CapturePawnSquare, PIECE_CREATE(PAWN, BLACK));
         }
         else if (Move.Type & MOVE_CAPTURE) {
             Board->Pieces[To] = NO_PIECE;
@@ -133,8 +125,6 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
             Board->BB_Pieces[BLACK][Info->PieceTypeTo] &= ~BB_SQUARE(To);
 
             Board->Hash ^= PieceHash[BLACK][Info->PieceTypeTo][To];
-
-            AccumulatorSub(Board, To, PIECE_CREATE(Info->PieceTypeTo, BLACK));
         }
 
         if (Move.Type & MOVE_PAWN_PROMOTE) {
@@ -144,8 +134,6 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
             Board->BB_Pieces[WHITE][Info->PromotePieceType] |= BB_SQUARE(To);
 
             Board->Hash ^= PieceHash[WHITE][Info->PromotePieceType][To];
-
-            AccumulatorAdd(Board, To, PIECE_CREATE(Info->PromotePieceType, WHITE));
         }
         else {
             Board->Pieces[To] = Board->Pieces[From];
@@ -154,8 +142,6 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
             Board->BB_Pieces[WHITE][Info->PieceTypeFrom] |= BB_SQUARE(To);
 
             Board->Hash ^= PieceHash[WHITE][Info->PieceTypeFrom][To];
-
-            AccumulatorAdd(Board, To, PIECE_CREATE(Info->PieceTypeFrom, WHITE));
         }
 
         Board->Pieces[From] = NO_PIECE;
@@ -164,8 +150,6 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
         Board->BB_Pieces[WHITE][Info->PieceTypeFrom] &= ~BB_SQUARE(From);
 
         Board->Hash ^= PieceHash[WHITE][Info->PieceTypeFrom][From];
-
-        AccumulatorSub(Board, From, PIECE_CREATE(Info->PieceTypeFrom, WHITE));
     }
     else { // BLACK
         if (Move.Type & MOVE_PAWN_2) {
@@ -182,16 +166,12 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
 
             Board->Hash ^= PieceHash[BLACK][ROOK][SQ_H8];
 
-            AccumulatorSub(Board, SQ_H8, PIECE_CREATE(ROOK, BLACK));
-
             Board->Pieces[SQ_F8] = PIECE_CREATE(ROOK, BLACK);
 
             Board->BB_BlackPieces |= BB_SQUARE(SQ_F8);
             Board->BB_Pieces[BLACK][ROOK] |= BB_SQUARE(SQ_F8);
 
             Board->Hash ^= PieceHash[BLACK][ROOK][SQ_F8];
-
-            AccumulatorAdd(Board, SQ_F8, PIECE_CREATE(ROOK, BLACK));
         }
 
         if (Move.Type & MOVE_CASTLE_QUEEN) {
@@ -202,16 +182,12 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
 
             Board->Hash ^= PieceHash[BLACK][ROOK][SQ_A8];
 
-            AccumulatorSub(Board, SQ_A8, PIECE_CREATE(ROOK, BLACK));
-
             Board->Pieces[SQ_D8] = PIECE_CREATE(ROOK, BLACK);
 
             Board->BB_BlackPieces |= BB_SQUARE(SQ_D8);
             Board->BB_Pieces[BLACK][ROOK] |= BB_SQUARE(SQ_D8);
 
             Board->Hash ^= PieceHash[BLACK][ROOK][SQ_D8];
-
-            AccumulatorAdd(Board, SQ_D8, PIECE_CREATE(ROOK, BLACK));
         }
 
         Board->CastleFlags &= CastleMask[From] & CastleMask[To];
@@ -227,8 +203,6 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
             Board->BB_Pieces[WHITE][PAWN] &= ~BB_SQUARE(Info->CapturePawnSquare);
 
             Board->Hash ^= PieceHash[WHITE][PAWN][Info->CapturePawnSquare];
-
-            AccumulatorSub(Board, Info->CapturePawnSquare, PIECE_CREATE(PAWN, WHITE));
         }
         else if (Move.Type & MOVE_CAPTURE) {
             Board->Pieces[To] = NO_PIECE;
@@ -237,8 +211,6 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
             Board->BB_Pieces[WHITE][Info->PieceTypeTo] &= ~BB_SQUARE(To);
 
             Board->Hash ^= PieceHash[WHITE][Info->PieceTypeTo][To];
-
-            AccumulatorSub(Board, To, PIECE_CREATE(Info->PieceTypeTo, WHITE));
         }
 
         if (Move.Type & MOVE_PAWN_PROMOTE) {
@@ -248,8 +220,6 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
             Board->BB_Pieces[BLACK][Info->PromotePieceType] |= BB_SQUARE(To);
 
             Board->Hash ^= PieceHash[BLACK][Info->PromotePieceType][To];
-
-            AccumulatorAdd(Board, To, PIECE_CREATE(Info->PromotePieceType, BLACK));
         }
         else {
             Board->Pieces[To] = Board->Pieces[From];
@@ -258,8 +228,6 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
             Board->BB_Pieces[BLACK][Info->PieceTypeFrom] |= BB_SQUARE(To);
 
             Board->Hash ^= PieceHash[BLACK][Info->PieceTypeFrom][To];
-
-            AccumulatorAdd(Board, To, PIECE_CREATE(Info->PieceTypeFrom, BLACK));
         }
 
         Board->Pieces[From] = NO_PIECE;
@@ -268,8 +236,6 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
         Board->BB_Pieces[BLACK][Info->PieceTypeFrom] &= ~BB_SQUARE(From);
 
         Board->Hash ^= PieceHash[BLACK][Info->PieceTypeFrom][From];
-
-        AccumulatorSub(Board, From, PIECE_CREATE(Info->PieceTypeFrom, BLACK));
     }
 
     if (Move.Type & (MOVE_CAPTURE | MOVE_PAWN | MOVE_PAWN_2)) {
@@ -283,6 +249,8 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
 
     Board->Hash ^= ColorHash;
 
+    Board->Accumulator.AccumulatorActual = FALSE;
+
 #ifdef DEBUG_MOVE_HASH
     U64 Hash = GetBoardHash(Board);
 
@@ -290,24 +258,6 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
         printf("-- Board hash error (make move)!\n");
     }
 #endif // DEBUG_MOVE_HASH
-
-#ifdef DEBUG_MOVE_NNUE
-    I16 Accumulator[2][HIDDEN_DIMENSION]; // [Perspective][Hidden dimension]
-
-    memcpy(Accumulator, Board->Accumulator.Accumulator, sizeof(Accumulator));
-
-    InitAccumulator(Board);
-
-    for (int Perspective = 0; Perspective < 2; Perspective++) { // STM/XSTM
-        for (int Index = 0; Index < HIDDEN_DIMENSION; Index++) {
-            if (Board->Accumulator.Accumulator[Perspective][Index] != Accumulator[Perspective][Index]) {
-                printf("-- Accumulator error (make move)!\n");
-
-                break 2;
-            }
-        }
-    }
-#endif // DEBUG_MOVE_NNUE
 }
 
 void UnmakeMove(BoardItem* Board)
@@ -322,22 +272,16 @@ void UnmakeMove(BoardItem* Board)
         Board->BB_WhitePieces |= BB_SQUARE(Info->From);
         Board->BB_Pieces[WHITE][Info->PieceTypeFrom] |= BB_SQUARE(Info->From);
 
-        AccumulatorAdd(Board, Info->From, PIECE_CREATE(Info->PieceTypeFrom, WHITE));
-
         if (Info->Type & MOVE_CASTLE_KING) {
             Board->Pieces[SQ_F1] = NO_PIECE;
 
             Board->BB_WhitePieces &= ~BB_SQUARE(SQ_F1);
             Board->BB_Pieces[WHITE][ROOK] &= ~BB_SQUARE(SQ_F1);
 
-            AccumulatorSub(Board, SQ_F1, PIECE_CREATE(ROOK, WHITE));
-
             Board->Pieces[SQ_H1] = PIECE_CREATE(ROOK, WHITE);
 
             Board->BB_WhitePieces |= BB_SQUARE(SQ_H1);
             Board->BB_Pieces[WHITE][ROOK] |= BB_SQUARE(SQ_H1);
-
-            AccumulatorAdd(Board, SQ_H1, PIECE_CREATE(ROOK, WHITE));
         }
 
         if (Info->Type & MOVE_CASTLE_QUEEN) {
@@ -346,14 +290,10 @@ void UnmakeMove(BoardItem* Board)
             Board->BB_WhitePieces &= ~BB_SQUARE(SQ_D1);
             Board->BB_Pieces[WHITE][ROOK] &= ~BB_SQUARE(SQ_D1);
 
-            AccumulatorSub(Board, SQ_D1, PIECE_CREATE(ROOK, WHITE));
-
             Board->Pieces[SQ_A1] = PIECE_CREATE(ROOK, WHITE);
 
             Board->BB_WhitePieces |= BB_SQUARE(SQ_A1);
             Board->BB_Pieces[WHITE][ROOK] |= BB_SQUARE(SQ_A1);
-
-            AccumulatorAdd(Board, SQ_A1, PIECE_CREATE(ROOK, WHITE));
         }
 
         if (Info->Type & MOVE_PAWN_EN_PASSANT) {
@@ -362,14 +302,10 @@ void UnmakeMove(BoardItem* Board)
             Board->BB_WhitePieces &= ~BB_SQUARE(Info->To);
             Board->BB_Pieces[WHITE][PAWN] &= ~BB_SQUARE(Info->To);
 
-            AccumulatorSub(Board, Info->To, PIECE_CREATE(PAWN, WHITE));
-
             Board->Pieces[Info->CapturePawnSquare] = PIECE_CREATE(PAWN, BLACK);
 
             Board->BB_BlackPieces |= BB_SQUARE(Info->CapturePawnSquare);
             Board->BB_Pieces[BLACK][PAWN] |= BB_SQUARE(Info->CapturePawnSquare);
-
-            AccumulatorAdd(Board, Info->CapturePawnSquare, PIECE_CREATE(PAWN, BLACK));
         }
         else if (Info->Type & MOVE_CAPTURE) {
             Board->Pieces[Info->To] = NO_PIECE;
@@ -378,21 +314,15 @@ void UnmakeMove(BoardItem* Board)
 
             if (Info->Type & MOVE_PAWN_PROMOTE) {
                 Board->BB_Pieces[WHITE][Info->PromotePieceType] &= ~BB_SQUARE(Info->To);
-
-                AccumulatorSub(Board, Info->To, PIECE_CREATE(Info->PromotePieceType, WHITE));
             }
             else {
                 Board->BB_Pieces[WHITE][Info->PieceTypeFrom] &= ~BB_SQUARE(Info->To);
-
-                AccumulatorSub(Board, Info->To, PIECE_CREATE(Info->PieceTypeFrom, WHITE));
             }
 
             Board->Pieces[Info->To] = PIECE_CREATE(Info->PieceTypeTo, BLACK);
 
             Board->BB_BlackPieces |= BB_SQUARE(Info->To);
             Board->BB_Pieces[BLACK][Info->PieceTypeTo] |= BB_SQUARE(Info->To);
-
-            AccumulatorAdd(Board, Info->To, PIECE_CREATE(Info->PieceTypeTo, BLACK));
         }
         else {
             Board->Pieces[Info->To] = NO_PIECE;
@@ -401,13 +331,9 @@ void UnmakeMove(BoardItem* Board)
 
             if (Info->Type & MOVE_PAWN_PROMOTE) {
                 Board->BB_Pieces[WHITE][Info->PromotePieceType] &= ~BB_SQUARE(Info->To);
-
-                AccumulatorSub(Board, Info->To, PIECE_CREATE(Info->PromotePieceType, WHITE));
             }
             else {
                 Board->BB_Pieces[WHITE][Info->PieceTypeFrom] &= ~BB_SQUARE(Info->To);
-
-                AccumulatorSub(Board, Info->To, PIECE_CREATE(Info->PieceTypeFrom, WHITE));
             }
         }
     }
@@ -417,22 +343,16 @@ void UnmakeMove(BoardItem* Board)
         Board->BB_BlackPieces |= BB_SQUARE(Info->From);
         Board->BB_Pieces[BLACK][Info->PieceTypeFrom] |= BB_SQUARE(Info->From);
 
-        AccumulatorAdd(Board, Info->From, PIECE_CREATE(Info->PieceTypeFrom, BLACK));
-
         if (Info->Type & MOVE_CASTLE_KING) {
             Board->Pieces[SQ_F8] = NO_PIECE;
 
             Board->BB_BlackPieces &= ~BB_SQUARE(SQ_F8);
             Board->BB_Pieces[BLACK][ROOK] &= ~BB_SQUARE(SQ_F8);
 
-            AccumulatorSub(Board, SQ_F8, PIECE_CREATE(ROOK, BLACK));
-
             Board->Pieces[SQ_H8] = PIECE_CREATE(ROOK, BLACK);
 
             Board->BB_BlackPieces |= BB_SQUARE(SQ_H8);
             Board->BB_Pieces[BLACK][ROOK] |= BB_SQUARE(SQ_H8);
-
-            AccumulatorAdd(Board, SQ_H8, PIECE_CREATE(ROOK, BLACK));
         }
 
         if (Info->Type & MOVE_CASTLE_QUEEN) {
@@ -441,14 +361,10 @@ void UnmakeMove(BoardItem* Board)
             Board->BB_BlackPieces &= ~BB_SQUARE(SQ_D8);
             Board->BB_Pieces[BLACK][ROOK] &= ~BB_SQUARE(SQ_D8);
 
-            AccumulatorSub(Board, SQ_D8, PIECE_CREATE(ROOK, BLACK));
-
             Board->Pieces[SQ_A8] = PIECE_CREATE(ROOK, BLACK);
 
             Board->BB_BlackPieces |= BB_SQUARE(SQ_A8);
             Board->BB_Pieces[BLACK][ROOK] |= BB_SQUARE(SQ_A8);
-
-            AccumulatorAdd(Board, SQ_A8, PIECE_CREATE(ROOK, BLACK));
         }
 
         if (Info->Type & MOVE_PAWN_EN_PASSANT) {
@@ -457,14 +373,10 @@ void UnmakeMove(BoardItem* Board)
             Board->BB_BlackPieces &= ~BB_SQUARE(Info->To);
             Board->BB_Pieces[BLACK][PAWN] &= ~BB_SQUARE(Info->To);
 
-            AccumulatorSub(Board, Info->To, PIECE_CREATE(PAWN, BLACK));
-
             Board->Pieces[Info->CapturePawnSquare] = PIECE_CREATE(PAWN, WHITE);
 
             Board->BB_WhitePieces |= BB_SQUARE(Info->CapturePawnSquare);
             Board->BB_Pieces[WHITE][PAWN] |= BB_SQUARE(Info->CapturePawnSquare);
-
-            AccumulatorAdd(Board, Info->CapturePawnSquare, PIECE_CREATE(PAWN, WHITE));
         }
         else if (Info->Type & MOVE_CAPTURE) {
             Board->Pieces[Info->To] = NO_PIECE;
@@ -473,21 +385,15 @@ void UnmakeMove(BoardItem* Board)
 
             if (Info->Type & MOVE_PAWN_PROMOTE) {
                 Board->BB_Pieces[BLACK][Info->PromotePieceType] &= ~BB_SQUARE(Info->To);
-
-                AccumulatorSub(Board, Info->To, PIECE_CREATE(Info->PromotePieceType, BLACK));
             }
             else {
                 Board->BB_Pieces[BLACK][Info->PieceTypeFrom] &= ~BB_SQUARE(Info->To);
-
-                AccumulatorSub(Board, Info->To, PIECE_CREATE(Info->PieceTypeFrom, BLACK));
             }
 
             Board->Pieces[Info->To] = PIECE_CREATE(Info->PieceTypeTo, WHITE);
 
             Board->BB_WhitePieces |= BB_SQUARE(Info->To);
             Board->BB_Pieces[WHITE][Info->PieceTypeTo] |= BB_SQUARE(Info->To);
-
-            AccumulatorAdd(Board, Info->To, PIECE_CREATE(Info->PieceTypeTo, WHITE));
         }
         else {
             Board->Pieces[Info->To] = NO_PIECE;
@@ -496,13 +402,9 @@ void UnmakeMove(BoardItem* Board)
 
             if (Info->Type & MOVE_PAWN_PROMOTE) {
                 Board->BB_Pieces[BLACK][Info->PromotePieceType] &= ~BB_SQUARE(Info->To);
-
-                AccumulatorSub(Board, Info->To, PIECE_CREATE(Info->PromotePieceType, BLACK));
             }
             else {
                 Board->BB_Pieces[BLACK][Info->PieceTypeFrom] &= ~BB_SQUARE(Info->To);
-
-                AccumulatorSub(Board, Info->To, PIECE_CREATE(Info->PieceTypeFrom, BLACK));
             }
         }
     }
@@ -513,6 +415,8 @@ void UnmakeMove(BoardItem* Board)
     Board->FiftyMove = Info->FiftyMove;
 
     Board->Hash = Info->Hash;
+
+    Board->Accumulator = Info->Accumulator;
 
 #ifdef DEBUG_MOVE_BIT_BOARD
     if (Board->BB_WhitePieces != Info->BB_WhitePieces) {
@@ -528,29 +432,11 @@ void UnmakeMove(BoardItem* Board)
             if (Board->BB_Pieces[Color][Piece] != Info->BB_Pieces[Color][Piece]) {
                 printf("-- Pieces error!\n");
 
-                break 2;
+                break;
             }
         }
     }
 #endif // DEBUG_MOVE_BIT_BOARD
-
-#ifdef DEBUG_MOVE_NNUE
-    I16 Accumulator[2][HIDDEN_DIMENSION]; // [Perspective][Hidden dimension]
-
-    memcpy(Accumulator, Board->Accumulator.Accumulator, sizeof(Accumulator));
-
-    InitAccumulator(Board);
-
-    for (int Perspective = 0; Perspective < 2; Perspective++) { // STM/XSTM
-        for (int Index = 0; Index < HIDDEN_DIMENSION; Index++) {
-            if (Board->Accumulator.Accumulator[Perspective][Index] != Accumulator[Perspective][Index]) {
-                printf("-- Accumulator error (unmake move)!\n");
-
-                break 2;
-            }
-        }
-    }
-#endif // DEBUG_MOVE_NNUE
 }
 
 #ifdef NULL_MOVE_PRUNING
@@ -566,6 +452,8 @@ void MakeNullMove(BoardItem* Board)
     Info->FiftyMove = Board->FiftyMove;
 
     Info->Hash = Board->Hash;
+
+    Info->Accumulator = Board->Accumulator;
 
     if (Info->EnPassantSquare != -1) {
         Board->EnPassantSquare = -1;
@@ -599,6 +487,8 @@ void UnmakeNullMove(BoardItem* Board)
     Board->FiftyMove = Info->FiftyMove;
 
     Board->Hash = Info->Hash;
+
+    Board->Accumulator = Info->Accumulator;
 }
 
 #endif // NULL_MOVE_PRUNING

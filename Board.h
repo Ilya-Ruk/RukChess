@@ -125,6 +125,8 @@ typedef struct {
 
 typedef struct {
     _declspec(align(64)) I16 Accumulator[2][HIDDEN_DIMENSION]; // [Perspective][Hidden dimension]
+
+    BOOL AccumulatorActual;
 } AccumulatorItem;
 
 typedef struct {
@@ -145,6 +147,8 @@ typedef struct {
     int FiftyMove;
 
     U64 Hash;
+
+    AccumulatorItem Accumulator;
 
 #ifdef DEBUG_MOVE_BIT_BOARD
     U64 BB_WhitePieces;
@@ -236,7 +240,7 @@ int PositionRepeat2(const BoardItem* Board);
 
 BOOL IsInsufficientMaterial(const BoardItem* Board);
 
-void PrintBoard(const BoardItem* Board);
+void PrintBoard(BoardItem* Board);
 
 int SetFen(BoardItem* Board, const char* Fen);
 void GetFen(const BoardItem* Board, char* Fen);
