@@ -301,11 +301,9 @@ void InitAccumulator(BoardItem* Board)
 BOOL UpdateAccumulator(BoardItem* Board)
 {
     int CurrentColor = Board->CurrentColor;
-    int EnemyColor = CHANGE_COLOR(Board->CurrentColor);
 
-    for (int MoveIndex = Board->HalfMoveNumber - 1; MoveIndex >= 0; MoveIndex--) {
+    for (int MoveIndex = Board->HalfMoveNumber - 1, UpdateMoves = 0; MoveIndex >= 0, UpdateMoves < MAX_UPDATE_MOVES; MoveIndex--, UpdateMoves++) {
         CurrentColor = CHANGE_COLOR(CurrentColor);
-        EnemyColor = CHANGE_COLOR(EnemyColor);
 
         HistoryItem* Info = &Board->MoveTable[MoveIndex]; // Prev. move info
 
@@ -320,6 +318,22 @@ BOOL UpdateAccumulator(BoardItem* Board)
                     AccumulatorSub(Board, SQ_A1, PIECE_CREATE(ROOK, WHITE));
                     AccumulatorAdd(Board, SQ_D1, PIECE_CREATE(ROOK, WHITE));
                 }
+
+                if (Info->Type & MOVE_PAWN_EN_PASSANT) {
+                    AccumulatorSub(Board, Info->CapturePawnSquare, PIECE_CREATE(PAWN, BLACK));
+                }
+                else if (Info->Type & MOVE_CAPTURE) {
+                    AccumulatorSub(Board, Info->To, PIECE_CREATE(Info->PieceTypeTo, BLACK));
+                }
+
+                if (Info->Type & MOVE_PAWN_PROMOTE) {
+                    AccumulatorAdd(Board, Info->To, PIECE_CREATE(Info->PromotePieceType, WHITE));
+                }
+                else {
+                    AccumulatorAdd(Board, Info->To, PIECE_CREATE(Info->PieceTypeFrom, WHITE));
+                }
+
+                AccumulatorSub(Board, Info->From, PIECE_CREATE(Info->PieceTypeFrom, WHITE));
             }
             else { // BLACK
                 if (Info->Type & MOVE_CASTLE_KING) {
@@ -331,22 +345,22 @@ BOOL UpdateAccumulator(BoardItem* Board)
                     AccumulatorSub(Board, SQ_A8, PIECE_CREATE(ROOK, BLACK));
                     AccumulatorAdd(Board, SQ_D8, PIECE_CREATE(ROOK, BLACK));
                 }
-            }
 
-            AccumulatorSub(Board, Info->From, PIECE_CREATE(Info->PieceTypeFrom, CurrentColor));
+                if (Info->Type & MOVE_PAWN_EN_PASSANT) {
+                    AccumulatorSub(Board, Info->CapturePawnSquare, PIECE_CREATE(PAWN, WHITE));
+                }
+                else if (Info->Type & MOVE_CAPTURE) {
+                    AccumulatorSub(Board, Info->To, PIECE_CREATE(Info->PieceTypeTo, WHITE));
+                }
 
-            if (Info->Type & MOVE_PAWN_EN_PASSANT) {
-                AccumulatorSub(Board, Info->CapturePawnSquare, PIECE_CREATE(PAWN, EnemyColor));
-            }
-            else if (Info->Type & MOVE_CAPTURE) {
-                AccumulatorSub(Board, Info->To, PIECE_CREATE(Info->PieceTypeTo, EnemyColor));
-            }
+                if (Info->Type & MOVE_PAWN_PROMOTE) {
+                    AccumulatorAdd(Board, Info->To, PIECE_CREATE(Info->PromotePieceType, BLACK));
+                }
+                else {
+                    AccumulatorAdd(Board, Info->To, PIECE_CREATE(Info->PieceTypeFrom, BLACK));
+                }
 
-            if (Info->Type & MOVE_PAWN_PROMOTE) {
-                AccumulatorAdd(Board, Info->To, PIECE_CREATE(Info->PromotePieceType, CurrentColor));
-            }
-            else {
-                AccumulatorAdd(Board, Info->To, PIECE_CREATE(Info->PieceTypeFrom, CurrentColor));
+                AccumulatorSub(Board, Info->From, PIECE_CREATE(Info->PieceTypeFrom, BLACK));
             }
         } // if
 
@@ -373,7 +387,7 @@ BOOL UpdateAccumulator(BoardItem* Board)
         }
     } // for
 
-    return FALSE; // Never executed
+    return FALSE;
 }
 
 I32 OutputLayer(const BoardItem* Board)
@@ -443,7 +457,7 @@ int Evaluate(BoardItem* Board, SearchDataItem* SearchData)
 
     if (!Board->Accumulator.AccumulatorActual) {
         if (!UpdateAccumulator(Board)) {
-            InitAccumulator(Board); // Never executed
+            InitAccumulator(Board);
         }
     }
 

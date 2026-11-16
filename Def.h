@@ -122,4 +122,6 @@
 
 #define SCALE                                   1
 
+#define MAX_UPDATE_MOVES                        8
+
 #endif // !DEF_H
