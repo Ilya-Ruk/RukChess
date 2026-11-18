@@ -16,6 +16,17 @@
 #include "Types.h"
 #include "Utils.h"
 
+U64 QNodes(void)
+{
+    U64 Nodes = 0ULL;
+
+    for (int Thread = 0; Thread < omp_get_max_threads(); Thread++) {
+        Nodes += SearchDataList[Thread].Nodes;
+    }
+
+    return Nodes;
+}
+
 int QuiescenceSearch(BoardItem* Board, SearchDataItem* SearchData, int Alpha, int Beta, const int Depth, const int Ply, const BOOL IsPrincipal, const BOOL InCheck)
 {
     assert(Alpha >= -INF);
@@ -58,6 +69,15 @@ int QuiescenceSearch(BoardItem* Board, SearchDataItem* SearchData, int Alpha, in
             && TimeStop > 0ULL
             && Clock() >= TimeStop
         ) { // Max. time is up
+            StopSearch = TRUE;
+
+            return 0;
+        }
+
+        if (
+            MaxNodes > 0ULL
+            && QNodes() >= MaxNodes
+        ) { // Max. nodes is up
             StopSearch = TRUE;
 
             return 0;

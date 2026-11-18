@@ -20,21 +20,6 @@
 
 void Pgn2Fen(void)
 {
-    int GameNumber;
-
-    double Result;
-
-    char MoveString[16];
-    char* Move;
-
-    int Ply;
-
-    BOOL Error;
-
-    int Stage;
-
-    char FenOut[MAX_FEN_LENGTH];
-
     printf("\n");
 
     printf("Convert PGN file to FEN file...\n");
@@ -63,20 +48,22 @@ void Pgn2Fen(void)
 
     // Prepare new game
 
-    GameNumber = 1;
+    int GameNumber = 1;
 
-    Result = 0.0; // Draw default
+    double Result = 0.0; // Draw default
 
-    Move = MoveString;
+    char MoveString[16];
+    char* Move = MoveString;
+
     *Move = '\0'; // Nul
 
-    Ply = 0;
+    int Ply = 0;
 
-    Error = FALSE;
+    BOOL Error = FALSE;
 
     SetFen(&BoardList[0], StartFen);
 
-    Stage = STAGE_NONE;
+    int Stage = STAGE_NONE;
 
     printf("\n");
 
@@ -94,6 +81,7 @@ void Pgn2Fen(void)
                 Result = 0.0; // Draw default
 
                 Move = MoveString;
+
                 *Move = '\0'; // Nul
 
                 Ply = 0;
@@ -145,6 +133,8 @@ void Pgn2Fen(void)
         } // if
 
         if (Stage == STAGE_TAG) {
+            char FenOut[MAX_FEN_LENGTH];
+
             GetFen(&BoardList[0], FenOut); // First FEN in game (StartFen or FenString from FEN-tag)
 
             fprintf(FileOut, "%s|%.1f\n", FenOut, Result);
@@ -225,6 +215,8 @@ void Pgn2Fen(void)
                     }
 
                     if (MoveFound) {
+                        char FenOut[MAX_FEN_LENGTH];
+
                         GetFen(&BoardList[0], FenOut);
 
                         fprintf(FileOut, "%s|%.1f\n", FenOut, Result);

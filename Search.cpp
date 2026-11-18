@@ -39,6 +39,17 @@ int RazoringMargin(const int Depth) // Hakkapeliitta
 }
 #endif // RAZORING
 
+U64 Nodes(void)
+{
+    U64 Nodes = 0ULL;
+
+    for (int Thread = 0; Thread < omp_get_max_threads(); Thread++) {
+        Nodes += SearchDataList[Thread].Nodes;
+    }
+
+    return Nodes;
+}
+
 int Search(BoardItem* Board, SearchDataItem* SearchData, int Alpha, int Beta, const int Depth, const int Ply, MoveItem* BestMoves, const BOOL IsPrincipal, const BOOL InCheck, const BOOL UsePruning, const int SkipMove)
 {
     assert(Alpha >= -INF);
@@ -87,6 +98,16 @@ int Search(BoardItem* Board, SearchDataItem* SearchData, int Alpha, int Beta, co
             && TimeStop > 0ULL
             && Clock() >= TimeStop
         ) { // Max. time is up
+            StopSearch = TRUE;
+
+            return 0;
+        }
+
+        if (
+            Ply > 0
+            && MaxNodes > 0ULL
+            && Nodes() >= MaxNodes
+        ) { // Max. nodes is up
             StopSearch = TRUE;
 
             return 0;

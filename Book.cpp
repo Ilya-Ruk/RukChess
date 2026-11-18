@@ -87,21 +87,6 @@ void PrintNode(BoardItem* Board, const NodeItem* Node, FILE* FileOut)
 
 void GenerateBook(void)
 {
-    int GameNumber;
-
-    int Result;
-
-    char MoveString[16];
-    char* Move;
-
-    int Ply;
-
-    NodeItem* Node;
-
-    BOOL Error;
-
-    int Stage;
-
     printf("\n");
 
     printf("Generate book file from PGN file...\n");
@@ -140,22 +125,24 @@ void GenerateBook(void)
 
     // Prepare new game
 
-    GameNumber = 1;
+    int GameNumber = 1;
 
-    Result = 0; // Draw default
+    int Result = 0; // Draw default
 
-    Move = MoveString;
+    char MoveString[16];
+    char* Move = MoveString;
+
     *Move = '\0'; // Nul
 
-    Ply = 0;
+    int Ply = 0;
 
-    Node = RootNode;
+    NodeItem* Node = RootNode;
 
-    Error = FALSE;
+    BOOL Error = FALSE;
 
     SetFen(&BoardList[0], StartFen);
 
-    Stage = STAGE_NONE;
+    int Stage = STAGE_NONE;
 
     char Buf[4096];
 
@@ -171,6 +158,7 @@ void GenerateBook(void)
                 Result = 0; // Draw default
 
                 Move = MoveString;
+
                 *Move = '\0'; // Nul
 
                 Ply = 0;

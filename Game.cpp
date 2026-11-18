@@ -408,18 +408,6 @@ BOOL ComputerMove(void)
             if (ThreadScore <= -INF + Depth || ThreadScore >= INF - Depth) { // Checkmate
                 break; // for (depth)
             }
-
-            if (MaxNodes > 0ULL) {
-                U64 Nodes = 0ULL;
-
-                for (int Thread = 0; Thread < omp_get_max_threads(); Thread++) {
-                    Nodes += SearchDataList[Thread].Nodes;
-                }
-
-                if (Nodes >= MaxNodes) {
-                    break; // for (depth)
-                }
-            }
         } // for
 
         if (ThreadId == 0) { // Master thread
