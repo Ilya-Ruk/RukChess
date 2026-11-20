@@ -11,7 +11,6 @@
 
 //#define DEBUG_MOVE_BIT_BOARD
 //#define DEBUG_MOVE_HASH
-//#define DEBUG_SEE
 //#define DEBUG_NNUE_UPDATE
 
 // Common
@@ -57,11 +56,7 @@
 
 // NNUE
 
-//#define USE_CRELU
-
 #define USE_NNUE_AVX2
-
-//#define PRINT_MIN_MAX_VALUES
 
 // ------------------------------------------------------------------
 
@@ -119,8 +114,6 @@
 
 #define QUANTIZATION_PRECISION_IN               64
 #define QUANTIZATION_PRECISION_OUT              512
-
-#define SCALE                                   1
 
 #define MAX_UPDATE_MOVES                        8
 

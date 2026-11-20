@@ -21,7 +21,6 @@
 void Pgn2Fen(void)
 {
     printf("\n");
-
     printf("Convert PGN file to FEN file...\n");
 
     FILE* FileIn;
@@ -202,7 +201,6 @@ void Pgn2Fen(void)
                                 PrintBoard(&BoardList[0]);
 
                                 printf("\n");
-
                                 printf("Illegal move (%s)!\n", MoveString);
 
                                 continue; // Next move
@@ -227,11 +225,9 @@ void Pgn2Fen(void)
                         PrintBoard(&BoardList[0]);
 
                         printf("\n");
-
                         printf("Move (%s) not found!\n", MoveString);
 
                         printf("\n");
-
                         printf("Gen. moves:");
 
                         for (int MoveNumber = 0; MoveNumber < GenMoveCount; MoveNumber++) {
@@ -265,6 +261,5 @@ void Pgn2Fen(void)
     fclose(FileIn);
 
     printf("\n");
-
     printf("Convert PGN file to FEN file...DONE\n");
 }

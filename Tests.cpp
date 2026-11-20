@@ -456,12 +456,13 @@ const int WinAtChessTestCount = sizeof(WinAtChessTests) / sizeof(char*) / 2;
 void GeneratorTest1(void)
 {
     for (int TestNumber = 0; TestNumber < GeneratorTestCount; TestNumber++) {
+        char* Fen = GeneratorTests[TestNumber].Fen;
+
         printf("\n");
-
         printf("Test %d\n", TestNumber + 1);
-        printf("FEN = %s\n", GeneratorTests[TestNumber].Fen);
+        printf("FEN = %s\n", Fen);
 
-        SetFen(&BoardList[0], GeneratorTests[TestNumber].Fen);
+        SetFen(&BoardList[0], Fen);
 
         PrintBoard(&BoardList[0]);
 
@@ -487,10 +488,10 @@ void GeneratorTest1(void)
 void GeneratorTest2(void)
 {
     printf("\n");
+    printf("Max. depth (min. 1 max. %d; 0 = %d): ", MAX_PLY, MAX_PLY);
 
     int InputDepth;
 
-    printf("Max. depth (min. 1 max. %d; 0 = %d): ", MAX_PLY, MAX_PLY);
     scanf_s("%d", &InputDepth);
 
     MaxDepth = (InputDepth >= 1 && InputDepth <= MAX_PLY) ? InputDepth : MAX_PLY;
@@ -510,18 +511,16 @@ void Tests(const char* Tests[], const int TestCount)
 {
     InputParametrs();
 
-    PrintMode = PRINT_MODE_TESTS;
-
     int TestPassedCount = 0;
 
+    PrintMode = PRINT_MODE_TESTS;
+
     for (int TestNumber = 0; TestNumber < TestCount; TestNumber++) {
-        printf("\n");
-
-        printf("Test %d\n", TestNumber + 1);
-
         const char* Fen = Tests[TestNumber * 2];
         const char* BestMoves = Tests[TestNumber * 2 + 1];
 
+        printf("\n");
+        printf("Test %d\n", TestNumber + 1);
         printf("FEN = %s\n", Fen);
         printf("Best moves = %s\n", BestMoves);
 
@@ -529,9 +528,9 @@ void Tests(const char* Tests[], const int TestCount)
 
         SetFen(&BoardList[0], Fen);
 
-        ClearHashTable();
-
         PrintBoard(&BoardList[0]);
+
+        ClearHashTable();
 
         ComputerMove();
 
@@ -563,7 +562,6 @@ void Tests(const char* Tests[], const int TestCount)
     PrintMode = PRINT_MODE_NORMAL;
 
     printf("\n");
-
     printf("Tests %d Tests passed %d (%d%%)\n", TestCount, TestPassedCount, 100 * TestPassedCount / TestCount);
 }
 
@@ -582,17 +580,18 @@ void SearchPerformanceTest(void)
     InputParametrs();
 
     printf("\n");
+    printf("Max. cycles (min. 1): ");
 
     int MaxCycles;
 
-    printf("Max. cycles (min. 1): ");
     scanf_s("%d", &MaxCycles);
 
     MaxCycles = MAX(MaxCycles, 1);
 
+    printf("Max. moves (min. 1): ");
+
     int MaxMoves;
 
-    printf("Max. moves (min. 1): ");
     scanf_s("%d", &MaxMoves);
 
     MaxMoves = MAX(MaxMoves, 1);
@@ -602,16 +601,15 @@ void SearchPerformanceTest(void)
 
     for (int Cycle = 0; Cycle < MaxCycles; Cycle++) {
         printf("\n");
-
         printf("Cycle = %d\n", Cycle + 1);
 
         // Prepare new game
 
         SetFen(&BoardList[0], StartFen);
 
-        ClearHashTable();
-
         PrintBoard(&BoardList[0]);
+
+        ClearHashTable();
 
         for (int Move = 0; Move < MaxMoves * 2; Move++) {
             if (!ComputerMove()) {
@@ -630,9 +628,7 @@ void SearchPerformanceTest(void)
     }
 
     printf("\n");
-
     printf("Total nodes %llu Total time %.2f\n", TotalTestNodes, (double)TotalTestTime / 1000.0);
-
     printf("Average nodes %llu Average time %.2f\n", TotalTestNodes / (U64)MaxCycles, (double)TotalTestTime / (double)MaxCycles / 1000.0);
 
     if (TotalTestTime >= 1000ULL) {
@@ -643,10 +639,10 @@ void SearchPerformanceTest(void)
 void EvaluateTests(const char* Tests[], const int TestCount)
 {
     printf("\n");
+    printf("Max. cycles (min. 1): ");
 
     int MaxCycles;
 
-    printf("Max. cycles (min. 1): ");
     scanf_s("%d", &MaxCycles);
 
     MaxCycles = MAX(MaxCycles, 1);
@@ -688,7 +684,6 @@ void EvaluateTests(const char* Tests[], const int TestCount)
     EvaluateTotalTime /= Frequency.QuadPart;
 
     printf("\n");
-
     printf("EPS %lld\n", 1000000LL * (I64)TestCount * (I64)MaxCycles / EvaluateTotalTime);
 }
 

@@ -44,16 +44,16 @@ void SetCounterMoveHistoryPointer(const BoardItem* Board, const SearchDataItem* 
         return;
     }
 
-    const HistoryItem* Info_1 = &Board->MoveTable[Board->HalfMoveNumber - 1]; // Prev. move info
+    const HistoryItem* Info1 = &Board->MoveTable[Board->HalfMoveNumber - 1];
 
-    if (Info_1->Type == MOVE_NULL) {
+    if (Info1->Type == MOVE_NULL) {
         CMH_Pointer[0] = NULL;
         CMH_Pointer[1] = NULL;
 
         return;
     }
 
-    CMH_Pointer[0] = SearchData->CounterMoveHistoryTable[Info_1->PieceTypeFrom][Info_1->To];
+    CMH_Pointer[0] = SearchData->CounterMoveHistoryTable[Info1->PieceTypeFrom][Info1->To];
 
     if (Ply == 1) {
         CMH_Pointer[1] = NULL;
@@ -61,15 +61,15 @@ void SetCounterMoveHistoryPointer(const BoardItem* Board, const SearchDataItem* 
         return;
     }
 
-    const HistoryItem* Info_2 = &Board->MoveTable[Board->HalfMoveNumber - 2]; // Prev. prev. move info
+    const HistoryItem* Info2 = &Board->MoveTable[Board->HalfMoveNumber - 2];
 
-    if (Info_2->Type == MOVE_NULL) {
+    if (Info2->Type == MOVE_NULL) {
         CMH_Pointer[1] = NULL;
 
         return;
     }
 
-    CMH_Pointer[1] = SearchData->CounterMoveHistoryTable[Info_2->PieceTypeFrom][Info_2->To];
+    CMH_Pointer[1] = SearchData->CounterMoveHistoryTable[Info2->PieceTypeFrom][Info2->To];
 }
 #endif // COUNTER_MOVE_HISTORY
 
@@ -100,13 +100,13 @@ void UpdateCounterMove(const BoardItem* Board, SearchDataItem* SearchData, const
         return;
     }
 
-    const HistoryItem* Info_1 = &Board->MoveTable[Board->HalfMoveNumber - 1]; // Prev. move info
+    const HistoryItem* Info = &Board->MoveTable[Board->HalfMoveNumber - 1];
 
-    if (Info_1->Type == MOVE_NULL) {
+    if (Info->Type == MOVE_NULL) {
         return;
     }
 
-    SearchData->CounterMoveTable[CHANGE_COLOR(Board->CurrentColor)][Info_1->PieceTypeFrom][Info_1->To] = Move;
+    SearchData->CounterMoveTable[CHANGE_COLOR(Board->CurrentColor)][Info->PieceTypeFrom][Info->To] = Move;
 }
 
 void ClearCounterMove(SearchDataItem* SearchData)

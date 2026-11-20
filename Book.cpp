@@ -88,7 +88,6 @@ void PrintNode(BoardItem* Board, const NodeItem* Node, FILE* FileOut)
 void GenerateBook(void)
 {
     printf("\n");
-
     printf("Generate book file from PGN file...\n");
 
     NodeItem* RootNode = CreateNode((MoveItem){ 0, 0, 0 });
@@ -179,11 +178,9 @@ void GenerateBook(void)
             if (Stage == STAGE_NONE) {
                 if (GameNumber > 1 && ((GameNumber - 1) % 10000) == 0) {
                     printf("\n");
-
                     printf("Game number = %d\n", GameNumber - 1);
 
                     printf("\n");
-
                     printf("  White = %d Black = %d Draw = %d Total = %d\n", RootNode->White, RootNode->Black, RootNode->Draw, RootNode->Total);
                     printf("  White = %.1f%% Black = %.1f%% Draw = %.1f%%\n", 100.0 * (double)RootNode->White / (double)RootNode->Total, 100.0 * (double)RootNode->Black / (double)RootNode->Total, 100.0 * (double)RootNode->Draw / (double)RootNode->Total);
                     printf("  White score = %.1f%%\n", 100.0 * ((double)RootNode->White + (double)RootNode->Draw / 2.0) / (double)RootNode->Total);
@@ -222,17 +219,14 @@ void GenerateBook(void)
         if (Stage == STAGE_TAG) {
             if (Result == 1) { // White win
                 RootNode->White++;
-
                 RootNode->Total++;
             }
             else if (Result == 0) { // Draw
                 RootNode->Draw++;
-
                 RootNode->Total++;
             }
             else if (Result == -1) { // Black win
                 RootNode->Black++;
-
                 RootNode->Total++;
             }
 
@@ -297,7 +291,6 @@ void GenerateBook(void)
                                 PrintBoard(&BoardList[0]);
 
                                 printf("\n");
-
                                 printf("Illegal move (%s)!\n", MoveString);
 
                                 continue; // Next move
@@ -332,23 +325,19 @@ void GenerateBook(void)
                                 Error = TRUE;
 
                                 printf("\n");
-
                                 printf("No child node!\n");
                             }
                             else {
                                 if (Result == 1) { // White win
                                     ChildNode->White++;
-
                                     ChildNode->Total++;
                                 }
                                 else if (Result == 0) { // Draw
                                     ChildNode->Draw++;
-
                                     ChildNode->Total++;
                                 }
                                 else if (Result == -1) { // Black win
                                     ChildNode->Black++;
-
                                     ChildNode->Total++;
                                 }
 
@@ -365,11 +354,9 @@ void GenerateBook(void)
                         PrintBoard(&BoardList[0]);
 
                         printf("\n");
-
                         printf("Move (%s) not found!\n", MoveString);
 
                         printf("\n");
-
                         printf("Gen. moves:");
 
                         for (int MoveNumber = 0; MoveNumber < GenMoveCount; MoveNumber++) {
@@ -398,11 +385,9 @@ void GenerateBook(void)
     } // while
 
     printf("\n");
-
     printf("Game number = %d\n", GameNumber - 1);
 
     printf("\n");
-
     printf("  White = %d Black = %d Draw = %d Total = %d\n", RootNode->White, RootNode->Black, RootNode->Draw, RootNode->Total);
     printf("  White = %.1f%% Black = %.1f%% Draw = %.1f%%\n", 100.0 * (double)RootNode->White / (double)RootNode->Total, 100.0 * (double)RootNode->Black / (double)RootNode->Total, 100.0 * (double)RootNode->Draw / (double)RootNode->Total);
     printf("  White score = %.1f%%\n", 100.0 * ((double)RootNode->White + (double)RootNode->Draw / 2.0) / (double)RootNode->Total);
@@ -419,7 +404,6 @@ void GenerateBook(void)
     FreeNode(RootNode);
 
     printf("\n");
-
     printf("Generate book file from PGN file...DONE\n");
 }
 
@@ -441,10 +425,7 @@ int HashCompare(const void* BookItem1, const void* BookItem2)
 
 void LoadBook(const char* BookFileName)
 {
-    char Buf[256];
-
     printf("\n");
-
     printf("Load book...\n");
 
     FreeBook(); // The book may have been loaded earlier
@@ -458,6 +439,8 @@ void LoadBook(const char* BookFileName)
 
         return;
     }
+
+    char Buf[256];
 
     // The first cycle to get the number of book items
 

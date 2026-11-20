@@ -67,13 +67,13 @@ void SetCounterMoveSortValue(const BoardItem* Board, const SearchDataItem* Searc
         return;
     }
 
-    const HistoryItem* Info_1 = &Board->MoveTable[Board->HalfMoveNumber - 1]; // Prev. move info
+    const HistoryItem* Info = &Board->MoveTable[Board->HalfMoveNumber - 1];
 
-    if (Info_1->Type == MOVE_NULL) {
+    if (Info->Type == MOVE_NULL) {
         return;
     }
 
-    int CounterMove = SearchData->CounterMoveTable[CHANGE_COLOR(Board->CurrentColor)][Info_1->PieceTypeFrom][Info_1->To];
+    int CounterMove = SearchData->CounterMoveTable[CHANGE_COLOR(Board->CurrentColor)][Info->PieceTypeFrom][Info->To];
 
 #ifdef KILLER_MOVE
     int KillerMove1 = SearchData->KillerMoveTable[Ply][0];

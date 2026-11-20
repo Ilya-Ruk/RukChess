@@ -121,18 +121,15 @@ void UCI(void)
                 while (*Part != '\r' && *Part != '\n' && *Part != '\0') {
                     // Move (e2e4, e7e8q)
 
-                    int File;
-                    int Rank;
+                    int FileFrom = Part[0] - 'a';
+                    int RankFrom = 7 - (Part[1] - '1');
 
-                    File = Part[0] - 'a';
-                    Rank = 7 - (Part[1] - '1');
+                    int From = SQUARE_CREATE(FileFrom, RankFrom);
 
-                    int From = SQUARE_CREATE(File, Rank);
+                    int FileTo = Part[2] - 'a';
+                    int RankTo = 7 - (Part[3] - '1');
 
-                    File = Part[2] - 'a';
-                    Rank = 7 - (Part[3] - '1');
-
-                    int To = SQUARE_CREATE(File, Rank);
+                    int To = SQUARE_CREATE(FileTo, RankTo);
 
                     int PromotePieceType;
 

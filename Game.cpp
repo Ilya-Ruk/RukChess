@@ -182,7 +182,6 @@ BOOL PrintResult(const BOOL InCheck, const MoveItem BestMove, const MoveItem Pon
             }
             else { // Stalemate
                 printf("\n");
-
                 printf("1/2-1/2 {Draw by stalemate}!\n");
             }
 
@@ -213,7 +212,6 @@ BOOL PrintResult(const BOOL InCheck, const MoveItem BestMove, const MoveItem Pon
         printf(" (%s)\n", NotateMoveStr);
 
         printf("\n");
-
         printf("Score %.2f Nodes %llu Hashfull %.2f%% Time %.2f", (double)BestScore / 100.0, Nodes, (double)FullHash() / 10.0, (double)TotalTime / 1000.0);
 
         if (TotalTime >= 1000ULL) {
@@ -224,7 +222,6 @@ BOOL PrintResult(const BOOL InCheck, const MoveItem BestMove, const MoveItem Pon
 
 #ifdef USE_STATISTIC
         printf("\n");
-
         printf("Hash hit %llu Evaluate %llu Cutoff %llu Quiescence %llu\n", HashCount, EvaluateCount, CutoffCount, QuiescenceCount);
 #endif // USE_STATISTIC
 
@@ -243,7 +240,6 @@ BOOL PrintResult(const BOOL InCheck, const MoveItem BestMove, const MoveItem Pon
 
         if (IsInsufficientMaterial(&BoardList[0])) {
             printf("\n");
-
             printf("1/2-1/2 {Draw by insufficient mating material}!\n");
 
             return FALSE;
@@ -251,7 +247,6 @@ BOOL PrintResult(const BOOL InCheck, const MoveItem BestMove, const MoveItem Pon
 
         if (BoardList[0].FiftyMove >= 100) {
             printf("\n");
-
             printf("1/2-1/2 {Draw by fifty moves rule}!\n");
 
             return FALSE;
@@ -259,7 +254,6 @@ BOOL PrintResult(const BOOL InCheck, const MoveItem BestMove, const MoveItem Pon
 
         if (PositionRepeat2(&BoardList[0]) == 2) {
             printf("\n");
-
             printf("1/2-1/2 {Draw by 3-fold repetition}!\n");
 
             return FALSE;
@@ -296,8 +290,6 @@ BOOL ComputerMove(void)
 
     BOOL InCheck = IsInCheck(&BoardList[0], BoardList[0].CurrentColor);
 
-    AddHashStoreIteration();
-
     if (GetBookMove(&BoardList[0], &BestMove)) {
         goto Done;
     }
@@ -305,6 +297,8 @@ BOOL ComputerMove(void)
     for (int Thread = 1; Thread < omp_get_max_threads(); Thread++) {
         BoardList[Thread] = BoardList[0];
     }
+
+    AddHashStoreIteration();
 
 #pragma omp parallel
     {
@@ -435,25 +429,16 @@ void ComputerMoveThread(void* ignored)
 
 BOOL HumanMove(void)
 {
-    char ReadStr[64];
-
-    int File;
-    int Rank;
-
-    int GenMoveCount;
-    MoveItem MoveList[MAX_GEN_MOVES];
-
-    BOOL InCheck = IsInCheck(&BoardList[0], BoardList[0].CurrentColor);
-
-    GenMoveCount = 0;
-    GenerateAllMoves(&BoardList[0], NULL, NULL, MoveList, &GenMoveCount);
-
     while (TRUE) {
-        ReadStr[0] = '\0'; // Nul
+        BOOL InCheck = IsInCheck(&BoardList[0], BoardList[0].CurrentColor);
 
         printf("\n");
-
         printf("Enter move (e2e4, e7e8q, undo, save, exit) %c ", (InCheck ? '!' : '>'));
+
+        char ReadStr[64];
+
+        ReadStr[0] = '\0'; // Nul
+
         scanf_s("%9s", ReadStr, (unsigned)_countof(ReadStr));
 
         if (
@@ -466,11 +451,6 @@ BOOL HumanMove(void)
             UnmakeMove(&BoardList[0]);
 
             PrintBoard(&BoardList[0]);
-
-            InCheck = IsInCheck(&BoardList[0], BoardList[0].CurrentColor);
-
-            GenMoveCount = 0;
-            GenerateAllMoves(&BoardList[0], NULL, NULL, MoveList, &GenMoveCount);
 
             continue; // Next string
         }
@@ -486,15 +466,15 @@ BOOL HumanMove(void)
         }
 
         if (strlen(ReadStr) == 4 || strlen(ReadStr) == 5) { // Move (e2e4, e7e8q)
-            File = ReadStr[0] - 'a';
-            Rank = 7 - (ReadStr[1] - '1');
+            int FileFrom = ReadStr[0] - 'a';
+            int RankFrom = 7 - (ReadStr[1] - '1');
 
-            int From = SQUARE_CREATE(File, Rank);
+            int From = SQUARE_CREATE(FileFrom, RankFrom);
 
-            File = ReadStr[2] - 'a';
-            Rank = 7 - (ReadStr[3] - '1');
+            int FileTo = ReadStr[2] - 'a';
+            int RankTo = 7 - (ReadStr[3] - '1');
 
-            int To = SQUARE_CREATE(File, Rank);
+            int To = SQUARE_CREATE(FileTo, RankTo);
 
             int PromotePieceType;
 
@@ -515,6 +495,12 @@ BOOL HumanMove(void)
             }
 
             int Move = MOVE_CREATE(From, To, PromotePieceType);
+
+            int GenMoveCount;
+            MoveItem MoveList[MAX_GEN_MOVES];
+
+            GenMoveCount = 0;
+            GenerateAllMoves(&BoardList[0], NULL, NULL, MoveList, &GenMoveCount);
 
             for (int MoveNumber = 0; MoveNumber < GenMoveCount; MoveNumber++) {
                 if (MoveList[MoveNumber].Move == Move) {
@@ -549,7 +535,6 @@ BOOL HumanMove(void)
 
                     if (IsInsufficientMaterial(&BoardList[0])) {
                         printf("\n");
-
                         printf("1/2-1/2 {Draw by insufficient mating material}!\n");
 
                         return FALSE;
@@ -557,7 +542,6 @@ BOOL HumanMove(void)
 
                     if (BoardList[0].FiftyMove >= 100) {
                         printf("\n");
-
                         printf("1/2-1/2 {Draw by fifty moves rule}!\n");
 
                         return FALSE;
@@ -565,7 +549,6 @@ BOOL HumanMove(void)
 
                     if (PositionRepeat2(&BoardList[0]) == 2) {
                         printf("\n");
-
                         printf("1/2-1/2 {Draw by 3-fold repetition}!\n");
 
                         return FALSE;
@@ -580,25 +563,27 @@ BOOL HumanMove(void)
 
 void InputParametrs(void)
 {
-    int InputDepth;
-    int InputNodes;
-    int InputMaxTime;
-    int InputHashSize;
-    int InputThreads;
-
     printf("\n");
-
     printf("Max. depth (min. 1 max. %d; 0 = %d): ", MAX_PLY, MAX_PLY);
+
+    int InputDepth;
+
     scanf_s("%d", &InputDepth);
 
     MaxDepth = (InputDepth >= 1 && InputDepth <= MAX_PLY) ? InputDepth : MAX_PLY;
 
     printf("Max. nodes (min. 1; 0 = No limit): ");
+
+    int InputNodes;
+
     scanf_s("%d", &InputNodes);
 
     MaxNodes = InputNodes >= 1 ? (U64)InputNodes : 0ULL;
 
     printf("Max. time (min. 1; 0 = No limit), sec.: ");
+
+    int InputMaxTime;
+
     scanf_s("%d", &InputMaxTime);
 
     MaxTime = InputMaxTime >= 1 ? (U64)InputMaxTime : 0ULL;
@@ -618,6 +603,9 @@ void InputParametrs(void)
     memset(TargetTime, 0, sizeof(TargetTime));
 
     printf("Hash table size (min. 1 max. %d; 0 = %d), Mb: ", MAX_HASH_TABLE_SIZE, DEFAULT_HASH_TABLE_SIZE);
+
+    int InputHashSize;
+
     scanf_s("%d", &InputHashSize);
 
     InputHashSize = (InputHashSize >= 1 && InputHashSize <= MAX_HASH_TABLE_SIZE) ? InputHashSize : DEFAULT_HASH_TABLE_SIZE;
@@ -625,6 +613,9 @@ void InputParametrs(void)
     InitHashTable(InputHashSize);
 
     printf("Threads (min. 1 max. %d; 0 = %d): ", MaxThreads, DEFAULT_THREADS);
+
+    int InputThreads;
+
     scanf_s("%d", &InputThreads);
 
     InputThreads = (InputThreads >= 1 && InputThreads <= MaxThreads) ? InputThreads : DEFAULT_THREADS;
@@ -670,8 +661,6 @@ void LoadGame(BoardItem* Board)
 {
     FILE* File;
 
-    char Fen[MAX_FEN_LENGTH];
-
     fopen_s(&File, "chess.fen", "r");
 
     if (File == NULL) { // File open error
@@ -679,6 +668,8 @@ void LoadGame(BoardItem* Board)
 
         return;
     }
+
+    char Fen[MAX_FEN_LENGTH];
 
     fgets(Fen, sizeof(Fen), File);
 
@@ -691,8 +682,6 @@ void SaveGame(const BoardItem* Board)
 {
     FILE* File;
 
-    char Fen[MAX_FEN_LENGTH];
-
     fopen_s(&File, "chess.fen", "w");
 
     if (File == NULL) { // File create (open) error
@@ -700,6 +689,8 @@ void SaveGame(const BoardItem* Board)
 
         return;
     }
+
+    char Fen[MAX_FEN_LENGTH];
 
     GetFen(Board, Fen);
 

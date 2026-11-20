@@ -11,7 +11,7 @@
 #include "Utils.h"
 
 #define NNUE_FILE_MAGIC             ('B' | 'R' << 8 | 'K' << 16 | 'R' << 24)
-#define NNUE_FILE_SIZE              ((INPUT_DIMENSION * HIDDEN_DIMENSION + HIDDEN_DIMENSION + HIDDEN_DIMENSION * 2 + 1) * 4 + 12)
+#define NNUE_FILE_SIZE              (4 + 8 + (INPUT_DIMENSION * HIDDEN_DIMENSION + HIDDEN_DIMENSION + HIDDEN_DIMENSION * 2 + 1) * 4)
 
 #define NNUE_HASH(Hash, Value)      (((Hash) + 324723947ULL + (Value)) ^ 93485734985ULL)
 
@@ -41,27 +41,12 @@ I32 LoadInt32(const float Value, const int Precision)
 
 void LoadNetwork(const char* NnueFileName)
 {
-    FILE* File;
-
-    int FileMagic;
-    U64 FileHash;
-
-    U64 NnueHash = 0ULL;
-
-    float Value;
-
-    int FilePos;
-
-#ifdef PRINT_MIN_MAX_VALUES
-    float MinValue;
-    float MaxValue;
-#endif // PRINT_MIN_MAX_VALUES
-
     printf("\n");
-
     printf("Load network...\n");
 
     NnueFileLoaded = FALSE; // The network may have been loaded earlier
+
+    FILE* File;
 
     fopen_s(&File, NnueFileName, "rb");
 
@@ -72,6 +57,8 @@ void LoadNetwork(const char* NnueFileName)
     }
 
     // File magic
+
+    int FileMagic;
 
     fread(&FileMagic, 4, 1, File);
 
@@ -85,79 +72,45 @@ void LoadNetwork(const char* NnueFileName)
 
     // File hash (part 1)
 
+    U64 FileHash;
+
     fread(&FileHash, sizeof(U64), 1, File);
+
+    // Weights and biases
+
+    float Value;
+
+    U64 NnueHash = 0ULL;
 
     // Feature weights
 
-#ifdef PRINT_MIN_MAX_VALUES
-    MinValue = FLT_MAX;
-    MaxValue = -FLT_MAX;
-#endif // PRINT_MIN_MAX_VALUES
-
     for (int Index = 0; Index < INPUT_DIMENSION * HIDDEN_DIMENSION; Index++) {
         fread(&Value, sizeof(float), 1, File);
-
-#ifdef PRINT_MIN_MAX_VALUES
-        MinValue = MIN(MinValue, Value);
-        MaxValue = MAX(MaxValue, Value);
-#endif // PRINT_MIN_MAX_VALUES
 
         NnueHash = NNUE_HASH(NnueHash, (U64)Value);
 
         InputWeights[Index] = LoadInt16(Value, QUANTIZATION_PRECISION_IN);
     }
 
-#ifdef PRINT_MIN_MAX_VALUES
-    printf("Input weights: MinValue = %f MaxValue = %f\n", MinValue, MaxValue);
-#endif // PRINT_MIN_MAX_VALUES
-
     // Hidden biases
-
-#ifdef PRINT_MIN_MAX_VALUES
-    MinValue = FLT_MAX;
-    MaxValue = -FLT_MAX;
-#endif // PRINT_MIN_MAX_VALUES
 
     for (int Index = 0; Index < HIDDEN_DIMENSION; Index++) {
         fread(&Value, sizeof(float), 1, File);
-
-#ifdef PRINT_MIN_MAX_VALUES
-        MinValue = MIN(MinValue, Value);
-        MaxValue = MAX(MaxValue, Value);
-#endif // PRINT_MIN_MAX_VALUES
 
         NnueHash = NNUE_HASH(NnueHash, (U64)Value);
 
         InputBiases[Index] = LoadInt16(Value, QUANTIZATION_PRECISION_IN);
     }
 
-#ifdef PRINT_MIN_MAX_VALUES
-    printf("Input biases: MinValue = %f MaxValue = %f\n", MinValue, MaxValue);
-#endif // PRINT_MIN_MAX_VALUES
-
     // Hidden weights
-
-#ifdef PRINT_MIN_MAX_VALUES
-    MinValue = FLT_MAX;
-    MaxValue = -FLT_MAX;
-#endif // PRINT_MIN_MAX_VALUES
 
     for (int Index = 0; Index < HIDDEN_DIMENSION * 2; Index++) {
         fread(&Value, sizeof(float), 1, File);
-
-#ifdef PRINT_MIN_MAX_VALUES
-        MinValue = MIN(MinValue, Value);
-        MaxValue = MAX(MaxValue, Value);
-#endif // PRINT_MIN_MAX_VALUES
 
         NnueHash = NNUE_HASH(NnueHash, (U64)Value);
 
         OutputWeights[Index] = LoadInt16(Value, QUANTIZATION_PRECISION_OUT);
     }
-
-#ifdef PRINT_MIN_MAX_VALUES
-    printf("Output weights: MinValue = %f MaxValue = %f\n", MinValue, MaxValue);
-#endif // PRINT_MIN_MAX_VALUES
 
     // Output bias
 
@@ -167,15 +120,11 @@ void LoadNetwork(const char* NnueFileName)
 
     OutputBias = LoadInt32(Value, QUANTIZATION_PRECISION_IN * QUANTIZATION_PRECISION_OUT);
 
-#ifdef PRINT_MIN_MAX_VALUES
-    printf("Output bias: Value = %f\n", Value);
-#endif // PRINT_MIN_MAX_VALUES
-
     // Get the current position of the file pointer
 
-    FilePos = ftell(File);
+    int FilePos1 = ftell(File);
 
-    if (FilePos != NNUE_FILE_SIZE) { // File format error
+    if (FilePos1 != NNUE_FILE_SIZE) { // File format error
         printf("File '%s' format error!\n", NnueFileName);
 
         fclose(File);
@@ -189,9 +138,9 @@ void LoadNetwork(const char* NnueFileName)
 
     // Get the current position of the file pointer
 
-    FilePos = ftell(File);
+    int FilePos2 = ftell(File);
 
-    if (FilePos != NNUE_FILE_SIZE) { // File format error
+    if (FilePos2 != NNUE_FILE_SIZE) { // File format error
         printf("File '%s' format error!\n", NnueFileName);
 
         fclose(File);
@@ -300,15 +249,15 @@ void InitAccumulator(BoardItem* Board)
 
 BOOL UpdateAccumulator(BoardItem* Board)
 {
-    int CurrentColor = Board->CurrentColor;
+    int Color = Board->CurrentColor;
 
     for (int MoveIndex = Board->HalfMoveNumber - 1, UpdateMoves = 0; MoveIndex >= 0, UpdateMoves < MAX_UPDATE_MOVES; MoveIndex--, UpdateMoves++) {
-        CurrentColor = CHANGE_COLOR(CurrentColor);
+        HistoryItem* Info = &Board->MoveTable[MoveIndex];
 
-        HistoryItem* Info = &Board->MoveTable[MoveIndex]; // Prev. move info
+        Color = CHANGE_COLOR(Color);
 
         if (!(Info->Type & MOVE_NULL)) {
-            if (CurrentColor == WHITE) {
+            if (Color == WHITE) {
                 if (Info->Type & MOVE_CASTLE_KING) {
                     AccumulatorSub(Board, SQ_H1, PIECE_CREATE(ROOK, WHITE));
                     AccumulatorAdd(Board, SQ_F1, PIECE_CREATE(ROOK, WHITE));
@@ -397,10 +346,6 @@ I32 OutputLayer(const BoardItem* Board)
 #ifdef USE_NNUE_AVX2
     __m256i ConstZero = _mm256_setzero_si256();
 
-#ifdef USE_CRELU
-    __m256i ConstMax = _mm256_set1_epi16(QUANTIZATION_PRECISION_IN);
-#endif // USE_CRELU
-
     __m256i Sum0 = ConstZero;
     __m256i Sum1 = ConstZero;
 
@@ -411,13 +356,8 @@ I32 OutputLayer(const BoardItem* Board)
     __m256i* Weights1 = (__m256i*)&OutputWeights[HIDDEN_DIMENSION];
 
     for (int Reg = 0; Reg < NUM_REGS; Reg++) {
-#ifdef USE_CRELU
-        __m256i Acc0 = _mm256_max_epi16(ConstZero, _mm256_min_epi16(ConstMax, AccumulatorTile0[Reg])); // CReLU
-        __m256i Acc1 = _mm256_max_epi16(ConstZero, _mm256_min_epi16(ConstMax, AccumulatorTile1[Reg])); // CReLU
-#else
         __m256i Acc0 = _mm256_max_epi16(ConstZero, AccumulatorTile0[Reg]); // ReLU
         __m256i Acc1 = _mm256_max_epi16(ConstZero, AccumulatorTile1[Reg]); // ReLU
-#endif // USE_CRELU
 
         Sum0 = _mm256_add_epi32(Sum0, _mm256_madd_epi16(Acc0, Weights0[Reg]));
         Sum1 = _mm256_add_epi32(Sum1, _mm256_madd_epi16(Acc1, Weights1[Reg]));
@@ -431,20 +371,15 @@ I32 OutputLayer(const BoardItem* Board)
     Result += _mm_cvtsi128_si32(R1);
 #else
     for (int Index = 0; Index < HIDDEN_DIMENSION; Index++) {
-#ifdef USE_CRELU
-        I16 Acc0 = MAX(0, MIN(QUANTIZATION_PRECISION_IN, Board->Accumulator.Accumulator[Board->CurrentColor][Index])); // CReLU
-        I16 Acc1 = MAX(0, MIN(QUANTIZATION_PRECISION_IN, Board->Accumulator.Accumulator[CHANGE_COLOR(Board->CurrentColor)][Index])); // CReLU
-#else
         I16 Acc0 = MAX(0, Board->Accumulator.Accumulator[Board->CurrentColor][Index]); // ReLU
         I16 Acc1 = MAX(0, Board->Accumulator.Accumulator[CHANGE_COLOR(Board->CurrentColor)][Index]); // ReLU
-#endif // USE_CRELU
 
         Result += Acc0 * OutputWeights[Index];
         Result += Acc1 * OutputWeights[HIDDEN_DIMENSION + Index];
     }
 #endif // USE_NNUE_AVX2
 
-    return (Result * SCALE) / (QUANTIZATION_PRECISION_IN * QUANTIZATION_PRECISION_OUT);
+    return Result / (QUANTIZATION_PRECISION_IN * QUANTIZATION_PRECISION_OUT);
 }
 
 int Evaluate(BoardItem* Board, SearchDataItem* SearchData)

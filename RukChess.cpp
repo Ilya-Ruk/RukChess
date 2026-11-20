@@ -35,7 +35,6 @@ int main(int argc, char** argv)
     omp_set_num_threads(DEFAULT_THREADS);
 
     printf("\n");
-
     printf("Max. threads = %d\n", MaxThreads);
     printf("Threads = %d\n", DEFAULT_THREADS);
 
@@ -52,7 +51,6 @@ int main(int argc, char** argv)
     InitHashTable(DEFAULT_HASH_TABLE_SIZE);
 
     printf("\n");
-
     printf("Max. hash table size = %d Mb\n", MAX_HASH_TABLE_SIZE);
     printf("Hash table size = %d Mb\n", DEFAULT_HASH_TABLE_SIZE);
 
@@ -104,7 +102,6 @@ int main(int argc, char** argv)
     // Universal Chess Interface (UCI) or Terminal User Interface (TUI)?
 
     printf("\n");
-
     printf("Use UCI commands or press Enter to display the menu\n");
 
     char Buf[64];
@@ -169,9 +166,10 @@ int main(int argc, char** argv)
 
         printf("\n");
 
+        printf("Choice: ");
+
         int Choice;
 
-        printf("Choice: ");
         scanf_s("%d", &Choice);
 
         switch (Choice) {

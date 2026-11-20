@@ -60,10 +60,6 @@ int SEE(const BoardItem* Board, const int MoveType, const int Move)
 
     int Depth = 1;
 
-#ifdef DEBUG_SEE
-    printf("-- SEE: Move = %s%s\n", BoardName[From], BoardName[To]);
-#endif // DEBUG_SEE
-
     if (MoveType & MOVE_PAWN_EN_PASSANT) {
         Gain[0] = PiecesScoreSEE[PAWN];
 
@@ -95,7 +91,7 @@ int SEE(const BoardItem* Board, const int MoveType, const int Move)
     Attackers = AttackTo(Board, To, Occupied);
 
     while (TRUE) {
-        Color ^= 1;
+        Color = CHANGE_COLOR(Color);
 
         if (Color == WHITE) {
             CurrentAttackers = Attackers & Board->BB_WhitePieces;
@@ -118,10 +114,6 @@ int SEE(const BoardItem* Board, const int MoveType, const int Move)
 
         for (PieceType = 0; PieceType < 6; PieceType++) { // PNBRQK
             if (CurrentAttackers & Board->BB_Pieces[Color][PieceType]) {
-#ifdef DEBUG_SEE
-                printf("-- SEE: From = %s\n", BoardName[LSB(CurrentAttackers & Board->BB_Pieces[Color][PieceType])]);
-#endif // DEBUG_SEE
-
                 BB_From = BB_SQUARE(LSB(CurrentAttackers & Board->BB_Pieces[Color][PieceType]));
 
                 break; // for
@@ -147,10 +139,6 @@ int SEE(const BoardItem* Board, const int MoveType, const int Move)
 
     while (--Depth) {
         Gain[Depth - 1] = MIN(-Gain[Depth], Gain[Depth - 1]);
-
-#ifdef DEBUG_SEE
-        printf("-- SEE: Gain[%d] = %d\n", Depth - 1, Gain[Depth - 1]);
-#endif // DEBUG_SEE
     }
 
     return Gain[0];
