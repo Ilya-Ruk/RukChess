@@ -195,11 +195,11 @@ void AccumulatorAdd(BoardItem* Board, int Square, int PieceWithColor)
         int WeightIndex = CalculateWeightIndex(Perspective, Square, PieceWithColor);
 
 #ifdef USE_NNUE_AVX2
-        __m256i* AccumulatorTile = (__m256i*)Board->Accumulator.Accumulator[Perspective];
+        __m256i* Accumulator = (__m256i*)Board->Accumulator.Accumulator[Perspective];
         __m256i* Weights = (__m256i*)&InputWeights[WeightIndex * HIDDEN_DIMENSION];
 
         for (int Reg = 0; Reg < NUM_REGS; Reg++) {
-            AccumulatorTile[Reg] = _mm256_add_epi16(AccumulatorTile[Reg], Weights[Reg]);
+            Accumulator[Reg] = _mm256_add_epi16(Accumulator[Reg], Weights[Reg]);
         }
 #else
         for (int Index = 0; Index < HIDDEN_DIMENSION; Index++) {
@@ -215,11 +215,11 @@ void AccumulatorSub(BoardItem* Board, int Square, int PieceWithColor)
         int WeightIndex = CalculateWeightIndex(Perspective, Square, PieceWithColor);
 
 #ifdef USE_NNUE_AVX2
-        __m256i* AccumulatorTile = (__m256i*)Board->Accumulator.Accumulator[Perspective];
+        __m256i* Accumulator = (__m256i*)Board->Accumulator.Accumulator[Perspective];
         __m256i* Weights = (__m256i*)&InputWeights[WeightIndex * HIDDEN_DIMENSION];
 
         for (int Reg = 0; Reg < NUM_REGS; Reg++) {
-            AccumulatorTile[Reg] = _mm256_sub_epi16(AccumulatorTile[Reg], Weights[Reg]);
+            Accumulator[Reg] = _mm256_sub_epi16(Accumulator[Reg], Weights[Reg]);
         }
 #else
         for (int Index = 0; Index < HIDDEN_DIMENSION; Index++) {
@@ -279,7 +279,7 @@ BOOL UpdateAccumulator(BoardItem* Board)
     int Color = Board->CurrentColor;
 
     for (int MoveIndex = Board->HalfMoveNumber - 1; MoveIndex >= ActualMoveIndex; MoveIndex--) {
-        Color = CHANGE_COLOR(Color);
+        Color ^= 1;
 
         HistoryItem* Info = &Board->MoveTable[MoveIndex];
 
@@ -367,20 +367,20 @@ I32 OutputLayer(const BoardItem* Board)
     I32 Result = OutputBias;
 
 #ifdef USE_NNUE_AVX2
-    __m256i ConstZero = _mm256_setzero_si256();
+    __m256i Zero = _mm256_setzero_si256();
 
-    __m256i Sum0 = ConstZero;
-    __m256i Sum1 = ConstZero;
+    __m256i Sum0 = Zero;
+    __m256i Sum1 = Zero;
 
-    __m256i* AccumulatorTile0 = (__m256i*)Board->Accumulator.Accumulator[Board->CurrentColor];
-    __m256i* AccumulatorTile1 = (__m256i*)Board->Accumulator.Accumulator[CHANGE_COLOR(Board->CurrentColor)];
+    __m256i* Accumulator0 = (__m256i*)Board->Accumulator.Accumulator[Board->CurrentColor];
+    __m256i* Accumulator1 = (__m256i*)Board->Accumulator.Accumulator[CHANGE_COLOR(Board->CurrentColor)];
 
     __m256i* Weights0 = (__m256i*)&OutputWeights;
     __m256i* Weights1 = (__m256i*)&OutputWeights[HIDDEN_DIMENSION];
 
     for (int Reg = 0; Reg < NUM_REGS; Reg++) {
-        __m256i Acc0 = _mm256_max_epi16(ConstZero, AccumulatorTile0[Reg]); // ReLU
-        __m256i Acc1 = _mm256_max_epi16(ConstZero, AccumulatorTile1[Reg]); // ReLU
+        __m256i Acc0 = _mm256_max_epi16(Zero, Accumulator0[Reg]); // ReLU
+        __m256i Acc1 = _mm256_max_epi16(Zero, Accumulator1[Reg]); // ReLU
 
         Sum0 = _mm256_add_epi32(Sum0, _mm256_madd_epi16(Acc0, Weights0[Reg]));
         Sum1 = _mm256_add_epi32(Sum1, _mm256_madd_epi16(Acc1, Weights1[Reg]));

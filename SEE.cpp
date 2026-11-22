@@ -91,7 +91,7 @@ int SEE(const BoardItem* Board, const int MoveType, const int Move)
     Attackers = AttackTo(Board, To, Occupied);
 
     while (TRUE) {
-        Color = CHANGE_COLOR(Color);
+        Color ^= 1;
 
         if (Color == WHITE) {
             CurrentAttackers = Attackers & Board->BB_WhitePieces;

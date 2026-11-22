@@ -162,7 +162,7 @@ void UCI(void)
                     int Move = MOVE_CREATE(From, To, PromotePieceType);
 
                     BOOL MoveFound = FALSE;
-                    BOOL MoveInCheck = FALSE;
+                    BOOL InCheck = FALSE;
 
                     int GenMoveCount;
                     MoveItem MoveList[MAX_GEN_MOVES];
@@ -176,9 +176,9 @@ void UCI(void)
 
                             MakeMove(&BoardList[0], MoveList[MoveNumber]);
 
-                            MoveInCheck = IsInCheck(&BoardList[0], CHANGE_COLOR(BoardList[0].CurrentColor));
+                            InCheck = IsInCheck(&BoardList[0], CHANGE_COLOR(BoardList[0].CurrentColor));
 
-                            if (MoveInCheck) { // Illegal move
+                            if (InCheck) { // Illegal move
                                 UnmakeMove(&BoardList[0]);
                             }
 
@@ -186,7 +186,7 @@ void UCI(void)
                         }
                     }
 
-                    if (!MoveFound || MoveInCheck) { // Move not found or illegal move
+                    if (!MoveFound || InCheck) { // Move not found or illegal move
                         printf("info string Illegal move (%s%s", BoardName[From], BoardName[To]);
 
                         if (PromotePieceType != 0) {
