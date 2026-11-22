@@ -46,6 +46,8 @@ void LoadNetwork(const char* NnueFileName)
 
     NnueFileLoaded = FALSE; // The network may have been loaded earlier
 
+    // Open file
+
     FILE* File;
 
     fopen_s(&File, NnueFileName, "rb");
@@ -56,7 +58,7 @@ void LoadNetwork(const char* NnueFileName)
         return;
     }
 
-    // File magic
+    // Read and check file magic
 
     int FileMagic;
 
@@ -70,19 +72,19 @@ void LoadNetwork(const char* NnueFileName)
         return;
     }
 
-    // File hash (part 1)
+    // Read file hash
 
     U64 FileHash;
 
     fread(&FileHash, sizeof(U64), 1, File);
 
-    // Weights and biases
+    // Read weights and biases; calculate file hash
 
     float Value;
 
     U64 NnueHash = 0ULL;
 
-    // Feature weights
+    // Read input weights
 
     for (int Index = 0; Index < INPUT_DIMENSION * HIDDEN_DIMENSION; Index++) {
         fread(&Value, sizeof(float), 1, File);
@@ -92,7 +94,7 @@ void LoadNetwork(const char* NnueFileName)
         InputWeights[Index] = LoadInt16(Value, QUANTIZATION_PRECISION_IN);
     }
 
-    // Hidden biases
+    // Read input biases
 
     for (int Index = 0; Index < HIDDEN_DIMENSION; Index++) {
         fread(&Value, sizeof(float), 1, File);
@@ -102,7 +104,7 @@ void LoadNetwork(const char* NnueFileName)
         InputBiases[Index] = LoadInt16(Value, QUANTIZATION_PRECISION_IN);
     }
 
-    // Hidden weights
+    // Read output weights
 
     for (int Index = 0; Index < HIDDEN_DIMENSION * 2; Index++) {
         fread(&Value, sizeof(float), 1, File);
@@ -112,7 +114,7 @@ void LoadNetwork(const char* NnueFileName)
         OutputWeights[Index] = LoadInt16(Value, QUANTIZATION_PRECISION_OUT);
     }
 
-    // Output bias
+    // Read output bias
 
     fread(&Value, sizeof(float), 1, File);
 
@@ -120,7 +122,7 @@ void LoadNetwork(const char* NnueFileName)
 
     OutputBias = LoadInt32(Value, QUANTIZATION_PRECISION_IN * QUANTIZATION_PRECISION_OUT);
 
-    // Get the current position of the file pointer
+    // Check file size (part 1)
 
     int FilePos1 = ftell(File);
 
@@ -132,11 +134,9 @@ void LoadNetwork(const char* NnueFileName)
         return;
     }
 
-    // Set the pointer to the ending of the file
+    // Check file size (part 2)
 
     fseek(File, 0, SEEK_END);
-
-    // Get the current position of the file pointer
 
     int FilePos2 = ftell(File);
 
@@ -148,7 +148,7 @@ void LoadNetwork(const char* NnueFileName)
         return;
     }
 
-    // File hash (part 2)
+    // Check file hash
 
     if (FileHash != NnueHash) { // File format error
         printf("File '%s' format error!\n", NnueFileName);
@@ -157,6 +157,8 @@ void LoadNetwork(const char* NnueFileName)
 
         return;
     }
+
+    // Close file
 
     fclose(File);
 
@@ -249,12 +251,37 @@ void InitAccumulator(BoardItem* Board)
 
 BOOL UpdateAccumulator(BoardItem* Board)
 {
-    int Color = Board->CurrentColor;
+    int UpdateMoves = 0;
+    int ActualMoveIndex = -1;
 
-    for (int MoveIndex = Board->HalfMoveNumber - 1, UpdateMoves = 0; MoveIndex >= 0, UpdateMoves < MAX_UPDATE_MOVES; MoveIndex--, UpdateMoves++) {
+    for (int MoveIndex = Board->HalfMoveNumber - 1; MoveIndex >= 0; MoveIndex--) {
+        UpdateMoves++;
+
         HistoryItem* Info = &Board->MoveTable[MoveIndex];
 
+        if (Info->Accumulator.AccumulatorActual) {
+            ActualMoveIndex = MoveIndex;
+
+            break;
+        }
+
+        if (UpdateMoves >= MAX_UPDATE_MOVES) {
+            ActualMoveIndex = -1;
+
+            break;
+        }
+    }
+
+    if (ActualMoveIndex == -1) {
+        return FALSE;
+    }
+
+    int Color = Board->CurrentColor;
+
+    for (int MoveIndex = Board->HalfMoveNumber - 1; MoveIndex >= ActualMoveIndex; MoveIndex--) {
         Color = CHANGE_COLOR(Color);
+
+        HistoryItem* Info = &Board->MoveTable[MoveIndex];
 
         if (!(Info->Type & MOVE_NULL)) {
             if (Color == WHITE) {
@@ -312,31 +339,27 @@ BOOL UpdateAccumulator(BoardItem* Board)
                 AccumulatorSub(Board, Info->From, PIECE_CREATE(Info->PieceTypeFrom, BLACK));
             }
         } // if
-
-        if (Info->Accumulator.AccumulatorActual) {
-#ifdef DEBUG_NNUE_UPDATE
-            AccumulatorItem Accumulator = Board->Accumulator;
-
-            InitAccumulator(Board);
-
-            for (int Perspective = 0; Perspective < 2; Perspective++) { // STM/XSTM
-                for (int Index = 0; Index < HIDDEN_DIMENSION; Index++) {
-                    if (Board->Accumulator.Accumulator[Perspective][Index] != Accumulator.Accumulator[Perspective][Index]) {
-                        printf("-- Accumulator error (update)!\n");
-
-                        break;
-                    }
-                }
-            }
-#endif // DEBUG_NNUE_UPDATE
-
-            Board->Accumulator.AccumulatorActual = TRUE;
-
-            return TRUE;
-        }
     } // for
 
-    return FALSE;
+#ifdef DEBUG_NNUE_UPDATE
+    AccumulatorItem Accumulator = Board->Accumulator;
+
+    InitAccumulator(Board);
+
+    for (int Perspective = 0; Perspective < 2; Perspective++) { // STM/XSTM
+        for (int Index = 0; Index < HIDDEN_DIMENSION; Index++) {
+            if (Board->Accumulator.Accumulator[Perspective][Index] != Accumulator.Accumulator[Perspective][Index]) {
+                printf("-- Accumulator error (update)!\n");
+
+                break;
+            }
+        }
+    }
+#endif // DEBUG_NNUE_UPDATE
+
+    Board->Accumulator.AccumulatorActual = TRUE;
+
+    return TRUE;
 }
 
 I32 OutputLayer(const BoardItem* Board)
