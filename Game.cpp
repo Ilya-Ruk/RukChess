@@ -390,6 +390,9 @@ BOOL ComputerMove(void)
 
                 BestScore = ThreadScore;
 
+                BestMove = ThreadSearchData->BestMoves[0];
+                PonderMove = ThreadSearchData->BestMoves[1];
+
                 if (TargetTimeLocal > 0ULL && CompletedDepth >= MIN_SEARCH_DEPTH && (Clock() - TimeStart) >= TargetTimeLocal) { // Target time is up
                     break; // for (depth)
                 }
@@ -408,9 +411,6 @@ BOOL ComputerMove(void)
             StopSearch = TRUE; // Stop helper threads
         }
     } // pragma omp parallel
-
-    BestMove = SearchDataList[0].BestMoves[0];
-    PonderMove = SearchDataList[0].BestMoves[1];
 
 Done:
 
