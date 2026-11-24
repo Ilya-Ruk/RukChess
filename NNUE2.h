@@ -13,9 +13,6 @@ void LoadNetwork(const char* NnueFileName);
 
 BOOL IsNetworkLoaded(void);
 
-void AccumulatorAdd(BoardItem* Board, int Square, int PieceWithColor);
-void AccumulatorSub(BoardItem* Board, int Square, int PieceWithColor);
-
 void InitAccumulator(BoardItem* Board);
 
 int Evaluate(BoardItem* Board, SearchDataItem* SearchData);
