@@ -48,7 +48,7 @@ int SEE(const BoardItem* Board, const int MoveType, const int Move)
 
     U64 BB_From = BB_SQUARE(From);
 
-    U64 Occupied = Board->BB_WhitePieces | Board->BB_BlackPieces;
+    U64 Occupied = (Board->BB_WhitePieces | Board->BB_BlackPieces);
 
     U64 Attackers;
     U64 CurrentAttackers;
