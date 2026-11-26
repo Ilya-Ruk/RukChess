@@ -460,7 +460,7 @@ void GeneratorTest1(void)
 
         printf("\n");
         printf("Test %d\n", TestNumber + 1);
-        printf("FEN = %s\n", Fen);
+        printf("FEN %s\n", Fen);
 
         SetFen(&BoardList[0], Fen);
 
@@ -480,7 +480,7 @@ void GeneratorTest1(void)
                 ResultString = "FAILED";
             }
 
-            printf("Depth = %2d Nodes = %10llu Result nodes = %10llu %s\n", Depth, GeneratorTests[TestNumber].Nodes[Depth - 1], ResultNodes, ResultString);
+            printf("Depth %2d Nodes %10llu Result nodes %10llu %s\n", Depth, GeneratorTests[TestNumber].Nodes[Depth - 1], ResultNodes, ResultString);
         }
     }
 }
@@ -488,7 +488,7 @@ void GeneratorTest1(void)
 void GeneratorTest2(void)
 {
     printf("\n");
-    printf("Max. depth (min. 1 max. %d; 0 = %d): ", MAX_PLY, MAX_PLY);
+    printf("Max. depth (min. 1 max. %d; 0 - %d): ", MAX_PLY, MAX_PLY);
 
     int InputDepth;
 
@@ -503,7 +503,7 @@ void GeneratorTest2(void)
     for (int Depth = 1; Depth <= MaxDepth; Depth++) {
         U64 ResultNodes = CountLegalMoves(&BoardList[0], Depth);
 
-        printf("Depth = %2d Result nodes = %10llu\n", Depth, ResultNodes);
+        printf("Depth %2d Result nodes %10llu\n", Depth, ResultNodes);
     }
 }
 
@@ -521,8 +521,8 @@ void Tests(const char* Tests[], const int TestCount)
 
         printf("\n");
         printf("Test %d\n", TestNumber + 1);
-        printf("FEN = %s\n", Fen);
-        printf("Best moves = %s\n", BestMoves);
+        printf("FEN %s\n", Fen);
+        printf("Best moves %s\n", BestMoves);
 
         // Prepare new game
 
@@ -601,7 +601,7 @@ void SearchPerformanceTest(void)
 
     for (int Cycle = 0; Cycle < MaxCycles; Cycle++) {
         printf("\n");
-        printf("Cycle = %d\n", Cycle + 1);
+        printf("Cycle %d\n", Cycle + 1);
 
         // Prepare new game
 
@@ -652,7 +652,7 @@ void EvaluateTests(const char* Tests[], const int TestCount)
     I64 EvaluateTotalTime = 0LL;
 
     for (int Cycle = 0; Cycle < MaxCycles; Cycle++) {
-        printf("Cycle = %d\n", Cycle + 1);
+        printf("Cycle %d\n", Cycle + 1);
 
         for (int TestNumber = 0; TestNumber < TestCount; TestNumber++) {
             const char* Fen = Tests[TestNumber * 2];

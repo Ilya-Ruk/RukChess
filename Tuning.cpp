@@ -98,7 +98,7 @@ void Pgn2Fen(void)
         if (*Part == '[') { // Tag
             if (Stage == STAGE_NONE) {
                 if (GameNumber > 1 && ((GameNumber - 1) % 10000) == 0) {
-                    printf("Game number = %d\n", GameNumber - 1);
+                    printf("Game number %d\n", GameNumber - 1);
                 }
 
                 Stage = STAGE_TAG;
@@ -255,7 +255,7 @@ void Pgn2Fen(void)
         } // while
     } // while
 
-    printf("Game number = %d\n", GameNumber - 1);
+    printf("Game number %d\n", GameNumber - 1);
 
     fclose(FileOut);
     fclose(FileIn);

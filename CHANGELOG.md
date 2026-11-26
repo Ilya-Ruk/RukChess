@@ -7,8 +7,8 @@
 3. Updated BONUS formula
 4. Changed DEFAULT_HASH_TABLE_SIZE to 256
 5. Separated search data from board
-6. New neural net ((768x256)x2->1, CReLU, Qin=255, Qout=64, Scale=272)?
-7. New book file (434173 positions)?
+6. New accumulator update code
+7. New book file (434173 positions)
 8. Added nodes in UCI go command
 9. Project updated to Microsoft VS 2026
 10. Corrected the code

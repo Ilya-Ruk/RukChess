@@ -564,7 +564,7 @@ BOOL HumanMove(void)
 void InputParametrs(void)
 {
     printf("\n");
-    printf("Max. depth (min. 1 max. %d; 0 = %d): ", MAX_PLY, MAX_PLY);
+    printf("Max. depth (min. 1 max. %d; 0 - %d): ", MAX_PLY, MAX_PLY);
 
     int InputDepth;
 
@@ -572,7 +572,7 @@ void InputParametrs(void)
 
     MaxDepth = (InputDepth >= 1 && InputDepth <= MAX_PLY) ? InputDepth : MAX_PLY;
 
-    printf("Max. nodes (min. 1; 0 = No limit): ");
+    printf("Max. nodes (min. 1; 0 - No limit): ");
 
     int InputNodes;
 
@@ -580,7 +580,7 @@ void InputParametrs(void)
 
     MaxNodes = InputNodes >= 1 ? (U64)InputNodes : 0ULL;
 
-    printf("Max. time (min. 1; 0 = No limit), sec.: ");
+    printf("Max. time (min. 1; 0 - No limit), sec.: ");
 
     int InputMaxTime;
 
@@ -602,7 +602,7 @@ void InputParametrs(void)
 
     memset(TargetTime, 0, sizeof(TargetTime));
 
-    printf("Hash table size (min. 1 max. %d; 0 = %d), Mb: ", MAX_HASH_TABLE_SIZE, DEFAULT_HASH_TABLE_SIZE);
+    printf("Hash table size (min. 1 max. %d; 0 - %d), Mb: ", MAX_HASH_TABLE_SIZE, DEFAULT_HASH_TABLE_SIZE);
 
     int InputHashSize;
 
@@ -612,7 +612,7 @@ void InputParametrs(void)
 
     InitHashTable(InputHashSize);
 
-    printf("Threads (min. 1 max. %d; 0 = %d): ", MaxThreads, DEFAULT_THREADS);
+    printf("Threads (min. 1 max. %d; 0 - %d): ", MaxThreads, DEFAULT_THREADS);
 
     int InputThreads;
 

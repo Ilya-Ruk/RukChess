@@ -35,8 +35,8 @@ int main(int argc, char** argv)
     omp_set_num_threads(DEFAULT_THREADS);
 
     printf("\n");
-    printf("Max. threads = %d\n", MaxThreads);
-    printf("Threads = %d\n", DEFAULT_THREADS);
+    printf("Max. threads %d\n", MaxThreads);
+    printf("Threads %d\n", DEFAULT_THREADS);
 
 #ifdef BIND_THREAD_V1
     InitThreadNode();
@@ -51,8 +51,8 @@ int main(int argc, char** argv)
     InitHashTable(DEFAULT_HASH_TABLE_SIZE);
 
     printf("\n");
-    printf("Max. hash table size = %d Mb\n", MAX_HASH_TABLE_SIZE);
-    printf("Hash table size = %d Mb\n", DEFAULT_HASH_TABLE_SIZE);
+    printf("Max. hash table size %d Mb\n", MAX_HASH_TABLE_SIZE);
+    printf("Hash table size %d Mb\n", DEFAULT_HASH_TABLE_SIZE);
 
     // Initialize hash boards
 

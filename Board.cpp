@@ -395,7 +395,7 @@ void PrintBoard(BoardItem* Board)
 
     printf("\n");
 
-    printf("Static evaluate = %.2f\n", (double)Evaluate(Board, NULL) / 100.0);
+    printf("Static evaluate %.2f\n", (double)Evaluate(Board, NULL) / 100.0);
 }
 
 int SetFen(BoardItem* Board, const char* Fen)

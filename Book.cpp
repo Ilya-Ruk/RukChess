@@ -20,7 +20,7 @@
 #define STAGE_COMMENT   5
 
 #define MAX_BOOK_PLY    24 // 12 moves
-#define MIN_BOOK_GAMES  30
+#define MIN_BOOK_GAMES  25
 
 BookStoreItem BookStore;
 
@@ -178,12 +178,12 @@ void GenerateBook(void)
             if (Stage == STAGE_NONE) {
                 if (GameNumber > 1 && ((GameNumber - 1) % 10000) == 0) {
                     printf("\n");
-                    printf("Game number = %d\n", GameNumber - 1);
+                    printf("Game number %d\n", GameNumber - 1);
 
                     printf("\n");
-                    printf("  White = %d Black = %d Draw = %d Total = %d\n", RootNode->White, RootNode->Black, RootNode->Draw, RootNode->Total);
-                    printf("  White = %.1f%% Black = %.1f%% Draw = %.1f%%\n", 100.0 * (double)RootNode->White / (double)RootNode->Total, 100.0 * (double)RootNode->Black / (double)RootNode->Total, 100.0 * (double)RootNode->Draw / (double)RootNode->Total);
-                    printf("  White score = %.1f%%\n", 100.0 * ((double)RootNode->White + (double)RootNode->Draw / 2.0) / (double)RootNode->Total);
+                    printf("  White %d Black %d Draw %d Total %d\n", RootNode->White, RootNode->Black, RootNode->Draw, RootNode->Total);
+                    printf("  White %.1f%% Black %.1f%% Draw %.1f%%\n", 100.0 * (double)RootNode->White / (double)RootNode->Total, 100.0 * (double)RootNode->Black / (double)RootNode->Total, 100.0 * (double)RootNode->Draw / (double)RootNode->Total);
+                    printf("  White score %.1f%%\n", 100.0 * ((double)RootNode->White + (double)RootNode->Draw / 2.0) / (double)RootNode->Total);
                 }
 
                 Stage = STAGE_TAG;
@@ -385,12 +385,12 @@ void GenerateBook(void)
     } // while
 
     printf("\n");
-    printf("Game number = %d\n", GameNumber - 1);
+    printf("Game number %d\n", GameNumber - 1);
 
     printf("\n");
-    printf("  White = %d Black = %d Draw = %d Total = %d\n", RootNode->White, RootNode->Black, RootNode->Draw, RootNode->Total);
-    printf("  White = %.1f%% Black = %.1f%% Draw = %.1f%%\n", 100.0 * (double)RootNode->White / (double)RootNode->Total, 100.0 * (double)RootNode->Black / (double)RootNode->Total, 100.0 * (double)RootNode->Draw / (double)RootNode->Total);
-    printf("  White score = %.1f%%\n", 100.0 * ((double)RootNode->White + (double)RootNode->Draw / 2.0) / (double)RootNode->Total);
+    printf("  White %d Black %d Draw %d Total %d\n", RootNode->White, RootNode->Black, RootNode->Draw, RootNode->Total);
+    printf("  White %.1f%% Black %.1f%% Draw %.1f%%\n", 100.0 * (double)RootNode->White / (double)RootNode->Total, 100.0 * (double)RootNode->Black / (double)RootNode->Total, 100.0 * (double)RootNode->Draw / (double)RootNode->Total);
+    printf("  White score %.1f%%\n", 100.0 * ((double)RootNode->White + (double)RootNode->Draw / 2.0) / (double)RootNode->Total);
 
     // Prepare new game
 
