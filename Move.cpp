@@ -46,8 +46,6 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
 
     Info->Hash = Board->Hash;
 
-    Info->Accumulator = Board->Accumulator;
-
 #ifdef DEBUG_MOVE_BIT_BOARD
     Info->BB_WhitePieces = Board->BB_WhitePieces;
     Info->BB_BlackPieces = Board->BB_BlackPieces;
@@ -249,7 +247,9 @@ void MakeMove(BoardItem* Board, const MoveItem Move)
 
     Board->Hash ^= ColorHash;
 
-    Board->Accumulator.AccumulatorActual = FALSE;
+    Board->Ply++;
+
+    Board->Accumulator[Board->Ply].AccumulatorActual = FALSE;
 
 #ifdef DEBUG_MOVE_HASH
     U64 Hash = GetBoardHash(Board);
@@ -416,7 +416,7 @@ void UnmakeMove(BoardItem* Board)
 
     Board->Hash = Info->Hash;
 
-    Board->Accumulator = Info->Accumulator;
+    Board->Ply--;
 
 #ifdef DEBUG_MOVE_BIT_BOARD
     if (Board->BB_WhitePieces != Info->BB_WhitePieces) {
@@ -453,8 +453,6 @@ void MakeNullMove(BoardItem* Board)
 
     Info->Hash = Board->Hash;
 
-    Info->Accumulator = Board->Accumulator;
-
     if (Info->EnPassantSquare != -1) {
         Board->EnPassantSquare = -1;
 
@@ -466,6 +464,10 @@ void MakeNullMove(BoardItem* Board)
     Board->CurrentColor ^= 1;
 
     Board->Hash ^= ColorHash;
+
+    Board->Ply++;
+
+    Board->Accumulator[Board->Ply].AccumulatorActual = FALSE;
 
 #ifdef DEBUG_MOVE_HASH
     U64 Hash = GetBoardHash(Board);
@@ -488,7 +490,7 @@ void UnmakeNullMove(BoardItem* Board)
 
     Board->Hash = Info->Hash;
 
-    Board->Accumulator = Info->Accumulator;
+    Board->Ply--;
 }
 
 #endif // NULL_MOVE_PRUNING

@@ -72,7 +72,7 @@
 
 // Max. limits and default values
 
-#define MAX_PLY                                 128
+#define MAX_PLY                                 64
 
 #define MAX_GEN_MOVES                           256     // The maximum number of moves in the position
 #define MAX_GAME_MOVES                          1024    // The maximum number of moves in the game

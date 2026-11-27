@@ -11,6 +11,7 @@
 #include "Hash.h"
 #include "Heuristic.h"
 #include "Move.h"
+#include "NNUE2.h"
 #include "Search.h"
 #include "Types.h"
 #include "Utils.h"
@@ -194,6 +195,10 @@ BOOL PrintResult(const BOOL InCheck, const MoveItem BestMove, const MoveItem Pon
 
         MakeMove(&BoardList[0], BestMove);
 
+        BoardList[0].Ply = 0;
+
+        InitAccumulator(&BoardList[0]);
+
         PrintBoard(&BoardList[0]);
 
         printf("\n");
@@ -337,6 +342,8 @@ BOOL ComputerMove(void)
         int ThreadScore = 0;
 
         for (int Depth = 1; Depth <= MaxDepth; Depth++) {
+            ThreadBoard->Ply = 0;
+
 #ifdef ASPIRATION_WINDOW
             if (Depth >= ASPIRATION_WINDOW_START_DEPTH) {
                 int Delta = ASPIRATION_WINDOW_INIT_DELTA;
@@ -515,6 +522,10 @@ BOOL HumanMove(void)
 
                         break; // for
                     }
+
+                    BoardList[0].Ply = 0;
+
+                    InitAccumulator(&BoardList[0]);
 
                     PrintBoard(&BoardList[0]);
 

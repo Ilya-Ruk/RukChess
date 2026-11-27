@@ -618,6 +618,8 @@ int SetFen(BoardItem* Board, const char* Fen)
 
     // Initialize accumulator
 
+    Board->Ply = 0;
+
     InitAccumulator(Board);
 
     return (int)(Part - Fen);

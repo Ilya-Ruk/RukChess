@@ -182,6 +182,10 @@ void UCI(void)
                                 UnmakeMove(&BoardList[0]);
                             }
 
+                            BoardList[0].Ply = 0;
+
+                            InitAccumulator(&BoardList[0]);
+
                             break; // for
                         }
                     }

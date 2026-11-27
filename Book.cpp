@@ -10,6 +10,7 @@
 #include "Gen.h"
 #include "Hash.h"
 #include "Move.h"
+#include "NNUE2.h"
 #include "Types.h"
 #include "Utils.h"
 
@@ -295,6 +296,10 @@ void GenerateBook(void)
 
                                 continue; // Next move
                             }
+
+                            BoardList[0].Ply = 0;
+
+                            InitAccumulator(&BoardList[0]);
 
                             MoveFound = TRUE;
 

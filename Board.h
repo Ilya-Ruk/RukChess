@@ -148,8 +148,6 @@ typedef struct {
 
     U64 Hash;
 
-    AccumulatorItem Accumulator;
-
 #ifdef DEBUG_MOVE_BIT_BOARD
     U64 BB_WhitePieces;
     U64 BB_BlackPieces;
@@ -165,6 +163,8 @@ typedef struct {
     int FiftyMove;
     int HalfMoveNumber;
 
+    int Ply;
+
     U64 BB_WhitePieces;
     U64 BB_BlackPieces;
     U64 BB_Pieces[2][6]; // [Color][Piece]
@@ -173,7 +173,7 @@ typedef struct {
 
     HistoryItem MoveTable[MAX_GAME_MOVES];
 
-    AccumulatorItem Accumulator;
+    AccumulatorItem Accumulator[MAX_PLY + 1];
 } BoardItem;
 
 typedef struct {
